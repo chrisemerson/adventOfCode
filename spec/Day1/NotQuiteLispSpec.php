@@ -40,4 +40,22 @@ class NotQuiteLispSpec extends ObjectBehavior
         $this->move("(()((()()))()()())(())))())()))()");
         $this->getFloor()->shouldReturn(-5);
     }
+
+    function it_returns_1_for_the_first_basement_move_when_moving_down_immediately()
+    {
+        $this->move(")");
+        $this->getFirstBasementMove()->shouldReturn(1);
+    }
+
+    function it_calculates_the_first_basement_move_after_some_other_previous_moves()
+    {
+        $this->move("(())()(()()))");
+        $this->getFirstBasementMove()->shouldReturn(13);
+    }
+
+    function it_ignores_subsequent_trips_into_the_basement()
+    {
+        $this->move("())(())(");
+        $this->getFirstBasementMove()->shouldReturn(3);
+    }
 }

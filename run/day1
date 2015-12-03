@@ -7,4 +7,5 @@ $input = file_get_contents(__DIR__ . "/../res/Day1/input");
 $notQuiteLisp = new AdventOfCode\Day1\NotQuiteLisp();
 $notQuiteLisp->move($input);
 
-echo "Floor reached: " . $notQuiteLisp->getFloor();
+echo "Floor reached: " . $notQuiteLisp->getFloor() . PHP_EOL;
+echo "First time into basement: " . $notQuiteLisp->getFirstBasementMove() . PHP_EOL;
