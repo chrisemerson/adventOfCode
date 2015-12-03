@@ -3,25 +3,40 @@ namespace AdventOfCode\Day3;
 
 class HouseVisitor
 {
-    private $x = 0;
-    private $y = 0;
+    /** @var Visitor[] */
+    private $visitors;
 
-    private $visitedHouses = [];
+    /** @var Visitor */
+    private $currentVisitor;
+
+    private $combinedVisitedHouses = [];
 
     const MOVE_LEFT = '<';
     const MOVE_RIGHT = '>';
     const MOVE_UP = '^';
     const MOVE_DOWN = 'v';
 
-    public function __construct()
+    public function __construct(array $visitors)
     {
-        $this->visitHouseAtCurrentLocation();
+        $this->visitors = $visitors;
+
+        $this->nextVisitor();
     }
 
     public function getNumberOfHousesVisited()
     {
+        foreach ($this->visitors as $visitor) {
+            $visitedHouses = $visitor->getHousesVisited();
+
+            foreach ($visitedHouses as $x => $yValues) {
+                foreach (array_keys($yValues) as $y) {
+                    $this->visitHouseAt($x, $y);
+                }
+            }
+        }
+
         return array_reduce(
-            $this->visitedHouses,
+            $this->combinedVisitedHouses,
             function ($carry, $item) {
                 return $carry + count($item);
             }
@@ -32,6 +47,7 @@ class HouseVisitor
     {
         for ($i = 0; $i < strlen($directions); $i++) {
             $this->processDirection($directions[$i]);
+            $this->nextVisitor();
         }
     }
 
@@ -39,51 +55,35 @@ class HouseVisitor
     {
         switch (strtolower($currentDirection)) {
             case self::MOVE_LEFT:
-                $this->moveLeft();
+                $this->currentVisitor->moveLeft();
                 break;
 
             case self::MOVE_RIGHT:
-                $this->moveRight();
+                $this->currentVisitor->moveRight();
                 break;
 
             case self::MOVE_UP:
-                $this->moveUp();
+                $this->currentVisitor->moveUp();
                 break;
 
             case self::MOVE_DOWN:
-                $this->moveDown();
+                $this->currentVisitor->moveDown();
                 break;
         }
-
-        $this->visitHouseAtCurrentLocation();
     }
 
-    private function visitHouseAtCurrentLocation()
+    private function nextVisitor()
     {
-        if (!isset($this->visitedHouses[$this->x])) {
-            $this->visitedHouses[$this->x] = [$this->y => true];
+        $this->currentVisitor = array_shift($this->visitors);
+        $this->visitors[] = $this->currentVisitor;
+    }
+
+    private function visitHouseAt($x, $y)
+    {
+        if (!isset($this->combinedVisitedHouses[$x])) {
+            $this->combinedVisitedHouses[$x] = [$y => true];
         } else {
-            $this->visitedHouses[$this->x][$this->y] = true;
+            $this->combinedVisitedHouses[$x][$y] = true;
         }
-    }
-
-    private function moveLeft()
-    {
-        $this->x--;
-    }
-
-    private function moveRight()
-    {
-        $this->x++;
-    }
-
-    private function moveUp()
-    {
-        $this->y++;
-    }
-
-    private function moveDown()
-    {
-        $this->y--;
     }
 }

@@ -1,12 +1,23 @@
 #!/usr/bin/env php
 <?php
 use AdventOfCode\Day3\HouseVisitor;
+use AdventOfCode\Day3\Visitor;
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
 $directions = file_get_contents(__DIR__ . "/../res/Day3/input");
 
-$houseVisitor = new HouseVisitor();
+$santa = new Visitor();
+
+$houseVisitor = new HouseVisitor([$santa]);
 $houseVisitor->visitHouses($directions);
 
 echo "Number of individual houses visited: " . $houseVisitor->getNumberOfHousesVisited() . PHP_EOL;
+
+$santa = new Visitor();
+$roboSanta = new Visitor();
+
+$houseVisitor = new HouseVisitor([$santa, $roboSanta]);
+$houseVisitor->visitHouses($directions);
+
+echo "Number of individual houses visited with RoboSanta: " . $houseVisitor->getNumberOfHousesVisited() . PHP_EOL;
