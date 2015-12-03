@@ -10,8 +10,8 @@ $presentsArray = file(__DIR__ . "/../res/Day2/input");
 $wrappingPaper = new WrappingPaper();
 
 foreach ($presentsArray as $presentDimensions) {
-    $present = new Present($presentDimensions);
-    $wrappingPaper->addPresent($present);
+    $wrappingPaper->addPresent(new Present($presentDimensions));
 }
 
 echo "Wrapping paper area required: " . $wrappingPaper->getRequiredWrappingPaper() . " square feet" . PHP_EOL;
+echo "Ribbon required: " . $wrappingPaper->getRequiredRibbonLength() . " feet" . PHP_EOL;

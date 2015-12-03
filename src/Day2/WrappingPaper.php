@@ -21,4 +21,15 @@ class WrappingPaper
 
         return $wrappingPaperRequired;
     }
+
+    public function getRequiredRibbonLength()
+    {
+        $ribbonLengthRequired = 0;
+
+        foreach ($this->presents as $present) {
+            $ribbonLengthRequired += $present->getSmallestPerimeter() + $present->getVolume();
+        }
+
+        return $ribbonLengthRequired;
+    }
 }

@@ -34,9 +34,33 @@ class PresentSpec extends ObjectBehavior
         $this->getAreaOfSmallestSize()->shouldReturn(1);
     }
 
-    function it_should_return_the_area_of_the_smallest_size_for_a_non_trivial_sized_present()
+    function it_should_return_the_area_of_the_smallest_size_for_a_non_trivially_sized_present()
     {
         $this->beConstructedWith("2x3x4");
         $this->getAreaOfSmallestSize()->shouldReturn(6);
+    }
+
+    function it_should_return_the_smallest_perimeter_of_any_side_for_a_1ft_cube()
+    {
+        $this->beConstructedWith("1x1x1");
+        $this->getSmallestPerimeter()->shouldReturn(4);
+    }
+
+    function it_should_return_the_smallest_perimeter_of_any_side_for_a_non_trivially_sized_present()
+    {
+        $this->beConstructedWith("2x3x4");
+        $this->getSmallestPerimeter()->shouldReturn(10);
+    }
+
+    function it_should_return_the_volume_of_a_1ft_cube()
+    {
+        $this->beConstructedWith("1x1x1");
+        $this->getVolume()->shouldReturn(1);
+    }
+
+    function it_should_return_the_volume_of_a_non_trivially_sized_cube()
+    {
+        $this->beConstructedWith("5x6x2");
+        $this->getVolume()->shouldReturn(60);
     }
 }
