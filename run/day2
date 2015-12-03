@@ -5,7 +5,7 @@ use AdventOfCode\Day2\Present;
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
-$presentsArray = file(__DIR__ . "/../res/Day2/input");
+$presentsArray = array_map('trim', file(__DIR__ . "/../res/Day2/input"));
 
 $wrappingPaper = new WrappingPaper();
 
