@@ -1,0 +1,12 @@
+#!/usr/bin/env php
+<?php
+use AdventOfCode\Day3\HouseVisitor;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$directions = file_get_contents(__DIR__ . "/../res/Day3/input");
+
+$houseVisitor = new HouseVisitor();
+$houseVisitor->visitHouses($directions);
+
+echo "Number of individual houses visited: " . $houseVisitor->getNumberOfHousesVisited() . PHP_EOL;
