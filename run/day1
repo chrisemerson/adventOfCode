@@ -1,0 +1,10 @@
+#!/usr/bin/env php
+<?php
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$input = file_get_contents(__DIR__ . "/../res/Day1/input");
+
+$notQuiteLisp = new AdventOfCode\Day1\NotQuiteLisp();
+$notQuiteLisp->move($input);
+
+echo "Floor reached: " . $notQuiteLisp->getFloor();
