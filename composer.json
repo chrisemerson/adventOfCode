@@ -1,0 +1,19 @@
+{
+    "require": {
+        "phpspec/phpspec": "dev-fix-windows-rerunner"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdventOfCode\\": "src/"
+        }
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:chrisemerson/phpspec.git"
+        }
+    ]
+}
