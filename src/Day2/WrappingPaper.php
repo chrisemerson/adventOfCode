@@ -16,7 +16,7 @@ class WrappingPaper
         $wrappingPaperRequired = 0;
 
         foreach ($this->presents as $present) {
-            $wrappingPaperRequired += $present->getSurfaceArea() + $present->getAreaOfSmallestSize();
+            $wrappingPaperRequired += $this->getWrappingPaperRequirementForPresent($present);
         }
 
         return $wrappingPaperRequired;
@@ -27,9 +27,19 @@ class WrappingPaper
         $ribbonLengthRequired = 0;
 
         foreach ($this->presents as $present) {
-            $ribbonLengthRequired += $present->getSmallestPerimeter() + $present->getVolume();
+            $ribbonLengthRequired += $this->getRibbonLengthRequirementForPresent($present);
         }
 
         return $ribbonLengthRequired;
+    }
+
+    private function getWrappingPaperRequirementForPresent(Present $present)
+    {
+        return $present->getSurfaceArea() + $present->getAreaOfSmallestSize();
+    }
+
+    private function getRibbonLengthRequirementForPresent(Present $present)
+    {
+        return $present->getSmallestPerimeter() + $present->getVolume();
     }
 }
