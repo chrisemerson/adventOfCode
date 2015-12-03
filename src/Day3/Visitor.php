@@ -1,5 +1,4 @@
 <?php
-
 namespace AdventOfCode\Day3;
 
 class Visitor

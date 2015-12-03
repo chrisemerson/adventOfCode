@@ -1,5 +1,4 @@
 <?php
-
 namespace spec\AdventOfCode\Day1;
 
 use PhpSpec\ObjectBehavior;
