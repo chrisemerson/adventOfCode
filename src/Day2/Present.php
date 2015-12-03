@@ -34,7 +34,11 @@ class Present
 
     public function getSmallestPerimeter()
     {
-        return 2 * ($this->length + $this->width + $this->height - max($this->length, $this->width, $this->height));
+        $lwPerim = 2 * ($this->length + $this->width);
+        $whPerim = 2 * ($this->width + $this->height);
+        $hlPerim = 2 * ($this->height + $this->length);
+
+        return min($lwPerim, $whPerim, $hlPerim);
     }
 
     public function getVolume()
