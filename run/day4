@@ -1,0 +1,13 @@
+#!/usr/bin/env php
+<?php
+
+use AdventOfCode\Day4\StockingStuffer;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$input = trim(file_get_contents(__DIR__ . "/../res/Day4/input"));
+
+$stockingStuffer = new StockingStuffer();
+
+echo $stockingStuffer->findSuffixNumberFor($input) . PHP_EOL;
+echo "With 6 zeros: " . $stockingStuffer->findSuffixNumberFor($input, 6) . PHP_EOL;
