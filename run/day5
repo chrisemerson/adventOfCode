@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+
+use AdventOfCode\Day5\NiceStringFinder;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$strings = array_map('trim', file(__DIR__ . "/../res/Day5/input"));
+
+$niceStringFinder = new NiceStringFinder();
+
+foreach ($strings as $string) {
+    $niceStringFinder->addWord($string);
+}
+
+echo "Number of nice strings: " . $niceStringFinder->getNumberOfNiceWords() . PHP_EOL;
+echo "Number of naughty strings: " . $niceStringFinder->getNumberOfNaughtyWords() . PHP_EOL;
