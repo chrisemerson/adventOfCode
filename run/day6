@@ -14,4 +14,7 @@ foreach ($instructions as $instruction) {
     $christmasLights->addInstruction($instruction);
 }
 
-echo PHP_EOL . "Lights turned on: " . $christmasLights->getNumberOfSwitchedOnLights();
+echo PHP_EOL;
+
+echo "Lights turned on: " . $christmasLights->getNumberOfSwitchedOnLights() . PHP_EOL;
+echo "Total brightness of lights:: " . $christmasLights->getTotalBrightnessOfLights() . PHP_EOL;

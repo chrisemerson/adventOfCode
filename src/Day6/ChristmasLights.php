@@ -4,11 +4,13 @@ namespace AdventOfCode\Day6;
 class ChristmasLights
 {
     private $lights = [];
+    private $brightLights = [];
 
     public function __construct()
     {
         for ($i = 0; $i <= 999; $i++) {
             $this->lights[$i] = str_repeat(chr(0), 1000);
+            $this->brightLights[$i] = str_repeat(chr(0), 1000);
         }
     }
 
@@ -40,14 +42,17 @@ class ChristmasLights
         switch ($instruction) {
             case 'turn on':
                 $this->turnOn($x, $y);
+                $this->changeBrightness($x, $y, 1);
                 break;
 
             case 'turn off':
                 $this->turnOff($x, $y);
+                $this->changeBrightness($x, $y, -1);
                 break;
 
             case 'toggle':
                 $this->toggle($x, $y);
+                $this->changeBrightness($x, $y, 2);
                 break;
         }
     }
@@ -56,6 +61,17 @@ class ChristmasLights
     {
         return array_reduce(
             $this->lights,
+            function($carry, $item) {
+                return $carry + array_sum(array_map('ord', str_split($item)));
+            },
+            0
+        );
+    }
+
+    public function getTotalBrightnessOfLights()
+    {
+        return array_reduce(
+            $this->brightLights,
             function($carry, $item) {
                 return $carry + array_sum(array_map('ord', str_split($item)));
             },
@@ -76,5 +92,12 @@ class ChristmasLights
     private function toggle($x, $y)
     {
         $this->lights[$x]{$y} = chr(1 - ord($this->lights[$x]{$y}));
+    }
+
+    private function changeBrightness($x, $y, $change)
+    {
+        $currentBrightness = ord($this->brightLights[$x]{$y});
+        $newBrightness = max(0, $currentBrightness + $change);
+        $this->brightLights[$x]{$y} = chr($newBrightness);
     }
 }
