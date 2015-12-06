@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+use AdventOfCode\Day6\ChristmasLights;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$instructions = array_map('trim', file(__DIR__ . "/../res/Day6/input"));
+
+$christmasLights = new ChristmasLights();
+
+foreach ($instructions as $instruction) {
+    echo "Executing instruction " . $instruction . PHP_EOL;
+
+    $christmasLights->addInstruction($instruction);
+}
+
+echo PHP_EOL . "Lights turned on: " . $christmasLights->getNumberOfSwitchedOnLights();
