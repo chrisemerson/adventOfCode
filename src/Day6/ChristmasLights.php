@@ -21,19 +21,7 @@ class ChristmasLights
 
             for ($x = $x1; $x <= $x2; $x++) {
                 for ($y = $y1; $y <= $y2; $y++) {
-                    switch ($matches['instruction']) {
-                        case 'turn on':
-                            $this->turnOn($x, $y);
-                            break;
-
-                        case 'turn off':
-                            $this->turnOff($x, $y);
-                            break;
-
-                        case 'toggle':
-                            $this->toggle($x, $y);
-                            break;
-                    }
+                    $this->applyInstructionToLight($matches['instruction'], $x, $y);
                 }
             }
         }
@@ -49,13 +37,29 @@ class ChristmasLights
         ];
     }
 
+    private function applyInstructionToLight($instruction, $x, $y)
+    {
+        switch ($instruction) {
+            case 'turn on':
+                $this->turnOn($x, $y);
+                break;
+
+            case 'turn off':
+                $this->turnOff($x, $y);
+                break;
+
+            case 'toggle':
+                $this->toggle($x, $y);
+                break;
+        }
+    }
+
     public function getNumberOfSwitchedOnLights()
     {
         return array_reduce($this->lights, function($carry, $item) {
             return $carry + array_sum(str_split($item));
         });
     }
-
     private function turnOn($x, $y)
     {
         $this->lights[$x]{$y} = 1;
@@ -64,6 +68,7 @@ class ChristmasLights
     {
         $this->lights[$x]{$y} = 0;
     }
+
     private function toggle($x, $y)
     {
         if ($this->lights[$x]{$y} == 1) {
