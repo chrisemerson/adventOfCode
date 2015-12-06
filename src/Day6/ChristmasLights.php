@@ -7,10 +7,8 @@ class ChristmasLights
 
     public function __construct()
     {
-        $row = str_repeat('0', 1000);
-
-        foreach (range(0, 999) as $x) {
-            $this->lights[$x] = $row;
+        for ($i = 0; $i <= 999; $i++) {
+            $this->lights[$i] = str_repeat(chr(0), 1000);
         }
     }
 
@@ -56,25 +54,27 @@ class ChristmasLights
 
     public function getNumberOfSwitchedOnLights()
     {
-        return array_reduce($this->lights, function($carry, $item) {
-            return $carry + array_sum(str_split($item));
-        });
+        return array_reduce(
+            $this->lights,
+            function($carry, $item) {
+                return $carry + array_sum(array_map('ord', str_split($item)));
+            },
+            0
+        );
     }
+
     private function turnOn($x, $y)
     {
-        $this->lights[$x]{$y} = 1;
+        $this->lights[$x]{$y} = chr(1);
     }
+
     private function turnOff($x, $y)
     {
-        $this->lights[$x]{$y} = 0;
+        $this->lights[$x]{$y} = chr(0);
     }
 
     private function toggle($x, $y)
     {
-        if ($this->lights[$x]{$y} == 1) {
-            $this->turnOff($x, $y);
-        } else {
-            $this->turnOn($x, $y);
-        }
+        $this->lights[$x]{$y} = chr(1 - ord($this->lights[$x]{$y}));
     }
 }
