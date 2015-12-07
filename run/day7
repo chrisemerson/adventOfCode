@@ -1,0 +1,20 @@
+#!/usr/bin/env php
+<?php
+use AdventOfCode\Day7\BitwiseCircuit;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$wireConnections = array_map('trim', file(__DIR__ . "/../res/Day7/input"));
+
+$firstRun = new BitwiseCircuit();
+$secondRun = new BitwiseCircuit();
+
+foreach ($wireConnections as $wireConnection) {
+    $firstRun->addWiring($wireConnection);
+    $secondRun->addWiring($wireConnection);
+}
+
+echo "Value of wire a: " . $firstRun->getWireValue('a') . PHP_EOL;
+
+$secondRun->addWiring($firstRun->getWireValue('a') . ' -> b');
+echo "Value of wire a after second run: " . $secondRun->getWireValue('a') . PHP_EOL;
