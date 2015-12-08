@@ -134,7 +134,7 @@ class ChristmasLightsSpec extends ObjectBehavior
     function it_can_doubly_increase_the_brightness_of_a_light_that_is_off()
     {
         $this->addInstruction('toggle 0,0 through 0,0');
-        $this->getTotalBrightnessOfLights()->shouldReturn(1);
+        $this->getTotalBrightnessOfLights()->shouldReturn(2);
     }
 
     function it_can_doubly_increase_the_brightness_of_a_light_that_is_on()
@@ -142,7 +142,7 @@ class ChristmasLightsSpec extends ObjectBehavior
         $this->addInstruction('turn on 0,0 through 0,0');
         $this->addInstruction('toggle 0,0 through 0,0');
 
-        $this->getTotalBrightnessOfLights()->shouldReturn(0);
+        $this->getTotalBrightnessOfLights()->shouldReturn(3);
     }
 
     function it_can_follow_a_complex_series_of_instructions_and_gives_brightness()
