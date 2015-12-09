@@ -1,0 +1,15 @@
+#!/usr/bin/env php
+<?php
+use AdventOfCode\Day9\ShortestTrip;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$distances = array_map('trim', file(__DIR__ . "/../res/Day9/input"));
+
+$shortestTrip = new ShortestTrip();
+
+foreach ($distances as $distance) {
+    $shortestTrip->addDistance($distance);
+}
+
+echo "Shortest distance: " . $shortestTrip->getShortestTrip() . PHP_EOL;
