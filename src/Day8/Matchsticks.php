@@ -11,24 +11,44 @@ class Matchsticks
         $this->strings[] = $string;
     }
 
-    public function getDifferenceInCharacters()
+    public function getDifferenceInCharactersForDecodedStrings()
     {
         $difference = 0;
 
         foreach ($this->strings as $string) {
-            $parsedString = $this->parseString($string);
+            $decodedString = $this->decodeString($string);
 
-            $difference += (strlen($string) - strlen($parsedString));
+            $difference += (strlen($string) - strlen($decodedString));
         }
 
         return $difference;
     }
 
-    private function parseString($string)
+    public function getDifferenceInCharactersForEncodedStrings()
     {
-        $parsedString = str_replace(['\\\\', '\\"'], ['\\', '"'], trim($string, '"'));
-        $parsedString = preg_replace('/\\\\x[0-9a-f]{2}/i', '*', $parsedString);
+        $difference = 0;
 
-        return $parsedString;
+        foreach ($this->strings as $string) {
+            $encodedString = $this->encodeString($string);
+
+            $difference += (strlen($encodedString) - strlen($string));
+        }
+
+        return $difference;
+    }
+
+    private function decodeString($string)
+    {
+        $decodedString = str_replace(['\\\\', '\\"'], ['\\', '"'], trim($string, '"'));
+        $decodedString = preg_replace('/\\\\x[0-9a-f]{2}/i', '*', $decodedString);
+
+        return $decodedString;
+    }
+
+    private function encodeString($string)
+    {
+        $encodedString = str_replace(['\\', '"'], ['\\\\', '\\"'], $string);
+
+        return '"' . $encodedString . '"';
     }
 }

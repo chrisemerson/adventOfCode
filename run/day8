@@ -12,4 +12,5 @@ foreach ($strings as $string) {
     $matchsticks->addString($string);
 }
 
-echo "Total difference in strings: " . $matchsticks->getDifferenceInCharacters() . PHP_EOL;
+echo "Total difference between encoded and decoded strings: " . $matchsticks->getDifferenceInCharactersForDecodedStrings() . PHP_EOL;
+echo "Total difference between doubly-encoded and encoded strings: " . $matchsticks->getDifferenceInCharactersForEncodedStrings() . PHP_EOL;
