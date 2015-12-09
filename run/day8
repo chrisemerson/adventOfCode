@@ -1,0 +1,15 @@
+#!/usr/bin/env php
+<?php
+use AdventOfCode\Day8\Matchsticks;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$strings = array_map('trim', file(__DIR__ . "/../res/Day8/input"));
+
+$matchsticks = new Matchsticks();
+
+foreach ($strings as $string) {
+    $matchsticks->addString($string);
+}
+
+echo "Total difference in strings: " . $matchsticks->getDifferenceInCharacters() . PHP_EOL;

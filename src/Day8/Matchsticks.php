@@ -4,21 +4,31 @@ namespace AdventOfCode\Day8;
 
 class Matchsticks
 {
-    private $string;
+    private $strings;
 
     public function addString($string)
     {
-        $this->string = $string;
+        $this->strings[] = $string;
     }
 
     public function getDifferenceInCharacters()
     {
-        if (!empty($this->string)) {
-            return 2;
+        $difference = 0;
+
+        foreach ($this->strings as $string) {
+            $parsedString = $this->parseString($string);
+
+            $difference += (strlen($string) - strlen($parsedString));
         }
 
-        return 0;
+        return $difference;
+    }
+
+    private function parseString($string)
+    {
+        $parsedString = str_replace(['\\\\', '\\"'], ['\\', '"'], trim($string, '"'));
+        $parsedString = preg_replace('/\\\\x[0-9a-f]{2}/i', '*', $parsedString);
+
+        return $parsedString;
     }
 }
-
-
