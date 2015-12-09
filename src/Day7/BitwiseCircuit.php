@@ -4,31 +4,6 @@ namespace AdventOfCode\Day7;
 class BitwiseCircuit
 {
     private $wiring = [];
-    private $allowedInstructions;
-
-    const MAX_SIGNAL_VALUE = 65535;
-
-    public function __construct()
-    {
-        $this->allowedInstructions = [
-            'AND' => function ($a, $b) {
-                return $this->getValue($a) & $this->getValue($b);
-            },
-            'OR' => function ($a, $b) {
-                return $this->getValue($a) | $this->getValue($b);
-            },
-            'LSHIFT' => function ($a, $b) {
-                return $this->getValue($a) << (int)$b;
-            },
-            'RSHIFT' => function ($a, $b) {
-                return $this->getValue($a) >> (int)$b;
-            },
-            'NOT' => function ($notused, $a) {
-                //Implement bitwise NOT as this, because we need to use unsigned ints, PHP uses signed
-                return self::MAX_SIGNAL_VALUE - $this->getValue($a);
-            }
-        ];
-    }
 
     public function addWiring($wiringInstruction)
     {
@@ -38,26 +13,37 @@ class BitwiseCircuit
 
     public function getWireValue($wire)
     {
-        $instruction = $this->wiring[$wire];
-
-        foreach ($this->allowedInstructions as $allowedInstruction => $function) {
-            if (strpos($instruction, $allowedInstruction) !== false) {
-                list($a, $b) = array_map('trim', explode($allowedInstruction, $instruction));
-                $answer = call_user_func($function, $a, $b);
-                $this->wiring[$wire] = $answer;
-                return $answer;
+        $allowedInstructions = [
+            'AND' => function ($a, $b) {
+                return $this->getWireValue($a) & $this->getWireValue($b);
+            },
+            'OR' => function ($a, $b) {
+                return $this->getWireValue($a) | $this->getWireValue($b);
+            },
+            'LSHIFT' => function ($a, $b) {
+                return $this->getWireValue($a) << (int)$b;
+            },
+            'RSHIFT' => function ($a, $b) {
+                return $this->getWireValue($a) >> (int)$b;
+            },
+            'NOT' => function ($notused, $a) {
+                return 65535 - $this->getWireValue($a); // PHP uses unsigned bits, use this to get around the fact
             }
+        ];
+
+        if (array_key_exists($wire, $this->wiring)) {
+            $instruction = $this->wiring[$wire];
+
+            foreach ($allowedInstructions as $allowedInstruction => $function) {
+                if (strpos($instruction, $allowedInstruction) !== false) {
+                    return $this->wiring[$wire] =
+                        call_user_func_array($function, array_map('trim', explode($allowedInstruction, $instruction)));
+                }
+            }
+
+            return $this->getWireValue($instruction);
         }
 
-        return $this->getValue($instruction);
-    }
-
-    private function getValue($operand)
-    {
-        if (array_key_exists($operand, $this->wiring)) {
-            return $this->getWireValue($operand);
-        }
-
-        return (int) $operand;
+        return (int) $wire;
     }
 }
