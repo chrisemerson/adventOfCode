@@ -13,3 +13,4 @@ foreach ($distances as $distance) {
 }
 
 echo "Shortest distance: " . $shortestTrip->getShortestTrip() . PHP_EOL;
+echo "Longest distance: " . $shortestTrip->getLongestTrip() . PHP_EOL;

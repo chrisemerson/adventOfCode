@@ -26,4 +26,13 @@ class ShortestTripSpec extends ObjectBehavior
 
         $this->getShortestTrip()->shouldReturn(605);
     }
+
+    function it_calculates_the_longest_distance_between_3_places()
+    {
+        $this->addDistance('London to Dublin = 464');
+        $this->addDistance('London to Belfast = 518');
+        $this->addDistance('Dublin to Belfast = 141');
+
+        $this->getLongestTrip()->shouldReturn(982);
+    }
 }

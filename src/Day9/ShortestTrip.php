@@ -24,7 +24,7 @@ class ShortestTrip
             $this->distances[$from] = [];
         }
 
-        $this->distances[$from][$to] = (int)$distance;
+        $this->distances[$from][$to] = (int) $distance;
     }
 
     private function addDestination($place)
@@ -35,55 +35,61 @@ class ShortestTrip
 
     public function getShortestTrip()
     {
-        $minDistance = null;
-
-        foreach ($this->destinations as $destination) {
-            $destinationsWithoutThisOne = $this->removeArrayElement($this->destinations, $destination);
-
-            $distanceFromThisDestination = $this->calculateShortestTrip(
-                $destinationsWithoutThisOne,
-                $destination,
-                0
-            );
-
-            if (is_null($minDistance) || $distanceFromThisDestination < $minDistance) {
-                $minDistance = $distanceFromThisDestination;
-            }
-        }
-
-        return $minDistance;
+        return $this->calculateTrip($this->destinations);
     }
 
-    private function calculateShortestTrip($unvisitedDestinations, $currentLocation, $distanceTravelledSoFar) {
+    public function getLongestTrip()
+    {
+        return $this->calculateTrip($this->destinations, '', 0, 'max');
+    }
+
+    private function calculateTrip(
+        $unvisitedDestinations,
+        $currentLocation = '',
+        $distanceTravelledSoFar = 0,
+        $reductionFunction = 'min'
+    ) {
         if (empty($unvisitedDestinations)) {
             return $distanceTravelledSoFar;
         }
 
-        return min(
+        return call_user_func(
+            $reductionFunction,
             array_map(
-                function($destination) use ($unvisitedDestinations, $currentLocation, $distanceTravelledSoFar) {
-                    return $this->calculateShortestTrip(
+                function(
+                    $destination
+                ) use (
+                    $unvisitedDestinations,
+                    $currentLocation,
+                    $distanceTravelledSoFar,
+                    $reductionFunction
+                ) {
+                    $maxTrip = $this->calculateTrip(
                         $this->removeArrayElement($unvisitedDestinations, $destination),
                         $destination,
-                        $distanceTravelledSoFar + $this->getDistanceBetween($currentLocation, $destination)
+                        $distanceTravelledSoFar + $this->getDistanceBetween($currentLocation, $destination),
+                        $reductionFunction
                     );
+
+                    return $maxTrip;
                 },
                 $unvisitedDestinations
             )
         );
     }
 
-    private function getDistanceBetween($from, $to) {
-        return $this->distances[$from][$to];
+    private function removeArrayElement($array, $valueToRemove)
+    {
+        unset($array[array_search($valueToRemove, $array)]);
+
+        return $array;
     }
 
-    private function removeArrayElement($array, $elementToRemove)
-    {
-        return array_filter(
-            $array,
-            function ($value) use ($elementToRemove) {
-                return ($value != $elementToRemove);
-            }
-        );
+    private function getDistanceBetween($from, $to) {
+        if (empty($from) || empty($to)) {
+            return 0;
+        }
+
+        return $this->distances[$from][$to];
     }
 }
