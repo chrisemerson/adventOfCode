@@ -16,9 +16,10 @@ class LookAndSay
     {
         $output = '';
 
-        while (preg_match('/^((.)\2*)/', $input, $matches)) {
-            $output .= strlen($matches[0]) . $matches[2];
-            $input = substr($input, strlen($matches[0]));
+        if (preg_match_all('/(.)\1*/', $input, $groups)) {
+            foreach ($groups[0] as $group) {
+                $output .= strlen($group) . $group{0};
+            }
         }
 
         return $output;

@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 use AdventOfCode\Day10\LookAndSay;
-
+ini_set('memory_limit', '8000M');
 require_once __DIR__ . "/../vendor/autoload.php";
 
 $input = trim(file_get_contents(__DIR__ . "/../res/Day10/input"));
@@ -12,3 +12,8 @@ $output = $lookAndSay->lookAndSay($input, 40);
 
 echo "After 40 iterations: " . $output . PHP_EOL;
 echo "Length: " . strlen($output) . PHP_EOL;
+
+$output2 = $lookAndSay->lookAndSay($output, 10);
+
+echo "After 50 iterations: " . $output2 . PHP_EOL;
+echo "Length: " . strlen($output2) . PHP_EOL;
