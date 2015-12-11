@@ -1,0 +1,14 @@
+#!/usr/bin/env php
+<?php
+use AdventOfCode\Day11\PasswordFinder;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$input = trim(file_get_contents(__DIR__ . "/../res/Day11/input"));
+
+$passwordFinder = new PasswordFinder();
+
+$nextPassword = $passwordFinder->getNextPassword($input);
+
+echo "New Password: " . $nextPassword . PHP_EOL;
+echo "New Password 2: " . $passwordFinder->getNextPassword($nextPassword) . PHP_EOL;
