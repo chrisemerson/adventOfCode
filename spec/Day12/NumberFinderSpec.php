@@ -35,4 +35,19 @@ class NumberFinderSpec extends ObjectBehavior
     {
         $this->getNumberTotal('{"a":{"b":4},"c":-1}')->shouldReturn(3);
     }
+
+    function it_ignores_objects_whose_values_contain_red()
+    {
+        $this->getNumberTotal('[1,{"c":"red","b":2},3]')->shouldReturn(4);
+    }
+
+    function it_doesnt_ignore_arrays_whose_values_contain_red()
+    {
+        $this->getNumberTotal('[1,"red",5]')->shouldReturn(6);
+    }
+
+    function it_ignores_child_elements_of_objects_containing_red()
+    {
+        $this->getNumberTotal('{"d":"red","e":[1,2,3,4],"f":5}')->shouldReturn(0);
+    }
 }
