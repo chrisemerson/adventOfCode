@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+<?php
+use AdventOfCode\Day12\NumberFinder;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$input = trim(file_get_contents(__DIR__ . "/../res/Day12/input"));
+
+$numberFinder = new NumberFinder();
+
+echo "Number sum: " . $numberFinder->getNumberTotal($input) . PHP_EOL;
