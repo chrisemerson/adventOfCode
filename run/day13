@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+use AdventOfCode\Day13\TablePlaceSetter;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$input = array_map('trim', file(__DIR__ . "/../res/Day13/input"));
+
+$tablePlaceSetter = new TablePlaceSetter();
+
+foreach ($input as $preference) {
+    $tablePlaceSetter->addSeatingPreference($preference);
+}
+
+echo "Optimum seating arrangement: " . $tablePlaceSetter->getMaximumPossibleHappinessRating() . PHP_EOL;
+
+$tablePlaceSetter->addMyself();
+
+echo "Optimum seating arrangement including Me: " . $tablePlaceSetter->getMaximumPossibleHappinessRating() . PHP_EOL;
