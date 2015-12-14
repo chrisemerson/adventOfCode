@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+use AdventOfCode\Day14\ReindeerRace;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+const LENGTH_OF_RACE = 2503;
+
+$input = array_map('trim', file(__DIR__ . "/../res/Day14/input"));
+
+$reindeerRace = new ReindeerRace();
+
+foreach ($input as $reindeer) {
+    $reindeerRace->addReindeer($reindeer);
+}
+
+echo "Winning reindeer is at a distance: " . $reindeerRace->getWinningReindeerDistance(LENGTH_OF_RACE) . PHP_EOL;
+
+echo "Winning reindeer by points is on " . $reindeerRace->getWinningReindeerPoints(LENGTH_OF_RACE) . " points." . PHP_EOL;
