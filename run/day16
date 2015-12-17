@@ -1,0 +1,27 @@
+#!/usr/bin/env php
+<?php
+use AdventOfCode\Day16\MFCSAM;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$sues = array_map('trim', file(__DIR__ . "/../res/Day16/input"));
+
+$mfcsam = new MFCSAM();
+
+foreach ($sues as $sue) {
+    $mfcsam->addSue($sue);
+}
+
+$mfcsam->addDiscovery('children: 3');
+$mfcsam->addDiscovery('cats: 7');
+$mfcsam->addDiscovery('samoyeds: 2');
+$mfcsam->addDiscovery('pomeranians: 3');
+$mfcsam->addDiscovery('akitas: 0');
+$mfcsam->addDiscovery('vizslas: 0');
+$mfcsam->addDiscovery('goldfish: 5');
+$mfcsam->addDiscovery('trees: 3');
+$mfcsam->addDiscovery('cars: 2');
+$mfcsam->addDiscovery('perfumes: 1');
+
+echo "Aunt Sue using first rules: " . $mfcsam->findSue() . PHP_EOL;
+echo "Aunt Sue using second rules: " . $mfcsam->findSue('test2') . PHP_EOL;
