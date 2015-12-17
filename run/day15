@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+use AdventOfCode\Day15\CookieMaker;
+ini_set('memory_limit', '256M');
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$ingredients = array_map('trim', file(__DIR__ . "/../res/Day15/input"));
+
+$cookieMaker = new CookieMaker();
+
+foreach ($ingredients as $ingredient) {
+    $cookieMaker->addIngredient($ingredient);
+}
+
+echo "Best cookie: " . $cookieMaker->getBestCookieScore() . PHP_EOL;
+
+echo "Best cookie with 500 calorie requirement: " . $cookieMaker->getBestCookieScore(500) . PHP_EOL;
