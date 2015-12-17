@@ -1,0 +1,15 @@
+#!/usr/bin/env php
+<?php
+use AdventOfCode\Day17\EggnogContainers;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$containers = array_map('trim', file(__DIR__ . "/../res/Day17/input"));
+
+$eggnogContainers = new EggnogContainers();
+
+foreach ($containers as $container) {
+    $eggnogContainers->addContainer($container);
+}
+
+echo "Number of container combinations to get 150 litres: " . $eggnogContainers->getCombinations(150) . PHP_EOL;
