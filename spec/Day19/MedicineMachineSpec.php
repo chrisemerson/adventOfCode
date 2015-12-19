@@ -49,4 +49,14 @@ class MedicineMachineSpec extends ObjectBehavior
 
         $this->getNumberOfDistinctMolecules()->shouldReturn(4);
     }
+
+    function it_replaces_strings_of_multiple_source_lengths()
+    {
+        $this->setMolecule('HOH');
+
+        $this->addTransformation('H => H');
+        $this->addTransformation('HOH => HOH');
+
+        $this->getNumberOfDistinctMolecules()->shouldReturn(1);
+    }
 }
