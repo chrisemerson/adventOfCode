@@ -15,3 +15,13 @@ for ($i = 0; $i < 100; $i++) {
 }
 
 echo "Number of lights on after 100 iterations: " . $gameOfLife->getNumberOfLightsTurnedOn() . PHP_EOL;
+
+$gameOfLife = new GameOfLife();
+
+$gameOfLife->setInitialState($initialState);
+
+for ($i = 0; $i < 100; $i++) {
+    $gameOfLife->iterate(true);
+}
+
+echo "Number of lights on after 100 iterations with lights stuck on: " . $gameOfLife->getNumberOfLightsTurnedOn() . PHP_EOL;

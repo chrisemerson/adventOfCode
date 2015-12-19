@@ -116,4 +116,34 @@ class GameOfLifeSpec extends ObjectBehavior
 
         $this->getNumberOfLightsTurnedOn()->shouldReturn(4);
     }
+
+    function it_iterates_correctly_multiple_times_with_corner_lights_stuck_on()
+    {
+        $this->setInitialState("##.#.#
+...##.
+#....#
+..#...
+#.#..#
+####.#");
+
+        $this->iterate(true);
+
+        $this->getNumberOfLightsTurnedOn()->shouldReturn(18);
+
+        $this->iterate(true);
+
+        $this->getNumberOfLightsTurnedOn()->shouldReturn(18);
+
+        $this->iterate(true);
+
+        $this->getNumberOfLightsTurnedOn()->shouldReturn(18);
+
+        $this->iterate(true);
+
+        $this->getNumberOfLightsTurnedOn()->shouldReturn(14);
+
+        $this->iterate(true);
+
+        $this->getNumberOfLightsTurnedOn()->shouldReturn(17);
+    }
 }

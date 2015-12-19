@@ -35,14 +35,22 @@ class GameOfLife
         );
     }
 
-    public function iterate()
+    public function iterate($cornerLightsStuckOn = false)
     {
         $this->initialiseNewState();
+
+        if ($cornerLightsStuckOn) {
+            $this->turnOnCornerLights();
+        }
 
         for ($i = 0; $i < count($this->newState); $i++) {
             for ($j = 0; $j < count($this->newState[$i]); $j++) {
                 $this->iterateIndividualLight($i, $j);
             }
+        }
+
+        if ($cornerLightsStuckOn) {
+            $this->turnOnCornerLights();
         }
 
         $this->commitNewState();
@@ -101,5 +109,16 @@ class GameOfLife
     private function turnLightOff($i, $j)
     {
         $this->newState[$i][$j] = self::LIGHT_OFF;
+    }
+
+    private function turnOnCornerLights()
+    {
+        $iSize = count($this->state) - 1;
+        $jSize = count($this->state[0]) - 1;
+
+        $this->newState[0][0] = self::LIGHT_ON;
+        $this->newState[0][$jSize] = self::LIGHT_ON;
+        $this->newState[$iSize][0] = self::LIGHT_ON;
+        $this->newState[$iSize][$jSize] = self::LIGHT_ON;
     }
 }
