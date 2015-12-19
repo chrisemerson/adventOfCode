@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+use AdventOfCode\Day18\GameOfLife;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$initialState = trim(file_get_contents(__DIR__ . "/../res/Day18/input"));
+
+$gameOfLife = new GameOfLife();
+
+$gameOfLife->setInitialState($initialState);
+
+for ($i = 0; $i < 100; $i++) {
+    $gameOfLife->iterate();
+}
+
+echo "Number of lights on after 100 iterations: " . $gameOfLife->getNumberOfLightsTurnedOn() . PHP_EOL;
