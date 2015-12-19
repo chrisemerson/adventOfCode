@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 use AdventOfCode\Day17\EggnogContainers;
-
+ini_set('memory_limit', '1G');
 require_once __DIR__ . "/../vendor/autoload.php";
 
 $containers = array_map('trim', file(__DIR__ . "/../res/Day17/input"));

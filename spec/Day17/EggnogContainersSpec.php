@@ -35,4 +35,15 @@ class EggnogContainersSpec extends ObjectBehavior
 
         $this->getCombinations(10)->shouldReturn(2);
     }
+
+    function it_treats_containers_of_the_same_size_seperately()
+    {
+        $this->addContainer(20);
+        $this->addContainer(15);
+        $this->addContainer(10);
+        $this->addContainer(5);
+        $this->addContainer(5);
+
+        $this->getCombinations(25)->shouldReturn(4);
+    }
 }
