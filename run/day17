@@ -13,3 +13,5 @@ foreach ($containers as $container) {
 }
 
 echo "Number of container combinations to get 150 litres: " . $eggnogContainers->getCombinations(150) . PHP_EOL;
+
+echo "Number of min. container combinations to get 150 litres: " . $eggnogContainers->getUsingMinCombinations(150) . PHP_EOL;

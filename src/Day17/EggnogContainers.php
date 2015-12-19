@@ -25,6 +25,37 @@ class EggnogContainers
         return count(array_unique($combinations));
     }
 
+    public function getUsingMinCombinations($totalCapacity)
+    {
+        $combinations = $this->findCombinations(array_keys($this->containers), $totalCapacity);
+
+        $minContainers = min(
+            array_map(
+                function ($item) {
+                    return count($item);
+                },
+                $combinations
+            )
+        );
+
+        $combinations = array_filter(
+            $combinations,
+            function ($item) use ($minContainers) {
+                return count($item) == $minContainers;
+            }
+        );
+
+        $combinations = array_map(
+            function($item) {
+                sort($item);
+                return implode('-', $item);
+            },
+            $combinations
+        );
+
+        return count(array_unique($combinations));
+    }
+
     private function findCombinations($remainingContainers, $remainingCapacity, $indent = "")
     {
         $return = [];
