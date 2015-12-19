@@ -1,0 +1,18 @@
+#!/usr/bin/env php
+<?php
+use AdventOfCode\Day19\MedicineMachine;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$transformations = array_map('trim', file(__DIR__ . "/../res/Day19/input-transformations"));
+$molecule = trim(file_get_contents(__DIR__ . "/../res/Day19/input-molecule"));
+
+$medicineMachine = new MedicineMachine();
+
+$medicineMachine->setMolecule($molecule);
+
+foreach ($transformations as $transformation) {
+    $medicineMachine->addTransformation($transformation);
+}
+
+echo "Number of distinct molecules: " . $medicineMachine->getNumberOfDistinctMolecules() . PHP_EOL;
