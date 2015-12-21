@@ -52,16 +52,12 @@ class MedicineMachine
 
         foreach ($this->transformations as $source => $transformationsForSource) {
             foreach ($transformationsForSource as $transformation) {
-                $offset = 0;
-
-                while (($index = strpos($currentMolecule, $source, $offset)) !== false) {
+                for ($offset = 0; ($index = strpos($currentMolecule, $source, $offset)) !== false; $offset = $index + 1) {
                     $newString = substr_replace($currentMolecule, $transformation, $index, strlen($source));
 
                     if (strlen($newString) <= strlen($this->molecule)) {
                         $return = array_merge($return, $this->applyTransformationsToReachTarget($newString, $noSteps + 1));
                     }
-
-                    $offset = $index + 1;
                 }
             }
         }
