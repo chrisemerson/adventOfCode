@@ -6,6 +6,7 @@ class MedicineMachine
     private $molecule;
     private $transformations = [];
     private $foundTransformations = [];
+    private static $minFoundSoFar = PHP_INT_MAX;
 
     public function setMolecule($molecule)
     {
@@ -39,29 +40,50 @@ class MedicineMachine
 
     public function findQuickestRouteToMolecule($startingMolecule)
     {
-        return min($this->applyTransformationsToReachTarget($startingMolecule));
+        return $this->applyTransformationsToReachTarget($startingMolecule, true);
     }
 
-    private function applyTransformationsToReachTarget($currentMolecule, $noSteps = 0)
+    private function applyTransformationsToReachTarget($currentMolecule)
     {
-        $return = [];
-
         if ($currentMolecule == $this->molecule) {
-            $return[] = $noSteps;
+            return 0;
         }
+
+        $minSteps = PHP_INT_MAX;
+
+        $transformationsNormalised = [];
 
         foreach ($this->transformations as $source => $transformationsForSource) {
             foreach ($transformationsForSource as $transformation) {
-                for ($offset = 0; ($index = strpos($currentMolecule, $source, $offset)) !== false; $offset = $index + 1) {
-                    $newString = substr_replace($currentMolecule, $transformation, $index, strlen($source));
+                $transformationsNormalised[] = ['source' => $source, 'transformation' => $transformation];
+            }
+        }
 
-                    if (strlen($newString) <= strlen($this->molecule)) {
-                        $return = array_merge($return, $this->applyTransformationsToReachTarget($newString, $noSteps + 1));
-                    }
+        usort(
+            $transformationsNormalised,
+            function ($a, $b) {
+                return strlen($b['transformation']) - strlen($a['transformation']);
+            }
+        );
+
+        foreach ($transformationsNormalised as $transformationNormalised) {
+            $source = $transformationNormalised['source'];
+            $transformation = $transformationNormalised['transformation'];
+
+            for ($offset = 0; ($index = strpos($currentMolecule, $transformation, $offset)) !== false; $offset = $index + 1) {
+                if ($minSteps == PHP_INT_MAX || $minSteps < self::$minFoundSoFar) {
+                    return $this->applyTransformationsToReachTarget(
+                        substr_replace(
+                            $currentMolecule,
+                            $source,
+                            $index,
+                            strlen($transformation)
+                        )
+                    ) + 1;
                 }
             }
         }
 
-        return $return;
+        return $minSteps;
     }
 }

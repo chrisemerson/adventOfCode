@@ -69,16 +69,16 @@ class MedicineMachineSpec extends ObjectBehavior
 
     function it_can_find_quickest_route_to_molecule_with_1_transformation()
     {
-        $this->setMolecule('H');
+        $this->setMolecule('e');
 
         $this->addTransformation('e => H');
 
-        $this->findQuickestRouteToMolecule('e')->shouldReturn(1);
+        $this->findQuickestRouteToMolecule('H')->shouldReturn(1);
     }
 
     function it_can_take_multiple_steps_to_get_to_target_molecule()
     {
-        $this->setMolecule('HOH');
+        $this->setMolecule('e');
 
         $this->addTransformation('e => H');
         $this->addTransformation('e => O');
@@ -86,12 +86,12 @@ class MedicineMachineSpec extends ObjectBehavior
         $this->addTransformation('H => OH');
         $this->addTransformation('O => HH');
 
-        $this->findQuickestRouteToMolecule('e')->shouldReturn(3);
+        $this->findQuickestRouteToMolecule('HOH')->shouldReturn(3);
     }
 
     function it_can_deal_with_a_longer_example()
     {
-        $this->setMolecule('HOHOHO');
+        $this->setMolecule('e');
 
         $this->addTransformation('e => H');
         $this->addTransformation('e => O');
@@ -99,6 +99,6 @@ class MedicineMachineSpec extends ObjectBehavior
         $this->addTransformation('H => OH');
         $this->addTransformation('O => HH');
 
-        $this->findQuickestRouteToMolecule('e')->shouldReturn(6);
+        $this->findQuickestRouteToMolecule('HOHOHO')->shouldReturn(6);
     }
 }

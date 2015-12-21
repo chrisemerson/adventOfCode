@@ -2,6 +2,8 @@
 <?php
 use AdventOfCode\Day19\MedicineMachine;
 
+ini_set('memory_limit', '2G');
+
 require_once __DIR__ . "/../vendor/autoload.php";
 
 $transformations = array_map('trim', file(__DIR__ . "/../res/Day19/input-transformations"));
@@ -16,4 +18,7 @@ foreach ($transformations as $transformation) {
 }
 
 echo "Number of distinct molecules: " . $medicineMachine->getNumberOfDistinctMolecules() . PHP_EOL;
-echo "Shortest route to molecule from 'e': " . $medicineMachine->findQuickestRouteToMolecule('e') . PHP_EOL;
+
+$medicineMachine->setMolecule('e');
+
+echo "Shortest route to molecule from 'e': " . $medicineMachine->findQuickestRouteToMolecule($molecule) . PHP_EOL;
