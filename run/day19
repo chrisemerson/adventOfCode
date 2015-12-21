@@ -16,3 +16,4 @@ foreach ($transformations as $transformation) {
 }
 
 echo "Number of distinct molecules: " . $medicineMachine->getNumberOfDistinctMolecules() . PHP_EOL;
+echo "Shortest route to molecule from 'e': " . $medicineMachine->findQuickestRouteToMolecule('e') . PHP_EOL;
