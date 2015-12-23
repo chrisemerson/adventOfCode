@@ -4,9 +4,10 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "25db7c56a8ecfb8ec73b6ea62df7abfb",
-    "content-hash": "10a7b153cda4b5aa8b1763f721a8ddd2",
-    "packages": [
+    "hash": "8a4d75a7e15ba21bf0595901f3b5c204",
+    "content-hash": "496446c665566da16491554926abd5e8",
+    "packages": [],
+    "packages-dev": [
         {
             "name": "doctrine/instantiator",
             "version": "1.0.5",
@@ -146,16 +147,16 @@
         },
         {
             "name": "phpspec/phpspec",
-            "version": "dev-fix-windows-rerunner",
+            "version": "dev-fix-code-generation-errors-on-windows",
             "source": {
                 "type": "git",
                 "url": "https://github.com/chrisemerson/phpspec.git",
-                "reference": "25911d02c22490ebccc72e57f9f18f03885cd542"
+                "reference": "8240dd365b2dc2ae1891194be25487419c71a162"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/chrisemerson/phpspec/zipball/25911d02c22490ebccc72e57f9f18f03885cd542",
-                "reference": "25911d02c22490ebccc72e57f9f18f03885cd542",
+                "url": "https://api.github.com/repos/chrisemerson/phpspec/zipball/8240dd365b2dc2ae1891194be25487419c71a162",
+                "reference": "8240dd365b2dc2ae1891194be25487419c71a162",
                 "shasum": ""
             },
             "require": {
@@ -225,9 +226,9 @@
                 "tests"
             ],
             "support": {
-                "source": "https://github.com/chrisemerson/phpspec/tree/fix-windows-rerunner"
+                "source": "https://github.com/chrisemerson/phpspec/tree/fix-code-generation-errors-on-windows"
             },
-            "time": "2015-12-03 12:15:24"
+            "time": "2015-12-23 11:52:44"
         },
         {
             "name": "phpspec/prophecy",
@@ -848,7 +849,6 @@
             "time": "2015-11-30 12:36:17"
         }
     ],
-    "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {

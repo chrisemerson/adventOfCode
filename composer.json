@@ -1,6 +1,5 @@
 {
     "require": {
-        "phpspec/phpspec": "dev-fix-windows-rerunner"
     },
     "autoload": {
         "psr-4": {
@@ -15,5 +14,8 @@
             "type": "vcs",
             "url": "git@github.com:chrisemerson/phpspec.git"
         }
-    ]
+    ],
+    "require-dev": {
+        "phpspec/phpspec": "dev-fix-code-generation-errors-on-windows"
+    }
 }
