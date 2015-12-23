@@ -1,0 +1,23 @@
+#!/usr/bin/env php
+<?php
+use AdventOfCode\Day23\TuringLock;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$instructions = array_map('trim', (file(__DIR__ . "/../res/Day23/input")));
+
+$turingLock = new TuringLock();
+$turingLock2 = new TuringLock();
+
+$turingLock2->addInstruction('inc a');
+
+foreach ($instructions as $instruction) {
+    $turingLock->addInstruction($instruction);
+    $turingLock2->addInstruction($instruction);
+}
+
+$turingLock->runProgram();
+$turingLock2->runProgram();
+
+echo "Value of register b: " . $turingLock->getRegisterValue('b') . PHP_EOL;
+echo "Value of register b with a set to 1 initially: " . $turingLock2->getRegisterValue('b') . PHP_EOL;
