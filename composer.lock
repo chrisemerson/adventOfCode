@@ -151,12 +151,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/chrisemerson/phpspec.git",
-                "reference": "8240dd365b2dc2ae1891194be25487419c71a162"
+                "reference": "17dd49ce4415c62e17993188bfae352e2189b43a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/chrisemerson/phpspec/zipball/8240dd365b2dc2ae1891194be25487419c71a162",
-                "reference": "8240dd365b2dc2ae1891194be25487419c71a162",
+                "url": "https://api.github.com/repos/chrisemerson/phpspec/zipball/17dd49ce4415c62e17993188bfae352e2189b43a",
+                "reference": "17dd49ce4415c62e17993188bfae352e2189b43a",
                 "shasum": ""
             },
             "require": {
@@ -228,7 +228,7 @@
             "support": {
                 "source": "https://github.com/chrisemerson/phpspec/tree/fix-code-generation-errors-on-windows"
             },
-            "time": "2015-12-23 11:52:44"
+            "time": "2015-12-23 13:18:48"
         },
         {
             "name": "phpspec/prophecy",
