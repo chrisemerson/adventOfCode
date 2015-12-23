@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+use AdventOfCode\Day20\InfiniteElves;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$input = trim(file_get_contents(__DIR__ . "/../res/Day20/input"));
+
+$infiniteElves = new InfiniteElves();
+
+//echo "Lowest house with at least " . $input . " presents: " . $infiniteElves->getLowestHouseWithThisNumberOfPresents($input) . PHP_EOL;
+
+$infiniteElves->setElfDeliveringLimit(50);
+$infiniteElves->setNumberOfPresentsPerHouse(11);
+
+echo "Lowest house with at least " . $input . " presents with a 50 house limit per elf: " . $infiniteElves->getLowestHouseWithThisNumberOfPresents($input) . PHP_EOL;
