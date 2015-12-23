@@ -35,4 +35,9 @@ class SimplePlayer implements Player
     {
         return $this->armor;
     }
+
+    public function getCost()
+    {
+        return 0;
+    }
 }
