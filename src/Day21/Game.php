@@ -17,7 +17,8 @@ class Game
         $opponent = 1;
 
         while (true) {
-            $this->players[$opponent]['player']->attack($this->players[$currentPlayer]['player']->getDamage());
+            $damageDone = max(1, $this->players[$currentPlayer]['player']->getDamage() - $this->players[$opponent]['player']->getArmor());
+            $this->players[$opponent]['player']->attack($damageDone);
 
             if ($this->players[$opponent]['player']->isDefeated()) {
                 return $this->players[$currentPlayer]['label'];

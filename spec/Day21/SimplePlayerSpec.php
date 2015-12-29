@@ -28,31 +28,22 @@ class SimplePlayerSpec extends ObjectBehavior
         $this->isDefeated()->shouldReturn(true);
     }
 
-    function it_doesnt_attack_the_player_as_much_with_armor()
-    {
-        $this->beConstructedWith(3, 0, 4);
-
-        $this->attack(5);
-
-        $this->isDefeated()->shouldReturn(false);
-    }
-
     function it_can_play_a_series_of_moves()
     {
         $this->beConstructedWith(8, 5, 5);
 
         $this->isDefeated()->shouldReturn(false);
 
-        $this->attack(7);
+        $this->attack(2);
         $this->isDefeated()->shouldReturn(false);
 
-        $this->attack(7);
+        $this->attack(2);
         $this->isDefeated()->shouldReturn(false);
 
-        $this->attack(7);
+        $this->attack(2);
         $this->isDefeated()->shouldReturn(false);
 
-        $this->attack(7);
+        $this->attack(2);
         $this->isDefeated()->shouldReturn(true);
     }
 }

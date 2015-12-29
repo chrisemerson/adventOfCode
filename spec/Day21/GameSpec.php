@@ -17,6 +17,7 @@ class GameSpec extends ObjectBehavior
     {
         $opponent->isDefeated()->willReturn(true);
         $opponent->attack(1)->shouldBeCalled();
+        $opponent->getArmor()->willReturn(0);
 
         $player->isDefeated()->willReturn(false);
         $player->getDamage()->willReturn(1);
@@ -36,6 +37,7 @@ class GameSpec extends ObjectBehavior
                 $this->isDefeated()->willReturn(true);
             }
         )->shouldBeCalled();
+        $opponent->getArmor()->willReturn(0);
 
         $player->getDamage()->willReturn(5);
 
