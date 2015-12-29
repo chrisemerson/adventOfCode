@@ -1,5 +1,4 @@
 <?php
-
 namespace AdventOfCode\Day21;
 
 class Game
