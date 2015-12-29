@@ -71,3 +71,4 @@ $RPGSim->addPlayer('player', $player);
 $RPGSim->addPlayer('opponent', $opponent);
 
 echo "Cheapest way to win: " . $RPGSim->cheapestWin('player') . PHP_EOL;
+echo "Costliest way to lose: " . $RPGSim->costliestLose('player') . PHP_EOL;

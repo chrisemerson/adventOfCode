@@ -33,6 +33,23 @@ class RPGSim
         );
     }
 
+    public function costliestLose($playerToLose)
+    {
+        return max(
+            array_map(
+                function ($combination) use ($playerToLose) {
+                    return $this->getCostForCombination($combination, $playerToLose);
+                },
+                array_filter(
+                    $this->getDecoratorCombinations(),
+                    function ($combination) use ($playerToLose) {
+                        return !$this->playerWinsGame($combination, $playerToLose);
+                    }
+                )
+            )
+        );
+    }
+
     private function getDecoratorCombinations()
     {
         $decoratorCombinations = [];
