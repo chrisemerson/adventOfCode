@@ -21,9 +21,7 @@ class SimplePlayer implements Player
 
     public function attack($damage)
     {
-        $damageThisAttack = max(1, $damage - $this->getArmor());
-
-        $this->hitPoints -= $damageThisAttack;
+        $this->hitPoints -= max(1, $damage - $this->getArmor());
     }
 
     public function getDamage()
@@ -39,5 +37,10 @@ class SimplePlayer implements Player
     public function getCost()
     {
         return 0;
+    }
+
+    public function getHitPoints()
+    {
+        return $this->hitPoints;
     }
 }

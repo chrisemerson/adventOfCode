@@ -33,6 +33,11 @@ abstract class PlayerDecorator implements Player
 
     public function getCost()
     {
-        return 0;
+        return $this->player->getCost();
+    }
+
+    public function getHitPoints()
+    {
+        return $this->player->getHitPoints();
     }
 }

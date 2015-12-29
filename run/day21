@@ -1,0 +1,73 @@
+#!/usr/bin/env php
+<?php
+use AdventOfCode\Day21\PlayerDecorators\Armor\BandedmailDecorator;
+use AdventOfCode\Day21\PlayerDecorators\Armor\ChainmailDecorator;
+use AdventOfCode\Day21\PlayerDecorators\Armor\LeatherDecorator;
+use AdventOfCode\Day21\PlayerDecorators\Armor\NoArmorDecorator;
+use AdventOfCode\Day21\PlayerDecorators\Armor\PlatemailDecorator;
+use AdventOfCode\Day21\PlayerDecorators\Armor\SplintmailDecorator;
+use AdventOfCode\Day21\PlayerDecorators\DamageRings\NoDamageRingDecorator;
+use AdventOfCode\Day21\PlayerDecorators\DamageRings\PlusOneDamageRing;
+use AdventOfCode\Day21\PlayerDecorators\DamageRings\PlusThreeDamageRing;
+use AdventOfCode\Day21\PlayerDecorators\DamageRings\PlusTwoDamageRing;
+use AdventOfCode\Day21\PlayerDecorators\DefenceRings\NoDefenceRingDecorator;
+use AdventOfCode\Day21\PlayerDecorators\DefenceRings\PlusOneDefenceDecorator;
+use AdventOfCode\Day21\PlayerDecorators\DefenceRings\PlusThreeDefenceDecorator;
+use AdventOfCode\Day21\PlayerDecorators\DefenceRings\PlusTwoDefenceDecorator;
+use AdventOfCode\Day21\PlayerDecorators\Weapons\DaggerDecorator;
+use AdventOfCode\Day21\PlayerDecorators\Weapons\GreataxeDecorator;
+use AdventOfCode\Day21\PlayerDecorators\Weapons\LongswordDecorator;
+use AdventOfCode\Day21\PlayerDecorators\Weapons\ShortswordDecorator;
+use AdventOfCode\Day21\PlayerDecorators\Weapons\WarhammerDecorator;
+use AdventOfCode\Day21\RPGSim;
+use AdventOfCode\Day21\SimplePlayer;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$decorators = [
+    [
+        DaggerDecorator::class,
+        ShortswordDecorator::class,
+        WarhammerDecorator::class,
+        LongswordDecorator::class,
+        GreataxeDecorator::class
+    ],
+    [
+        NoArmorDecorator::class,
+        LeatherDecorator::class,
+        ChainmailDecorator::class,
+        SplintmailDecorator::class,
+        BandedmailDecorator::class,
+        PlatemailDecorator::class
+    ],
+    [
+        NoDamageRingDecorator::class,
+        PlusOneDamageRing::class,
+        PlusTwoDamageRing::class,
+        PlusThreeDamageRing::class,
+        NoDefenceRingDecorator::class,
+        PlusOneDefenceDecorator::class,
+        PlusTwoDefenceDecorator::class,
+        PlusThreeDefenceDecorator::class
+    ],
+    [
+        NoDamageRingDecorator::class,
+        PlusOneDamageRing::class,
+        PlusTwoDamageRing::class,
+        PlusThreeDamageRing::class,
+        NoDefenceRingDecorator::class,
+        PlusOneDefenceDecorator::class,
+        PlusTwoDefenceDecorator::class,
+        PlusThreeDefenceDecorator::class
+    ]
+];
+
+$RPGSim = new RPGSim($decorators);
+
+$player = new SimplePlayer(100, 0, 0);
+$opponent = new SimplePlayer(104, 8, 1);
+
+$RPGSim->addPlayer('player', $player);
+$RPGSim->addPlayer('opponent', $opponent);
+
+echo "Cheapest way to win: " . $RPGSim->cheapestWin('player') . PHP_EOL;
