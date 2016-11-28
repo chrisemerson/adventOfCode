@@ -22,4 +22,5 @@ the `2015` directory. You also just run the tests for a certain day with, eg, `b
 ----
 
 I'm going to attempt the 2016 challenges in Clojure, a language I know a very small amount of but really like and would
-like to get better at.
+like to get better at. I suspect you will need to have Leiningen installed [http://leiningen.org/] if you want to run
+them yourself.
