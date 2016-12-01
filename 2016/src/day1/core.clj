@@ -30,7 +30,7 @@
 (defn parse-instruction
   [instruction]
   (let
-    [[_ direction distance] (re-matches #"^([DLRU])(\d+)$" instruction)]
+    [[_ direction distance] (re-matches #"^(L|R)(\d+)$" instruction)]
     (vector direction (Integer. distance))))
 
 (defn process-instruction
