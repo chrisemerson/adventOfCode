@@ -22,5 +22,12 @@ the `2015` directory. You also just run the tests for a certain day with, eg, `b
 ----
 
 I'm going to attempt the 2016 challenges in Clojure, a language I know a very small amount of but really like and would
-like to get better at. I suspect you will need to have Leiningen installed [http://leiningen.org/] if you want to run
-them yourself.
+like to get better at. You will need to have Leiningen installed [http://leiningen.org/] if you want to run them yourself.
+
+To run the clojure code for a particluar day, change to the `2016` directory and run
+
+    $ lein run d ...args
+
+...substituting the day number for d. For example, day 1 takes the input as a file name with the instructions:
+
+    $ lein run 1 "resources/day1"
