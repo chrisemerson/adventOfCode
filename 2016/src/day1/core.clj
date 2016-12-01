@@ -20,18 +20,12 @@
   (conj visitedlocations [x y]))
 
 (defn move
-  [x y direction distance]
-  (case direction
-    :N (vector x (+ y distance))
-    :W (vector (- x distance) y)
-    :E (vector (+ x distance) y)
-    :S (vector x (- y distance))))
-
-(defn move-iterable
   [[x y direction visitedlocations]]
-  (let
-    [[x y] (move x y direction 1)]
-    (vector x y direction (add-visited-location visitedlocations x y))))
+  (case direction
+    :N (vector x (inc y) direction (add-visited-location visitedlocations x (inc y)))
+    :W (vector (dec x) y direction (add-visited-location visitedlocations (dec x) y))
+    :E (vector (inc x) y direction (add-visited-location visitedlocations (inc x) y))
+    :S (vector x (dec y) direction (add-visited-location visitedlocations x (dec y)))))
 
 (defn parse-instruction
   [instruction]
@@ -44,21 +38,32 @@
   (let
     [[dirinst distinst] (parse-instruction instruction)
      newdir (get-new-direction d dirinst)
-     [newx newy _ visitedlocations] (nth (iterate move-iterable [x y newdir visitedlocations]) distinst)]
+     [newx newy _ visitedlocations] (nth (iterate move [x y newdir visitedlocations]) distinst)]
      (vector newx newy newdir visitedlocations)))
 
 (defn in?
   [coll el]
   (some #(= el %) coll))
 
+(defn firstrepeateditem
+  [coll]
+  (let
+    [appearstwice (map (fn [item] (first item)) (filter #(> (second %) 1) (frequencies coll)))]
+    (first (drop-while #(not (in? appearstwice %)) coll))))
+
+(defn +abs
+  [& args]
+  (apply + (map #(Math/abs %) args)))
+
 (defn -main
   [& args]
   (let
-    [[x y d visitedlocations] (reduce process-instruction [0 0 :N [[0 0]]] (import-instructions (first args)))
-     visitedtwice (map (fn [item] (first item)) (filter #(> (second %) 1) (frequencies visitedlocations)))]
+    [startingvector [0 0 :N [[0 0]]]
+     instructions (import-instructions (first args))
+     [x y d visitedlocations] (reduce process-instruction startingvector instructions)]
     (println
       "Easter Bunny HQ is"
-      (+ (Math/abs x) (Math/abs y))
+      (+abs x y)
       "blocks away (pt 1) and"
-      (reduce (fn [a b] (+ (Math/abs a) (Math/abs b))) (first (drop-while #(not (in? visitedtwice %)) visitedlocations)))
+      (apply +abs (firstrepeateditem visitedlocations))
       "blocks away (pt 2)")))
