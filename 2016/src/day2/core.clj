@@ -2,24 +2,26 @@
   (:gen-class)
   (:require [clojure.string :as str]))
 
+(def keypad [[\X \X 1 \X \X] [\X 2 3 4 \X] [5 6 7 8 9] [\X \A \B \C \X] [\X \X \D \X \X]])
+
 (defn get-instructions
   [filename]
   (str/split-lines (str/trim (slurp filename))))
 
+(defn return-key
+  [[x y]]
+  ((keypad y) x))
+
 (defn move
   [[x y] instruction]
-  (case instruction
-    \U (vector x (max 0 (dec y)))
-    \D (vector x (min 2 (inc y)))
-    \L (vector (max 0 (dec x)) y)
-    \R (vector (min 2 (inc x)) y)
-    (vector x y)))
-
-(defn return-number
-  [[x y]]
   (let
-    [keypad [[1 2 3] [4 5 6] [7 8 9]]]
-    ((keypad y) x)))
+    [[newx newy] (case instruction
+                   \U (vector x (max 0 (dec y)))
+                   \D (vector x (min (dec (count keypad)) (inc y)))
+                   \L (vector (max 0 (dec x)) y)
+                   \R (vector (min (dec (count keypad)) (inc x)) y)
+                   (vector x y))]
+    (if (= \X (return-key [newx newy])) [x y] [newx newy])))
 
 (defn find-number
   [instructions startingposition]
@@ -33,4 +35,4 @@
 
 (defn -main
   [& args]
-  (println (apply str (map return-number (find-number (get-instructions (first args)) [1 1])))))
+  (println (apply str (map return-key (find-number (get-instructions (first args)) [(/ (dec (count keypad)) 2) (/ (dec (count keypad)) 2)])))))
