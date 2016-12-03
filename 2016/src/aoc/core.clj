@@ -1,7 +1,8 @@
 (ns aoc.core
   (:gen-class)
   (:require day1.core)
-  (:require day2.core))
+  (:require day2.core)
+  (:require day3.core))
 
 (defn -main
   [day & args]
