@@ -14,7 +14,7 @@
   [line]
   (map (fn [x] (Integer. x)) (filter (fn [x] (not (empty? x))) (map str/trim (str/split line #"\s+")))))
 
-(defn get-instructions
+(defn get-input
   [filename]
   (rearrange-lines (map cleanline (str/split-lines (str/trim (slurp filename)))) '()))
 
@@ -30,4 +30,4 @@
 
 (defn -main
   [& args]
-  (println (count (filter triangle? (get-instructions (first args))))))
+  (println (count (filter triangle? (get-input (first args))))))
