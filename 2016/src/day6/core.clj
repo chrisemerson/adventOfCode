@@ -8,7 +8,7 @@
 
 (defn find-message
   [lines]
-  (apply str (map (comp first first #(sort-by second > %)) (map frequencies (apply map vector lines)))))
+  (apply str (map (comp first first #(sort-by second < %)) (map frequencies (apply map vector lines)))))
 
 (defn -main
   [& args]
