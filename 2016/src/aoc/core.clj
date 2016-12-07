@@ -5,7 +5,8 @@
   (:require day3.core)
   (:require day4.core)
   (:require day5.core)
-  (:require day6.core))
+  (:require day6.core)
+  (:require day7.core))
 
 (defn -main
   [day & args]
