@@ -12,8 +12,7 @@
   [board w h]
   (concat
     (map #(concat (repeat w "#") (drop w %)) (take h board))
-    (drop h board)
-  ))
+    (drop h board)))
 
 (defn rotate-row
   [board row n]
