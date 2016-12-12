@@ -29,6 +29,27 @@
              (subs origstring 1)
              (str decodedstring (subs origstring 0 1))))))))
 
+(defn get-decoded-string-length
+  [string]
+  (loop
+    [origstring string
+     length 0]
+     (let
+       [matcher (re-matcher #"^\((\d+)x(\d+)\)" origstring)]
+       (if (empty? origstring)
+         length
+         (if (re-find matcher)
+           (let
+             [matches (re-groups matcher)
+              markerlength (count (first matches))
+              contentlength (Integer. (nth matches 1))
+              content (subs origstring markerlength (+ markerlength contentlength))
+              repeat (Integer. (nth matches 2))]
+             (recur
+               (subs origstring (+ markerlength contentlength))
+               (+ length (* repeat (get-decoded-string-length content)))))
+           (recur (subs origstring 1) (inc length)))))))
+
 (defn -main
   [& args]
-  (println (count (decode-string (get-input (first args))))))
+  (println (get-decoded-string-length (get-input (first args)))))
