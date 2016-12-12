@@ -30,7 +30,7 @@
         [arg (partial nth (re-groups matcher))]
         (if (= "bot" (arg 1))
           [(assoc botstate (arg 2) (conj (get botstate (arg 2)) value)) outputs]
-          [botstate (assoc outputs (arg 2) value)]))
+          [botstate (assoc outputs (arg 2) (conj (get outputs (arg 2)) value))]))
       [botstate outputs])))
 
 (defn distribute
@@ -62,9 +62,15 @@
         true)
       false)))
 
+(defn all-processing-done
+  [botstate]
+  (let
+    [has-chips (filter #(not (empty? (second %))) botstate)]
+    (empty? has-chips)))
+
 (defn -main
   [& args]
   (let
     [instructions (get-input (first args))
      [movements botstate] (reduce create-instructions [{} {}] instructions)]
-    (first (drop-while #(not (bot-comparing-these-chips % 17 61)) (map first (iterate step [botstate movements {}]))))))
+    (println (nth (first (drop-while #(not (all-processing-done (first %))) (iterate step [botstate movements {}]))) 2))))
