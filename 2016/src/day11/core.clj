@@ -75,14 +75,23 @@
          floor (get-possible-floors state)]
         (list floor items)))))
 
+(defn score
+  [state]
+  (+
+    (* (count (:3 state)))
+    (* (count (:2 state)) 2)
+    (* (count (:1 state)) 3)))
+
 (defn get-min-moves-to-finish
-  [state limit]
-  (if (> limit 99)
-    9999
-    (if (finished? state)
-      0
-      (inc (apply min (map #(get-min-moves-to-finish % (inc limit)) (get-possible-next-positions state)))))))
+  [state depth limit visitedstates]
+  (if (contains? visitedstates state)
+    limit
+    (if (> depth limit)
+      limit
+      (if (finished? state)
+        depth
+        (reduce #(get-min-moves-to-finish %2 (inc depth) %1 (conj visitedstates state)) limit (sort #(compare (score %1) (score %2)) (get-possible-next-positions state)))))))
 
 (defn -main
   [& args]
-  (println (get-min-moves-to-finish initial-state 0)))
+  (println (get-min-moves-to-finish initial-state 0 (Integer. (first args)) #{})))
