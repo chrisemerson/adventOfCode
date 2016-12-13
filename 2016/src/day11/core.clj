@@ -1,12 +1,20 @@
 (ns day11.core
   (:gen-class))
 
+;(def initial-state {
+;  :1 '("strontium generator" "strontium chip" "plutonium generator" "plutonium chip")
+;  :2 '("thulium generator" "ruthenium generator" "ruthenium chip" "curium generator" "curium chip")
+;  :3 '("thulium chip")
+;  :4 '()
+;  :elevator :1
+;})
+
 (def initial-state {
-  :1 '("strontium generator" "strontium chip" "plutonium generator" "plutonium chip")
-  :2 '("thulium generator" "ruthenium generator" "ruthenium chip" "curium generator" "curium chip")
-  :3 '("thulium chip")
+  :1 '()
+  :2 '()
+  :3 '("hydrogen generator" "lithium generator" "lithium chip" "hydrogen chip")
   :4 '()
-  :elevator :1
+  :elevator :3
 })
 
 (defn get-possible-items-to-take
@@ -55,8 +63,7 @@
 
 (defn valid-state?
   [state]
-  (and
-    (no-exposed-microchips? state)))
+  (no-exposed-microchips? state))
 
 (defn make-move
   [state [floor items]]
@@ -78,20 +85,32 @@
 (defn score
   [state]
   (+
-    (* (count (:3 state)))
+    (count (:3 state))
     (* (count (:2 state)) 2)
     (* (count (:1 state)) 3)))
 
+(defn sort-by-score
+  [x]
+  (sort #(compare (score %1) (score %2)) x))
+
+(defn next-positions-by-score
+  [state]
+  (sort-by-score (get-possible-next-positions state)))
+
 (defn get-min-moves-to-finish
   [state depth limit visitedstates]
-  (if (contains? visitedstates state)
-    limit
-    (if (> depth limit)
-      limit
-      (if (finished? state)
-        depth
-        (reduce #(get-min-moves-to-finish %2 (inc depth) %1 (conj visitedstates state)) limit (sort #(compare (score %1) (score %2)) (get-possible-next-positions state)))))))
+  (if (finished? state)
+    [depth (assoc visitedstates state depth)]
+    (if (contains? visitedstates state)
+      [(get visitedstates state) visitedstates]
+      (let
+        [reducefunc (fn [[returneddepth returnedvisitedstates] nextstate] (get-min-moves-to-finish nextstate (inc depth) returneddepth returnedvisitedstates))]
+        (if (> depth limit)
+          [limit (assoc visitedstates state limit)]
+          (if (= 1 (count (next-positions-by-score state)))
+            (get-min-moves-to-finish (first (next-positions-by-score state)) (inc depth) limit visitedstates)
+            (reduce reducefunc [limit visitedstates] (next-positions-by-score state))))))))
 
 (defn -main
   [& args]
-  (println (get-min-moves-to-finish initial-state 0 (Integer. (first args)) #{})))
+  (println (first (get-min-moves-to-finish initial-state 0 (Integer. (first args)) {}))))
