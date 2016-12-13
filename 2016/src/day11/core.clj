@@ -1,21 +1,21 @@
 (ns day11.core
   (:gen-class))
 
-;(def initial-state {
-;  :1 '("strontium generator" "strontium chip" "plutonium generator" "plutonium chip")
-;  :2 '("thulium generator" "ruthenium generator" "ruthenium chip" "curium generator" "curium chip")
-;  :3 '("thulium chip")
-;  :4 '()
-;  :elevator :1
-;})
-
 (def initial-state {
-  :1 '()
-  :2 '()
-  :3 '("hydrogen generator" "lithium generator" "lithium chip" "hydrogen chip")
-  :4 '()
-  :elevator :3
+  :1 #{"strontium generator" "strontium chip" "plutonium generator" "plutonium chip"}
+  :2 #{"thulium generator" "ruthenium generator" "ruthenium chip" "curium generator" "curium chip"}
+  :3 #{"thulium chip"}
+  :4 #{}
+  :elevator :1
 })
+
+;(def initial-state {
+;  :1 #{}
+;  :2 #{}
+;  :3 #{"hydrogen generator" "lithium generator" "lithium chip" "hydrogen chip"}
+;  :4 #{}
+;  :elevator :3
+;})
 
 (defn get-possible-items-to-take
   [state]
@@ -100,7 +100,8 @@
 (defn get-min-moves-to-finish
   [state depth limit visitedstates]
   (if (finished? state)
-    [depth (assoc visitedstates state depth)]
+    (do (println depth)
+    [depth (assoc visitedstates state depth)])
     (if (contains? visitedstates state)
       [(get visitedstates state) visitedstates]
       (let
@@ -108,8 +109,12 @@
         (if (> depth limit)
           [limit (assoc visitedstates state limit)]
           (if (= 1 (count (next-positions-by-score state)))
-            (get-min-moves-to-finish (first (next-positions-by-score state)) (inc depth) limit visitedstates)
-            (reduce reducefunc [limit visitedstates] (next-positions-by-score state))))))))
+            (let
+              [[returneddepth returnedvisitedstates] (get-min-moves-to-finish (first (next-positions-by-score state)) (inc depth) limit visitedstates)]
+              [returneddepth (assoc returnedvisitedstates state returneddepth)])
+            (let
+              [[returneddepth returnedvisitedstates] (reduce reducefunc [limit visitedstates] (next-positions-by-score state))]
+              [returneddepth (assoc returnedvisitedstates state returneddepth)])))))))
 
 (defn -main
   [& args]
