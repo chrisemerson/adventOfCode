@@ -39,9 +39,9 @@
   [a b c d instruction line]
   (let
     [register (second (str/split instruction #" "))
-     regval (case register "a" a "b" b "c" c "d" d)
+     regval (case register "a" a "b" b "c" c "d" d (Integer. register))
      linestojump (Integer. (nth (str/split instruction #" ") 2))]
-    (if (= 0 regval)
+    (if (zero? regval)
       [a b c d (inc line)]
       [a b c d (+ line linestojump)])))
 
@@ -53,13 +53,13 @@
                         "cpy" (concat (handle-cpy a b c d instruction) [(inc line) false])
                         "inc" (concat (handle-inc a b c d instruction) [(inc line) false])
                         "dec" (concat (handle-dec a b c d instruction) [(inc line) false])
-                        "jnz" (concat (handle-jnz a b c d instruction (inc line)) [false])
+                        "jnz" (concat (handle-jnz a b c d instruction line) [false])
                         "end" (vector a b c d line true))]
-    [newa newb newc newd instructions newline newdone]))
+      [newa newb newc newd instructions newline newdone]))
 
 (defn -main
   [& args]
   (let
     [instructions (get-input (first args))
-     processed-instructions (take-while #(= false (nth % 6)) (iterate process-instructions [0 0 0 0 instructions 0 false]))]
+     processed-instructions (take-while #(= false (nth % 6)) (iterate process-instructions [0 0 1 0 instructions 0 false]))]
     (println (count processed-instructions) (take 4 (last processed-instructions)))))
