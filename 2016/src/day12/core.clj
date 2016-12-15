@@ -45,6 +45,23 @@
       [a b c d (inc line)]
       [a b c d (+ line linestojump)])))
 
+(defn handle-add
+  [a b c d instruction]
+  (let
+    [source (second (str/split instruction #" "))
+     sourceval (case source "a" a "b" b "c" c "d" d)
+     dest (nth (str/split instruction #" ") 2)
+     [newa newb newc newd] (case dest
+                             "a" [(+ a sourceval) b c d]
+                             "b" [a (+ b sourceval) c d]
+                             "c" [a b (+ c sourceval) d]
+                             "d" [a b c (+ d sourceval)])]
+    (case source
+      "a" [0 newb newc newd]
+      "b" [newa 0 newc newd]
+      "c" [newa newb 0 newd]
+      "d" [newa newb newc 0])))
+
 (defn process-instructions
   [[a b c d instructions line done]]
   (let
@@ -54,12 +71,13 @@
                         "inc" (concat (handle-inc a b c d instruction) [(inc line) false])
                         "dec" (concat (handle-dec a b c d instruction) [(inc line) false])
                         "jnz" (concat (handle-jnz a b c d instruction line) [false])
+                        "add" (concat (handle-add a b c d instruction) [(inc line) false])
                         "end" (vector a b c d line true))]
       [newa newb newc newd instructions newline newdone]))
 
 (defn -main
   [& args]
-  (let
+  (time (let
     [instructions (get-input (first args))
      processed-instructions (take-while #(= false (nth % 6)) (iterate process-instructions [0 0 1 0 instructions 0 false]))]
-    (println (count processed-instructions) (take 4 (last processed-instructions)))))
+    (println (count processed-instructions) (take 4 (last processed-instructions))))))
