@@ -12,7 +12,7 @@ If you download the repository to give it a go yourself, you will need to have c
 [http://getcomposer.org] and run `composer install` within the `2015-PHP-TDD` directory to download and install PHPSpec, which I
 use for the tests.
 
-Tests can be found in `2015-PHP-TDD/spec/`, solutions in `2015-PHP-TDD/src/`, my puzzle inputs in `res/` and run files to get each
+Tests can be found in `2015-PHP-TDD/spec/`, solutions in `2015-PHP-TDD/src/`, my puzzle inputs in `2015-PHP-TDD/res/` and run files to get each
 solution in `2015-PHP-TDD/run/`.
 
 To run all the tests (some are pretty slow because of inefficient code), run `bin/phpspec run` on the command line in
