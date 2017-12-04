@@ -1,9 +1,7 @@
-passphrases = open('input.txt', 'r')
-
 validPassPhrases = 0
 validPassPhrasesPt2 = 0
 
-with passphrases as fp:
+with open('input.txt', 'r') as fp:
     for line in fp:
         words = list(line.strip().split(" "))
         uniqueWords = set(line.strip().split(" "))
