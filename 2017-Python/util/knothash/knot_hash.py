@@ -20,6 +20,6 @@ def knot_hash(string):
         sub_list = number_list[16 * i:16 * (i + 1)]
         dense_hash.append(reduce(lambda a, b: a ^ b, sub_list))
 
-    hex_hash = list(map(lambda x: format(x, 'x'), dense_hash))
+    hex_hash = list(map(lambda x: format(x, '0>2x'), dense_hash))
 
     return ''.join(hex_hash)
