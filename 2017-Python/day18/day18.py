@@ -71,7 +71,7 @@ message_queue_1 = []
 
 program_1_values_sent = 0
 
-while (0 <= position_0 < len(instructions)) and (0 <= position_1 < len(instructions)) and (not blocked_0) and (not blocked_1):
+while (0 <= position_0 < len(instructions)) and (0 <= position_1 < len(instructions)) and (not blocked_0 or not blocked_1):
     instruction_0 = instructions[position_0]
     instruction_1 = instructions[position_1]
 
