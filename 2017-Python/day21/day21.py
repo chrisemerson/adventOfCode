@@ -6,15 +6,6 @@ start = time.time()
 instructions = []
 state = '.#./..#/###'
 
-with open('input.txt', 'r') as fp:
-    for line in fp:
-        matches = re.search('^([.#/]*)\s+=>\s+([.#/]*)$', line)
-        instructions.append({
-            'from': matches.group(1),
-            'to': matches.group(2)
-        })
-
-
 def get_size(state):
     return int(math.sqrt(len(state.replace('/', ''))))
 
@@ -100,12 +91,9 @@ def get_reflections_and_rotations(grid):
 
 
 def transform_state(grid):
-    reflections_and_rotations = get_reflections_and_rotations(grid)
-
-    for reflection_or_rotation in reflections_and_rotations:
-        for transformation in instructions:
-            if transformation['from'] == reflection_or_rotation:
-                return transformation['to']
+    for transformation in instructions:
+        if transformation['from'] == grid:
+            return transformation['to']
 
 
 def strip_trailing_slash(string):
@@ -156,6 +144,16 @@ def count_pixels(state):
 
     return total_on_pixels
 
+
+with open('input.txt', 'r') as fp:
+    for line in fp:
+        matches = re.search('^([.#/]*)\s+=>\s+([.#/]*)$', line)
+
+        for reflection_or_rotation in get_reflections_and_rotations(matches.group(1)):
+            instructions.append({
+                'from': reflection_or_rotation,
+                'to': matches.group(2)
+            })
 
 for i in range(0, 5):
     print("Starting iteration " + str(i + 1) + "(" + str(time.time() - start) + ")")
