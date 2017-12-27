@@ -3,8 +3,9 @@ import math
 import time
 
 start = time.time()
-instructions = []
-state = '.#./..#/###'
+instructions = {}
+starting_state = '.#./..#/###'
+
 
 def get_size(state):
     return int(math.sqrt(len(state.replace('/', ''))))
@@ -90,10 +91,8 @@ def get_reflections_and_rotations(grid):
     return reflections_and_rotations
 
 
-def transform_state(grid):
-    for transformation in instructions:
-        if transformation['from'] == grid:
-            return transformation['to']
+def transform_state(grid, instruction_set):
+    return instruction_set[grid]
 
 
 def strip_trailing_slash(string):
@@ -119,7 +118,7 @@ def reassemble_grid(sub_grids):
     return strip_trailing_slash(grid)
 
 
-def get_next_state(state):
+def get_next_state(state, instruction_set):
     if get_size(state) % 2 == 0:
         split_size = 2
     else:
@@ -128,7 +127,7 @@ def get_next_state(state):
     sub_grids = split_grid(state, split_size)
 
     for sub_grid_id in sub_grids:
-        sub_grids[sub_grid_id] = transform_state(sub_grids[sub_grid_id])
+        sub_grids[sub_grid_id] = transform_state(sub_grids[sub_grid_id], instruction_set)
 
     state = reassemble_grid(sub_grids)
 
@@ -150,19 +149,27 @@ with open('input.txt', 'r') as fp:
         matches = re.search('^([.#/]*)\s+=>\s+([.#/]*)$', line)
 
         for reflection_or_rotation in get_reflections_and_rotations(matches.group(1)):
-            instructions.append({
-                'from': reflection_or_rotation,
-                'to': matches.group(2)
-            })
+            instructions[reflection_or_rotation] = matches.group(2)
+
+pt_1 = starting_state
 
 for i in range(0, 5):
-    print("Starting iteration " + str(i + 1) + "(" + str(time.time() - start) + ")")
-    state = get_next_state(state)
+    pt_1 = get_next_state(pt_1, instructions)
 
-print(count_pixels(state))
+print(count_pixels(pt_1))
 
-for i in range(0, 13):
-    print("Starting iteration " + str(i + 6) + "(" + str(time.time() - start) + ")")
-    state = get_next_state(state)
+pt_2_instructions = {}
 
-print(count_pixels(state))
+for instruction in instructions:
+    pt_2_instructions[instruction] = get_next_state(instructions[instruction], instructions)
+
+pt_2 = get_next_state(starting_state, instructions)
+
+for i in range(0, 8):
+    print("Starting iteration " + str(i + 1) + " (" + str(time.time() - start) + ")")
+    pt_2 = get_next_state(pt_2, pt_2_instructions)
+
+print("Starting iteration 9 (" + str(time.time() - start) + ")")
+pt_2 = get_next_state(pt_2, instructions)
+
+print(count_pixels(pt_2))
