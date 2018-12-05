@@ -52,7 +52,7 @@ func Part2() {
 	}
 }
 
-func makeClaims () [1000][1000][]string {
+func makeClaims() [1000][1000][]string {
 	input := util.GetInputAsArrayTrimmed("day3/input.txt")
 	fabric := [1000][1000][]string{}
 
