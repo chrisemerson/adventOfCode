@@ -7,6 +7,7 @@ import (
 	"github.com/chrisemerson/AdventOfCode/2018-Go/day4"
 	"github.com/chrisemerson/AdventOfCode/2018-Go/day5"
 	"github.com/chrisemerson/AdventOfCode/2018-Go/day6"
+	"github.com/chrisemerson/AdventOfCode/2018-Go/day7"
 	"os"
 	"strings"
 )
@@ -42,5 +43,10 @@ func main() {
 		day6.Part1()
 	case "d6_p2":
 		day6.Part2()
+
+	case "d7_p1":
+		day7.Part1()
+	case "d7_p2":
+		day7.Part2()
 	}
 }
