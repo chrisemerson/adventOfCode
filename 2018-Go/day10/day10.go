@@ -21,7 +21,7 @@ func Part1() {
 	for time := start; time <= tries; time += step {
 		minX, maxX, minY, maxY := findBoundingBox(particles, time)
 
-		if (maxX - minX) * (maxY - minY) < smallestArea {
+		if (maxX-minX)*(maxY-minY) < smallestArea {
 			smallestArea = (maxX - minX) * (maxY - minY)
 			smallestAreaTime = time
 		}
@@ -59,9 +59,9 @@ func getParticles() []map[string]int {
 }
 
 func displayParticlesAtTime(particles []map[string]int, time int) {
-    minX, maxX, minY, maxY := findBoundingBox(particles, time)
+	minX, maxX, minY, maxY := findBoundingBox(particles, time)
 
-    grid := make(map[int]map[int]string, 0)
+	grid := make(map[int]map[int]string, 0)
 
 	for y := minY; y <= maxY; y++ {
 		grid[y] = make(map[int]string, 0)
@@ -71,7 +71,7 @@ func displayParticlesAtTime(particles []map[string]int, time int) {
 		}
 	}
 
-    for _, particle := range particles {
+	for _, particle := range particles {
 		particleX := particle["x"] + (time * particle["dx"])
 		particleY := particle["y"] + (time * particle["dy"])
 
