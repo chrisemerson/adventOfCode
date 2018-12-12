@@ -23,7 +23,7 @@ func Part1() {
 }
 
 func Part2() {
-	//After 1000 iterations, score increases by 48 per iteration. 45320 is the score at 1000.
+	//After 1000 iterations, score increases by 36 per iteration. 35458 is the score at 1000.
 
 	fmt.Print("Score after 50,000,000,000 iterations: ")
 	fmt.Println(((50000000000 - 1000) * 36) + 35458)
