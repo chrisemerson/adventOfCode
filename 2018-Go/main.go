@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/chrisemerson/AdventOfCode/2018-Go/day1"
+	"github.com/chrisemerson/AdventOfCode/2018-Go/day10"
+	"github.com/chrisemerson/AdventOfCode/2018-Go/day11"
 	"github.com/chrisemerson/AdventOfCode/2018-Go/day2"
 	"github.com/chrisemerson/AdventOfCode/2018-Go/day3"
 	"github.com/chrisemerson/AdventOfCode/2018-Go/day4"
@@ -10,7 +12,6 @@ import (
 	"github.com/chrisemerson/AdventOfCode/2018-Go/day7"
 	"github.com/chrisemerson/AdventOfCode/2018-Go/day8"
 	"github.com/chrisemerson/AdventOfCode/2018-Go/day9"
-	"github.com/chrisemerson/AdventOfCode/2018-Go/day10"
 	"os"
 	"strings"
 )
@@ -66,5 +67,10 @@ func main() {
 		day10.Part1()
 	case "d10_p2":
 		day10.Part2()
+
+	case "d11_p1":
+		day11.Part1()
+	case "d11_p2":
+		day11.Part2()
 	}
 }

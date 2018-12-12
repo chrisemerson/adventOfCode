@@ -81,37 +81,16 @@ func Part2() {
 }
 
 func addMarble(marbles []int, currentMarblePosition int, marbleToPlace int) ([]int, int, int) {
-	score := 0
-	newMarbles := []int{}
-
-	if marbleToPlace % 23 == 0 {
-		score += marbleToPlace
+	if marbleToPlace%23 == 0 {
 		marblePositionToRemove := (currentMarblePosition - 7 + len(marbles)) % len(marbles)
+		score := marbleToPlace + marbles[marblePositionToRemove]
 
-		score += marbles[marblePositionToRemove]
-
-		for i := 0; i < marblePositionToRemove; i++ {
-			newMarbles = append(newMarbles, marbles[i])
-		}
-
-		for i := marblePositionToRemove + 1; i < len(marbles); i++ {
-			newMarbles = append(newMarbles, marbles[i])
-		}
-
-		return newMarbles, marblePositionToRemove % len(newMarbles), score
+		return append(marbles[:marblePositionToRemove], marbles[marblePositionToRemove+1:]...), marblePositionToRemove % (len(marbles) - 1), score
 	} else {
 		newMarblePosition := (currentMarblePosition + 2) % len(marbles)
+		marblesPost := make([]int, len(marbles[newMarblePosition:]))
+		copy(marblesPost, marbles[newMarblePosition:])
 
-		for i := 0; i < newMarblePosition; i++ {
-			newMarbles = append(newMarbles, marbles[i])
-		}
-
-		newMarbles = append(newMarbles, marbleToPlace)
-
-		for i := newMarblePosition; i < len(marbles); i++ {
-			newMarbles = append(newMarbles, marbles[i])
-		}
-
-		return newMarbles, newMarblePosition, 0
+		return append(append(marbles[:newMarblePosition], marbleToPlace), marblesPost...), newMarblePosition, 0
 	}
 }
