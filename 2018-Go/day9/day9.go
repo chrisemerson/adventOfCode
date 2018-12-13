@@ -1,14 +1,15 @@
 package day9
 
 import (
+	"container/list"
 	"fmt"
 )
 
 func Part1() {
 	players := 476
 	lastMarble := 71431
-	marbles := []int{0}
-	currentMarblePosition := 0
+	marbles := list.New()
+	currentMarble := marbles.PushBack(0)
 
 	scores := make(map[int]int, 0)
 
@@ -20,7 +21,32 @@ func Part1() {
 
 	for marble := 1; marble <= lastMarble; marble++ {
 		score := 0
-		marbles, currentMarblePosition, score = addMarble(marbles, currentMarblePosition, marble)
+
+		if marble%23 == 0 {
+			marbleToRemove := currentMarble
+
+			for i := 0; i < 7; i++ {
+				marbleToRemove = marbleToRemove.Prev()
+
+				if marbleToRemove == nil {
+					marbleToRemove = marbles.Back()
+				}
+			}
+
+			currentMarble = marbleToRemove.Next()
+			score = marbleToRemove.Value.(int) + marble
+
+			marbles.Remove(marbleToRemove)
+		} else {
+			insertAfter := currentMarble.Next()
+
+			if insertAfter == nil {
+				insertAfter = marbles.Front()
+			}
+
+			currentMarble = marbles.InsertAfter(marble, insertAfter)
+		}
+
 		scores[player] += score
 
 		player = (player % players) + 1
@@ -45,8 +71,8 @@ func Part1() {
 func Part2() {
 	players := 476
 	lastMarble := 7143100
-	marbles := []int{0}
-	currentMarblePosition := 0
+	marbles := list.New()
+	currentMarble := marbles.PushBack(0)
 
 	scores := make(map[int]int, 0)
 
@@ -58,7 +84,32 @@ func Part2() {
 
 	for marble := 1; marble <= lastMarble; marble++ {
 		score := 0
-		marbles, currentMarblePosition, score = addMarble(marbles, currentMarblePosition, marble)
+
+		if marble%23 == 0 {
+			marbleToRemove := currentMarble
+
+			for i := 0; i < 7; i++ {
+				marbleToRemove = marbleToRemove.Prev()
+
+				if marbleToRemove == nil {
+					marbleToRemove = marbles.Back()
+				}
+			}
+
+			currentMarble = marbleToRemove.Next()
+			score = marbleToRemove.Value.(int) + marble
+
+			marbles.Remove(marbleToRemove)
+		} else {
+			insertAfter := currentMarble.Next()
+
+			if insertAfter == nil {
+				insertAfter = marbles.Front()
+			}
+
+			currentMarble = marbles.InsertAfter(marble, insertAfter)
+		}
+
 		scores[player] += score
 
 		player = (player % players) + 1
@@ -78,19 +129,4 @@ func Part2() {
 	fmt.Print(maxScore)
 	fmt.Print(" achieved by player ")
 	fmt.Println(maxPlayer)
-}
-
-func addMarble(marbles []int, currentMarblePosition int, marbleToPlace int) ([]int, int, int) {
-	if marbleToPlace%23 == 0 {
-		marblePositionToRemove := (currentMarblePosition - 7 + len(marbles)) % len(marbles)
-		score := marbleToPlace + marbles[marblePositionToRemove]
-
-		return append(marbles[:marblePositionToRemove], marbles[marblePositionToRemove+1:]...), marblePositionToRemove % (len(marbles) - 1), score
-	} else {
-		newMarblePosition := (currentMarblePosition + 2) % len(marbles)
-		marblesPost := make([]int, len(marbles[newMarblePosition:]))
-		copy(marblesPost, marbles[newMarblePosition:])
-
-		return append(append(marbles[:newMarblePosition], marbleToPlace), marblesPost...), newMarblePosition, 0
-	}
 }
