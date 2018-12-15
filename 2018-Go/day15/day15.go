@@ -356,17 +356,20 @@ func findShortestPath(board map[int]map[int]string, srcx int, srcy int, dstx int
 
 	shortestPath := maxPathLen
 
-	for _, possiblePath := range possiblePaths {
-		if len(possiblePath) < shortestPath {
-			shortestPath = len(possiblePath)
+	if len(possiblePaths) > 1 {
+		for _, possiblePath := range possiblePaths {
+			if len(possiblePath) < shortestPath {
+				shortestPath = len(possiblePath)
+			}
+		}
+
+		for _, possiblePath := range possiblePaths {
+			if len(possiblePath) == shortestPath {
+				return possiblePath, true
+			}
 		}
 	}
 
-	for _, possiblePath := range possiblePaths {
-		if len(possiblePath) == shortestPath {
-			return possiblePath, true
-		}
-	}
 
 	return path, false
 }
