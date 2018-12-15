@@ -17,7 +17,7 @@ func Part1() {
 		allUnitsMovedThisRound := false
 
 		//Each unit plays in a round in 'reading' order
-		for allUnitsMovedThisRound {
+		for !allUnitsMovedThisRound {
 			//First, pick a unit to move...
 
 			unitToMove := 0
@@ -25,7 +25,7 @@ func Part1() {
 			for y, line := range board {
 				for x := range line {
 					for idx, unit := range units {
-						if unit["x"] == x && unit["y"] == y && unit["played"] == 0 {
+						if unit["x"] == x && unit["y"] == y && unit["played"] == 0 && unitToMove == 0 {
 							unitToMove = idx
 						}
 					}
@@ -38,27 +38,97 @@ func Part1() {
 			if len(inRange) == 0 {
 				//Need to move first
 
+				//Find Targets
+				targets := []int{}
 
+				for idx, unit := range units {
+					if unit["team"] != units[unitToMove]["team"] {
+						targets = append(targets, idx)
+					}
+				}
 
+				//Find spaces In Range based on targets
+				inRangeSpaces := make([]map[string]int, 0)
+				obstaclesBoard := getObstaclesBoard(board, units)
 
+				for _, target := range targets {
+					if obstaclesBoard[units[target]["y"] - 1][units[target]["x"]] == "." {
+						inRangeSpace := make(map[string]int, 0)
 
+						inRangeSpace["y"] = units[target]["y"] - 1
+						inRangeSpace["x"] = units[target]["x"]
 
+						inRangeSpaces = append(inRangeSpaces, inRangeSpace)
+					}
 
+					if obstaclesBoard[units[target]["y"]][units[target]["x"] - 1] == "." {
+						inRangeSpace := make(map[string]int, 0)
 
+						inRangeSpace["y"] = units[target]["y"]
+						inRangeSpace["x"] = units[target]["x"] - 1
 
+						inRangeSpaces = append(inRangeSpaces, inRangeSpace)
+					}
 
+					if obstaclesBoard[units[target]["y"]][units[target]["x"] + 1] == "." {
+						inRangeSpace := make(map[string]int, 0)
 
+						inRangeSpace["y"] = units[target]["y"]
+						inRangeSpace["x"] = units[target]["x"] + 1
 
-				
+						inRangeSpaces = append(inRangeSpaces, inRangeSpace)
+					}
 
+					if obstaclesBoard[units[target]["y"] + 1][units[target]["x"]] == "." {
+						inRangeSpace := make(map[string]int, 0)
 
+						inRangeSpace["y"] = units[target]["y"] + 1
+						inRangeSpace["x"] = units[target]["x"]
 
+						inRangeSpaces = append(inRangeSpaces, inRangeSpace)
+					}
+				}
 
+				for idx, inRangeSpace := range inRangeSpaces {
+					path, reachable := findShortestPath(obstaclesBoard, units[unitToMove]["x"], units[unitToMove]["y"], inRangeSpace["x"], inRangeSpace["y"])
 
+					if reachable {
+						inRangeSpaces[idx]["reachable"] = 1
+						inRangeSpaces[idx]["pathlen"] = len(path)
+						inRangeSpaces[idx]["movex"] = path[0]["x"]
+						inRangeSpaces[idx]["movey"] = path[0]["y"]
+					} else {
+						inRangeSpaces[idx]["reachable"] = 0
+					}
+				}
 
+				shortestPath := len(board) * len(board[0])
 
+				for _, inRangeSpace := range inRangeSpaces {
+					if inRangeSpace["reachable"] == 1 {
+						if inRangeSpace["pathlen"] < shortestPath {
+							shortestPath = inRangeSpace["pathlen"]
+						}
+					}
+				}
 
+				moveTowards := -1
 
+				//Reading order...
+				for y, row := range board {
+					for x := range row {
+						for idx, inRangeSpace := range inRangeSpaces {
+							if inRangeSpace["x"] == x && inRangeSpace["y"] == y && inRangeSpace["pathlen"] == shortestPath && moveTowards == -1 {
+								moveTowards = idx
+							}
+						}
+					}
+				}
+
+				if moveTowards != -1 {
+					units[unitToMove]["x"] = inRangeSpaces[moveTowards]["movex"]
+					units[unitToMove]["y"] = inRangeSpaces[moveTowards]["movey"]
+				}
 			}
 
 			//Check again - is there an enemy in range?
@@ -192,4 +262,121 @@ func enemiesInRange (units []map[string]int, unit map[string]int) []int {
 	}
 
 	return enemiesInRange
+}
+
+func getObstaclesBoard(board map[int]map[int]string, units []map[string]int) map[int]map[int]string {
+	obstaclesBoard := make(map[int]map[int]string, 0)
+
+	for y, row := range board {
+		obstaclesBoard[y] = make(map[int]string, 0)
+
+		for x, cell := range row {
+			unitHere := false
+
+			for _, unit := range units {
+				if unit["x"] == x && unit["y"] == y {
+					unitHere = true
+				}
+			}
+
+			if unitHere {
+				obstaclesBoard[y][x] = "#"
+			} else {
+				obstaclesBoard[y][x] = cell
+			}
+		}
+	}
+
+	return obstaclesBoard
+}
+
+func findShortestPath(board map[int]map[int]string, srcx int, srcy int, dstx int, dsty int) ([]map[string]int, bool) {
+	path := make([]map[string]int, 0)
+	maxPathLen := len(board) * len(board[0])
+
+	if srcx == dstx && srcy == dsty {
+		return path, true
+	}
+
+	//Find shortest path in each direction from current 'end' spot
+	possiblePaths := make([][]map[string]int, 0)
+	newCoord := make(map[string]int, 0)
+
+	if board[srcx][srcy - 1] == "." {
+		upPath, upBlocked := findShortestPath(board, srcx, srcy - 1, dstx, dsty)
+
+		newCoord["x"] = srcx
+		newCoord["y"] = srcy - 1
+
+		path = append(path, newCoord)
+
+		if !upBlocked && !checkDoubleBack(newCoord, upPath) && len(upPath) < maxPathLen {
+			possiblePaths = append(possiblePaths, append(path, upPath...))
+		}
+	}
+
+	if board[srcx - 1][srcy] == "." {
+		leftPath, leftBlocked := findShortestPath(board, srcx - 1, srcy, dstx, dsty)
+
+		newCoord["x"] = srcx - 1
+		newCoord["y"] = srcy
+
+		path = append(path, newCoord)
+
+		if !leftBlocked && !checkDoubleBack(newCoord, leftPath) && len(leftPath) < maxPathLen {
+			possiblePaths = append(possiblePaths, append(path, leftPath...))
+		}
+	}
+
+	if board[srcx + 1][srcy] == "." {
+		rightPath, rightBlocked := findShortestPath(board, srcx + 1, srcy, dstx, dsty)
+
+		newCoord["x"] = srcx + 1
+		newCoord["y"] = srcy
+
+		path = append(path, newCoord)
+
+		if !rightBlocked && !checkDoubleBack(newCoord, rightPath) && len(rightPath) < maxPathLen {
+			possiblePaths = append(possiblePaths, append(path, rightPath...))
+		}
+	}
+
+	if board[srcx][srcy + 1] == "." {
+		downPath, downBlocked := findShortestPath(board, srcx, srcy + 1, dstx, dsty)
+
+		newCoord["x"] = srcx
+		newCoord["y"] = srcy + 1
+
+		path = append(path, newCoord)
+
+		if !downBlocked && !checkDoubleBack(newCoord, downPath) && len(downPath) < maxPathLen {
+			possiblePaths = append(possiblePaths, append(path, downPath...))
+		}
+	}
+
+	shortestPath := maxPathLen
+
+	for _, possiblePath := range possiblePaths {
+		if len(possiblePath) < shortestPath {
+			shortestPath = len(possiblePath)
+		}
+	}
+
+	for _, possiblePath := range possiblePaths {
+		if len(possiblePath) == shortestPath {
+			return possiblePath, true
+		}
+	}
+
+	return path, false
+}
+
+func checkDoubleBack(coord map[string]int, path []map[string]int) bool {
+	for _, pathCoord := range path {
+		if pathCoord["x"] == coord["x"] && pathCoord["y"] == coord["y"] {
+			return true
+		}
+	}
+
+	return false
 }
