@@ -8,58 +8,140 @@ import (
 )
 
 func Part1() {
-	data := strings.Split(util.GetInputAsString("day8/input.txt"), " ")
-	data = []string{"2", "3", "0", "3", "10", "11", "12", "1", "1", "0", "1", "99", "2", "1", "1", "2"}
+	nodes := getInput()
 
-	nodes := returnNodes(data, 1)
+	fmt.Print(nodes)
 
-	fmt.Println(nodes)
+	metaDataTotal := 0
+
+	for _, node := range nodes {
+		for _, metaData := range node["metadata"] {
+			metaDataTotal += metaData
+		}
+	}
+
+	fmt.Print("Metadata total: ")
+	fmt.Println(metaDataTotal)
 }
 
 func Part2() {
 }
 
-func returnNodes(data []string, nextLabel int) map[int]map[string][]int {
-	pointer := 0
-	nodes := make(map[int]map[string][]int, 0)
+func getInput() map[int]map[string][]int {
+	data := strings.Split(util.GetInputAsString("day8/input.txt"), " ")
+	//data = []string{"2", "3", "0", "3", "10", "11", "12", "1", "1", "0", "1", "99", "2", "1", "1", "2"}
 
-	for pointer < len(data) {
-		numChildren, _ := strconv.Atoi(data[0])
-		numMetadata, _ := strconv.Atoi(data[1])
-		children := []int{}
-		metadata := []int{}
+	dataInt := []int{}
 
-		if numChildren == 0 {
-			for metaDataPointer := 2; metaDataPointer < numMetadata + 2; metaDataPointer++ {
-				thisMetaData, _ := strconv.Atoi(data[metaDataPointer])
-				metadata = append(metadata, thisMetaData)
-			}
-
-			pointer += numMetadata + 2
-		} else {
-			childNodes := returnNodes(data[pointer + 2:], nextLabel + 1)
-
-			for idx, childNode := range childNodes {
-				pointer += len(childNode["metadata"]) + 2
-				children = append(children, idx)
-
-				nodes[idx] = childNode
-			}
-
-			for metaDataPointer := pointer + 2; metaDataPointer < numMetadata + 2; metaDataPointer++ {
-				thisMetaData, _ := strconv.Atoi(data[metaDataPointer])
-				metadata = append(metadata, thisMetaData)
-			}
-
-			pointer += numMetadata
-		}
-
-		nodes[nextLabel] = make(map[string][]int, 0)
-		nodes[nextLabel]["children"] = children
-		nodes[nextLabel]["metadata"] = metadata
-
-		nextLabel += 1
+	for _, dataPoint := range data {
+		dataPointInt, _ := strconv.Atoi(strings.TrimSpace(dataPoint))
+		dataInt = append(dataInt, dataPointInt)
 	}
 
+	noChildren := dataInt[0]
+	noMetadata := dataInt[1]
+
+	nodes := make(map[int]map[string][]int, 0)
+	node := make(map[string][]int, 0)
+
+	label := 1
+
+	childNodes, remainingData := returnNodes(dataInt[2:], noChildren, label + 1)
+
+	alreadyParented := []int{}
+
+	for _, childNode := range childNodes {
+		alreadyParented = append(alreadyParented, childNode["children"]...)
+	}
+
+	for childLabel, childNode := range childNodes {
+		alreadyHasParent := false
+
+		for _, alreadyParentedItem := range alreadyParented {
+			if alreadyParentedItem == childLabel {
+				alreadyHasParent = true
+			}
+		}
+
+		if !alreadyHasParent {
+			node["children"] = append(node["children"], childLabel)
+		}
+
+		nodes[childLabel] = childNode
+	}
+
+	if noMetadata != len(remainingData) {
+		fmt.Println("Something has gone wrong in parsing...")
+	}
+
+	for i := 0; i < noMetadata; i++ {
+		node["metadata"] = append(node["metadata"], remainingData[i])
+	}
+
+	nodes[label] = node
+
 	return nodes
+}
+
+func returnNodes(data []int, children int, label int) (map[int]map[string][]int, []int) {
+	nodes := make(map[int]map[string][]int, 0)
+	remainingData := data
+
+	for c := 0; c < children; c++ {
+		node := make(map[string][]int, 0)
+		noChildren := remainingData[0]
+		noMetadata := remainingData[1]
+
+		if noChildren == 0 {
+			for i := 0; i < noMetadata; i++ {
+				metadata := remainingData[i + 2]
+				node["metadata"] = append(node["metadata"], metadata)
+			}
+
+			nodes[label] = node
+
+			remainingData = remainingData[2 + noMetadata:]
+		} else {
+			node["children"] = []int{}
+			node["metadata"] = []int{}
+
+			childNodes := make(map[int]map[string][]int, 0)
+
+			childNodes, remainingData = returnNodes(remainingData[2:], noChildren, label + 1)
+
+			alreadyParented := []int{}
+
+			for _, childNode := range childNodes {
+				alreadyParented = append(alreadyParented, childNode["children"]...)
+			}
+
+			for childLabel, childNode := range childNodes {
+				alreadyHasParent := false
+
+				for _, alreadyParentedItem := range alreadyParented {
+					if alreadyParentedItem == childLabel {
+						alreadyHasParent = true
+					}
+				}
+
+				if !alreadyHasParent {
+					node["children"] = append(node["children"], childLabel)
+				}
+
+				nodes[childLabel] = childNode
+			}
+
+			for m := 0; m < noMetadata; m++ {
+				node["metadata"] = append(node["metadata"], remainingData[m])
+			}
+
+			remainingData = remainingData[noMetadata:]
+
+			nodes[label] = node
+		}
+
+		label += 1
+	}
+
+	return nodes, remainingData
 }
