@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -45,4 +46,9 @@ func getInput(file string) string {
 	}
 
 	return string(dat)
+}
+
+func Atoi(str string) int {
+	number, _ := strconv.Atoi(str)
+	return number
 }

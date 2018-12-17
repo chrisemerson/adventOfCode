@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/chrisemerson/AdventOfCode/2018-Go/util"
 	"regexp"
-	"strconv"
 )
 
 func Part1() {
@@ -66,7 +65,6 @@ func Part2() {
 		opcodeMap[i]["borr"] = true
 		opcodeMap[i]["bori"] = true
 		opcodeMap[i]["setr"] = true
-		opcodeMap[i]["seti"] = true
 		opcodeMap[i]["gtir"] = true
 		opcodeMap[i]["gtri"] = true
 		opcodeMap[i]["gtrr"] = true
@@ -129,7 +127,7 @@ func Part2() {
 
 	for _, line := range program {
 		instMatches := regexInst.FindStringSubmatch(line)
-		registers = exec(opCodes[Atoi(instMatches[1])], Atoi(instMatches[2]), Atoi(instMatches[3]), Atoi(instMatches[4]), registers)
+		registers = exec(opCodes[util.Atoi(instMatches[1])], util.Atoi(instMatches[2]), util.Atoi(instMatches[3]), util.Atoi(instMatches[4]), registers)
 	}
 
 	fmt.Print("Final value of register 0: ")
@@ -153,24 +151,24 @@ func getInputMap () []map[string][]int {
 
 		beforeArray := []int{}
 
-		beforeArray = append(beforeArray, Atoi(beforeMatches[1]))
-		beforeArray = append(beforeArray, Atoi(beforeMatches[2]))
-		beforeArray = append(beforeArray, Atoi(beforeMatches[3]))
-		beforeArray = append(beforeArray, Atoi(beforeMatches[4]))
+		beforeArray = append(beforeArray, util.Atoi(beforeMatches[1]))
+		beforeArray = append(beforeArray, util.Atoi(beforeMatches[2]))
+		beforeArray = append(beforeArray, util.Atoi(beforeMatches[3]))
+		beforeArray = append(beforeArray, util.Atoi(beforeMatches[4]))
 
 		instArray := []int{}
 
-		instArray = append(instArray, Atoi(instMatches[1]))
-		instArray = append(instArray, Atoi(instMatches[2]))
-		instArray = append(instArray, Atoi(instMatches[3]))
-		instArray = append(instArray, Atoi(instMatches[4]))
+		instArray = append(instArray, util.Atoi(instMatches[1]))
+		instArray = append(instArray, util.Atoi(instMatches[2]))
+		instArray = append(instArray, util.Atoi(instMatches[3]))
+		instArray = append(instArray, util.Atoi(instMatches[4]))
 
 		afterArray := []int{}
 
-		afterArray = append(afterArray, Atoi(afterMatches[1]))
-		afterArray = append(afterArray, Atoi(afterMatches[2]))
-		afterArray = append(afterArray, Atoi(afterMatches[3]))
-		afterArray = append(afterArray, Atoi(afterMatches[4]))
+		afterArray = append(afterArray, util.Atoi(afterMatches[1]))
+		afterArray = append(afterArray, util.Atoi(afterMatches[2]))
+		afterArray = append(afterArray, util.Atoi(afterMatches[3]))
+		afterArray = append(afterArray, util.Atoi(afterMatches[4]))
 
 		example["before"] = beforeArray
 		example["inst"] = instArray
@@ -180,11 +178,6 @@ func getInputMap () []map[string][]int {
 	}
 
 	return inputMap
-}
-
-func Atoi(str string) int {
-	number, _ := strconv.Atoi(str)
-	return number
 }
 
 func exec(inst string, a int, b int, c int, before []int) []int {
