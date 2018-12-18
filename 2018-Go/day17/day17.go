@@ -8,16 +8,96 @@ import (
 )
 
 func Part1() {
-	coreMap := getCoreMap()
+	coreMap, minX, maxX := getCoreMap()
 
-	fmt.Println(coreMap)
+	wetTiles := 1
+	retainedWaterTiles := 0
+	wetTilesPrev := 0
+
+	for wetTiles > wetTilesPrev {
+		for y := 0; y <= len(coreMap); y++ {
+			for x := minX - 2; x <= maxX+2; x++ {
+				if (coreMap[y][x] == "+" || coreMap[y][x] == "|") && coreMap[y+1][x] == "." {
+					coreMap[y+1][x] = "|"
+				}
+
+				if coreMap[y][x] == "|" && (coreMap[y+1][x] == "#" || coreMap[y+1][x] == "~") {
+					stopLeft := false
+					hitLeftBarrier := false
+
+					stopRight := false
+					hitRightBarrier := false
+
+					lx := x
+					rx := x
+
+					for ; !stopLeft && lx >= minX-2; lx-- {
+						if coreMap[y][lx] == "." && coreMap[y+1][lx+1] != "|" {
+							coreMap[y][lx] = "|"
+						}
+
+						if coreMap[y][lx] == "#" {
+							hitLeftBarrier = true
+							stopLeft = true
+						}
+
+						if coreMap[y+1][lx] == "." {
+							stopLeft = true
+						}
+					}
+
+					for ; !stopRight && rx <= maxX+2; rx++ {
+						if coreMap[y][rx] == "." && coreMap[y+1][rx-1] != "|" {
+							coreMap[y][rx] = "|"
+						}
+
+						if coreMap[y][rx] == "#" {
+							hitRightBarrier = true
+							stopRight = true
+						}
+
+						if coreMap[y+1][rx] == "." {
+							stopRight = true
+						}
+					}
+
+					if hitLeftBarrier && hitRightBarrier {
+						for cx := lx + 2; cx < rx-1; cx++ {
+							coreMap[y][cx] = "~"
+						}
+					}
+				}
+			}
+		}
+
+		wetTilesPrev = wetTiles
+		wetTiles = 0
+		retainedWaterTiles = 0
+
+		for y := 3; y <= len(coreMap)-2; y++ {
+			for x := minX - 2; x <= maxX+2; x++ {
+				if coreMap[y][x] == "|" || coreMap[y][x] == "~" {
+					wetTiles += 1
+				}
+
+				if coreMap[y][x] == "~" {
+					retainedWaterTiles += 1
+				}
+			}
+		}
+	}
+
+	fmt.Print("Number of wet tiles is ")
+	fmt.Println(wetTiles)
+	fmt.Print("Water retained is ")
+	fmt.Println(retainedWaterTiles)
 }
 
 func Part2() {
-	fmt.Println("")
+	Part1()
 }
 
-func getCoreMap() map[int]map[int]string {
+func getCoreMap() (map[int]map[int]string, int, int) {
 	input := util.GetInputAsArrayTrimmed("day17/input.txt")
 
 	seamRegexp := regexp.MustCompile(`(x|y)=(\d+), (x|y)=(\d+)..(\d+)`)
@@ -70,10 +150,10 @@ func getCoreMap() map[int]map[int]string {
 
 	coreMap := make(map[int]map[int]string, 0)
 
-	for y := 0; y <= maxY + 1; y++ {
+	for y := 0; y <= maxY+1; y++ {
 		coreMap[y] = make(map[int]string, 0)
 
-		for x := minX - 1; x <= maxX + 1; x++ {
+		for x := minX - 2; x <= maxX+2; x++ {
 			coreMap[y][x] = "."
 		}
 	}
@@ -104,12 +184,12 @@ func getCoreMap() map[int]map[int]string {
 		}
 	}
 
-	return coreMap
+	return coreMap, minX, maxX
 }
 
-func drawMap (coreMap map[int]map[int]string, xMin int, xMax int) {
+func drawMap(coreMap map[int]map[int]string, xMin int, xMax int) {
 	for y := 0; y < len(coreMap); y++ {
-		for x := xMin - 1; x <= xMax + 1; x++ {
+		for x := xMin - 1; x <= xMax+1; x++ {
 			fmt.Print(coreMap[y][x])
 		}
 
