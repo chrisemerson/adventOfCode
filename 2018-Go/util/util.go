@@ -52,3 +52,87 @@ func Atoi(str string) int {
 	number, _ := strconv.Atoi(str)
 	return number
 }
+
+func ExecOpcode(inst string, a int, b int, c int, before []int) []int {
+	after := []int{}
+
+	for i := 0; i < len(before); i++ {
+		after = append(after, before[i])
+	}
+
+	switch inst {
+	case "addr":
+		after[c] = before[a] + before[b]
+
+	case "addi":
+		after[c] = before[a] + b
+
+	case "mulr":
+		after[c] = before[a] * before[b]
+
+	case "muli":
+		after[c] = before[a] * b
+
+	case "banr":
+		after[c] = before[a] & before[b]
+
+	case "bani":
+		after[c] = before[a] & b
+
+	case "borr":
+		after[c] = before[a] | before[b]
+
+	case "bori":
+		after[c] = before[a] | b
+
+	case "setr":
+		after[c] = before[a]
+
+	case "seti":
+		after[c] = a
+
+	case "gtir":
+		if a > before[b] {
+			after[c] = 1
+		} else {
+			after[c] = 0
+		}
+
+	case "gtri":
+		if before[a] > b {
+			after[c] = 1
+		} else {
+			after[c] = 0
+		}
+
+	case "gtrr":
+		if before[a] > before[b] {
+			after[c] = 1
+		} else {
+			after[c] = 0
+		}
+
+	case "eqir":
+		if a == before[b] {
+			after[c] = 1
+		} else {
+			after[c] = 0
+		}
+
+	case "eqri":
+		if before[a] == b {
+			after[c] = 1
+		} else {
+			after[c] = 0
+		}
+
+	case "eqrr":
+		if before[a] == before[b] {
+			after[c] = 1
+		} else {
+			after[c] = 0
+		}
+	}
+
+	return after
+}

@@ -127,7 +127,7 @@ func Part2() {
 
 	for _, line := range program {
 		instMatches := regexInst.FindStringSubmatch(line)
-		registers = exec(opCodes[util.Atoi(instMatches[1])], util.Atoi(instMatches[2]), util.Atoi(instMatches[3]), util.Atoi(instMatches[4]), registers)
+		registers = util.ExecOpcode(opCodes[util.Atoi(instMatches[1])], util.Atoi(instMatches[2]), util.Atoi(instMatches[3]), util.Atoi(instMatches[4]), registers)
 	}
 
 	fmt.Print("Final value of register 0: ")
@@ -180,93 +180,8 @@ func getInputMap () []map[string][]int {
 	return inputMap
 }
 
-func exec(inst string, a int, b int, c int, before []int) []int {
-	after := []int{}
-
-	after = append(after, before[0])
-	after = append(after, before[1])
-	after = append(after, before[2])
-	after = append(after, before[3])
-
-	switch inst {
-	case "addr":
-		after[c] = before[a] + before[b]
-
-	case "addi":
-		after[c] = before[a] + b
-
-	case "mulr":
-		after[c] = before[a] * before[b]
-
-	case "muli":
-		after[c] = before[a] * b
-
-	case "banr":
-		after[c] = before[a] & before[b]
-
-	case "bani":
-		after[c] = before[a] & b
-
-	case "borr":
-		after[c] = before[a] | before[b]
-
-	case "bori":
-		after[c] = before[a] | b
-
-	case "setr":
-		after[c] = before[a]
-
-	case "seti":
-		after[c] = a
-
-	case "gtir":
-		if a > before[b] {
-			after[c] = 1
-		} else {
-			after[c] = 0
-		}
-
-	case "gtri":
-		if before[a] > b {
-			after[c] = 1
-		} else {
-			after[c] = 0
-		}
-
-	case "gtrr":
-		if before[a] > before[b] {
-			after[c] = 1
-		} else {
-			after[c] = 0
-		}
-
-	case "eqir":
-		if a == before[b] {
-			after[c] = 1
-		} else {
-			after[c] = 0
-		}
-
-	case "eqri":
-		if before[a] == b {
-			after[c] = 1
-		} else {
-			after[c] = 0
-		}
-
-	case "eqrr":
-		if before[a] == before[b] {
-			after[c] = 1
-		} else {
-			after[c] = 0
-		}
-	}
-
-	return after
-}
-
 func testInst(inst string, a int, b int, c int, before []int, expectedAfter []int) bool {
-	after := exec(inst, a, b, c, before)
+	after := util.ExecOpcode(inst, a, b, c, before)
 
 	return expectedAfter[0] == after[0] && expectedAfter[1] == after[1] && expectedAfter[2] == after[2] && expectedAfter[3] == after[3]
 }
