@@ -126,8 +126,11 @@ func Part2() {
 	registers := []int{0, 0, 0, 0}
 
 	for _, line := range program {
-		instMatches := regexInst.FindStringSubmatch(line)
-		registers = util.ExecOpcode(opCodes[util.Atoi(instMatches[1])], util.Atoi(instMatches[2]), util.Atoi(instMatches[3]), util.Atoi(instMatches[4]), registers)
+		fmt.Println(line)
+		if regexInst.MatchString(line) {
+			instMatches := regexInst.FindStringSubmatch(line)
+			registers = util.ExecOpcode(opCodes[util.Atoi(instMatches[1])], util.Atoi(instMatches[2]), util.Atoi(instMatches[3]), util.Atoi(instMatches[4]), registers)
+		}
 	}
 
 	fmt.Print("Final value of register 0: ")
