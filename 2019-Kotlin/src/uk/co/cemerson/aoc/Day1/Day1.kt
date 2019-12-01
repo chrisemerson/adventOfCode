@@ -22,7 +22,7 @@ class Day1 : AOCDay {
         println("Total mass is " + totalMass)
     }
 
-    private fun calculateFuelBasedOnMass(mass: Int): Int = (floor(mass.toDouble() / 3) - 2).toInt()
+    private fun calculateFuelBasedOnMass(mass: Int): Int = mass / 3 - 2
 
     private fun calculateFuelBasedOnMassInclFuel(mass: Int): Int =
             generateSequence(calculateFuelBasedOnMass(mass)) { calculateFuelBasedOnMass(it) }
