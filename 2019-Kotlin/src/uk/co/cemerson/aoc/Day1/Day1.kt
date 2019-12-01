@@ -1,7 +1,6 @@
 package uk.co.cemerson.aoc.Day1
 
 import uk.co.cemerson.aoc.AOCDay
-import java.lang.Math.floor
 
 class Day1 : AOCDay {
     override fun part1() {
