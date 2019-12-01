@@ -25,6 +25,7 @@ class Day1 : AOCDay {
     private fun calculateFuelBasedOnMass(mass: Int): Int = (floor(mass.toDouble() / 3) - 2).toInt()
 
     private fun calculateFuelBasedOnMassInclFuel(mass: Int): Int =
-            generateSequence(calculateFuelBasedOnMass(mass)) { calculateFuelBasedOnMass(it).takeIf { it > 0 } }
+            generateSequence(calculateFuelBasedOnMass(mass)) { calculateFuelBasedOnMass(it) }
+                    .takeWhile { it > 0 }
                     .reduce { a, b -> a + b }
 }
