@@ -5,21 +5,19 @@ import java.lang.Math.floor
 
 class Day1 : AOCDay {
     override fun part1() {
-        val fileLines = readFileLines(filename = "Day1/input.txt")
-
-        val moduleMasses = fileLines.map(String::toInt)
-        val fuelRequired = moduleMasses.map { calculateFuelBasedOnMass(it) }
-        val totalMass = fuelRequired.reduce { a, b -> a + b }
+        val totalMass = readFileLines(filename = "Day1/input.txt")
+                .map(String::toInt)
+                .map { calculateFuelBasedOnMass(it) }
+                .reduce { a, b -> a + b }
 
         println("Total mass is " + totalMass)
     }
 
     override fun part2() {
-        val fileLines = readFileLines(filename = "Day1/input.txt")
-
-        val moduleMasses = fileLines.map(String::toInt)
-        val fuelRequired = moduleMasses.map { calculateFuelBasedOnMassInclFuel(it) }
-        val totalMass = fuelRequired.reduce { a, b -> a + b }
+        val totalMass = readFileLines(filename = "Day1/input.txt")
+                .map(String::toInt)
+                .map { calculateFuelBasedOnMassInclFuel(it) }
+                .reduce { a, b -> a + b }
 
         println("Total mass is " + totalMass)
     }
