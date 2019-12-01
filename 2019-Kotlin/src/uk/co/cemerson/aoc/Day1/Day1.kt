@@ -24,17 +24,9 @@ class Day1 : AOCDay {
         println("Total mass is " + totalMass)
     }
 
-    private fun calculateFuelBasedOnMass(moduleMass: Int): Int = (floor(moduleMass.toDouble() / 3) - 2).toInt()
+    private fun calculateFuelBasedOnMass(mass: Int): Int = (floor(mass.toDouble() / 3) - 2).toInt()
 
-    private fun calculateFuelBasedOnMassInclFuel(moduleMass: Int): Int {
-        var fuelForCurrentMass = calculateFuelBasedOnMass(moduleMass)
-        var totalFuel = 0
-
-        while (fuelForCurrentMass > 0) {
-            totalFuel += fuelForCurrentMass
-            fuelForCurrentMass = calculateFuelBasedOnMass(fuelForCurrentMass)
-        }
-
-        return totalFuel
-    }
+    private fun calculateFuelBasedOnMassInclFuel(mass: Int): Int =
+        if (calculateFuelBasedOnMass(mass) <= 0) 0
+        else calculateFuelBasedOnMass(mass) + calculateFuelBasedOnMassInclFuel(calculateFuelBasedOnMass(mass))
 }
