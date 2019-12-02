@@ -6,8 +6,12 @@ class Day2 : AOCDay {
     val DESIRED_OUTPUT = 19690720
 
     override fun part1() {
-        val program = getProgram().toMutableList()
-        val programResult = executeProgram(program.take(1) + listOf(12) + listOf(2) + program.drop(3))
+        val program = getProgram()
+                .toMutableList()
+                .replace(1, 12)
+                .replace(2, 2)
+
+        val programResult = executeProgram(program)
 
         println("Opcode at position 0 is: " + programResult)
     }
@@ -17,7 +21,7 @@ class Day2 : AOCDay {
 
         for (noun in 0..99) {
             for (verb in 0..99) {
-                if (executeProgram(program.take(1) + listOf(noun) + listOf(verb) + program.drop(3)) == DESIRED_OUTPUT) {
+                if (executeProgram(program.replace(1, noun).replace(2, verb)) == DESIRED_OUTPUT) {
                     println("Noun: " + noun + ", Verb: " + verb)
                     println("Answer: " + (100 * noun + verb))
                 }
@@ -49,9 +53,9 @@ class Day2 : AOCDay {
         val operand2 = program[program[position + 2]]
         val outputposition = program[position + 3]
 
-        return Triple(position + 4, replaceValueInList(program, outputposition, operation(operand1, operand2)), false)
+        return Triple(position + 4, program.replace(outputposition, operation(operand1, operand2)), false)
     }
 
-    private fun replaceValueInList(list: List<Int>, position: Int, newValue: Int) =
-            list.take(position) + listOf(newValue) + list.drop(position + 1)
+    private fun List<Int>.replace(position: Int, newValue: Int) =
+            this.take(position) + listOf(newValue) + this.drop(position + 1)
 }
