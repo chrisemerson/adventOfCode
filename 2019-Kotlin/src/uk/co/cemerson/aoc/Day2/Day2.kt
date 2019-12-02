@@ -6,8 +6,8 @@ class Day2 : AOCDay {
     override fun part1() {
         var program = getProgram().toMutableList()
 
-        program.set(1, 12)
-        program.set(2, 2)
+        program[1] = 12
+        program[2] = 2
 
         val programResult = executeProgram(program)
 
@@ -19,8 +19,8 @@ class Day2 : AOCDay {
 
         for (noun in 0..99) {
             for (verb in 0..99) {
-                program.set(1, noun)
-                program.set(2, verb)
+                program[1] = noun
+                program[2] = verb
 
                 if (executeProgram(program) == 19690720) {
                     println("Noun: " + noun + ", Verb: " + verb)
