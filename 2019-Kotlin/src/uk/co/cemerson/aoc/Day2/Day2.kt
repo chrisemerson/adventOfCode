@@ -4,25 +4,18 @@ import uk.co.cemerson.aoc.AOCDay
 
 class Day2 : AOCDay {
     override fun part1() {
-        var program = getProgram().toMutableList()
-
-        program[1] = 12
-        program[2] = 2
-
-        val programResult = executeProgram(program)
+        val program = getProgram().toMutableList()
+        val programResult = executeProgram(program.take(1) + listOf(12) + listOf(2) + program.drop(3))
 
         println("Opcode at position 0 is: " + programResult)
     }
 
     override fun part2() {
-        var program = getProgram().toMutableList()
+        val program = getProgram().toMutableList()
 
         for (noun in 0..99) {
             for (verb in 0..99) {
-                program[1] = noun
-                program[2] = verb
-
-                if (executeProgram(program) == 19690720) {
+                if (executeProgram(program.take(1) + listOf(noun) + listOf(verb) + program.drop(3)) == 19690720) {
                     println("Noun: " + noun + ", Verb: " + verb)
                     println("Answer: " + (100 * noun + verb))
                 }
@@ -30,25 +23,33 @@ class Day2 : AOCDay {
         }
     }
 
-    private fun getProgram(): List<Int> {
-        return readFileSplitByChar(filename = "Day2/input.txt", splitBy = ',')
-                .map(String::toInt)
-    }
+    private fun getProgram(): List<Int> = readFileSplitByChar(filename = "Day2/input.txt", splitBy = ',')
+            .map(String::toInt)
 
-    private fun executeProgram(program: List<Int>): Int {
-        var opCodes = program.toMutableList()
-        var position = 0
+    private fun executeProgram(program: List<Int>): Int =
+            generateSequence(Triple(0, program, false)) { executeProgramStep(it) }
+                    .takeWhile { !it.third }
+                    .map { it.second[0] }
+                    .last()
 
-        while (opCodes[position] != 99) {
-            if (opCodes[position] == 1) {
-                opCodes.set(opCodes[position + 3], opCodes[opCodes[position + 1]] + opCodes[opCodes[position + 2]])
-                position += 4
-            } else if (opCodes[position] == 2) {
-                opCodes.set(opCodes[position + 3], opCodes[opCodes[position + 1]] * opCodes[opCodes[position + 2]])
-                position += 4
-            }
-        }
+    private fun executeProgramStep(programState: Triple<Int, List<Int>, Boolean>): Triple<Int, List<Int>, Boolean> =
+            if (programState.second[programState.first] == 1) performAddStep(programState)
+            else if (programState.second[programState.first] == 2) performMultiplyStep(programState)
+            else Triple(programState.first, programState.second, true)
 
-        return opCodes[0]
-    }
+    private fun performAddStep(programState: Triple<Int, List<Int>, Boolean>): Triple<Int, List<Int>, Boolean> = Triple(
+            programState.first + 4,
+            programState.second.take(programState.second[programState.first + 3])
+                    + listOf(programState.second[programState.second[programState.first + 1]] + programState.second[programState.second[programState.first + 2]])
+                    + programState.second.drop(programState.second[programState.first + 3] + 1),
+            false
+    )
+
+    private fun performMultiplyStep(programState: Triple<Int, List<Int>, Boolean>): Triple<Int, List<Int>, Boolean> = Triple(
+            programState.first + 4,
+            programState.second.take(programState.second[programState.first + 3])
+                    + listOf(programState.second[programState.second[programState.first + 1]] * programState.second[programState.second[programState.first + 2]])
+                    + programState.second.drop(programState.second[programState.first + 3] + 1),
+            false
+    )
 }
