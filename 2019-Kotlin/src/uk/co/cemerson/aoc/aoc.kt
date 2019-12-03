@@ -2,6 +2,7 @@ package uk.co.cemerson.aoc
 
 import uk.co.cemerson.aoc.Day1.Day1
 import uk.co.cemerson.aoc.Day2.Day2
+import uk.co.cemerson.aoc.Day3.Day3
 
 fun main(args: Array<String>) {
     if (args.size != 2) {
@@ -14,6 +15,7 @@ fun main(args: Array<String>) {
     when (args[0]) {
         "1" -> dayClass = Day1()
         "2" -> dayClass = Day2()
+        "3" -> dayClass = Day3()
         else -> {
             println("Invalid Day specified")
             return
