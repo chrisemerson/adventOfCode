@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="aec01011-cf63-40a6-9d6f-8a361bda379b" name="Default" comment="">
+    <list default="true" id="b18375fb-a7e6-4078-9b05-0f070ba7cd54" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/uk/co/cemerson/aoc/Day4/Day4.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/uk/co/cemerson/aoc/Day4/Day4.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/uk/co/cemerson/aoc/Day2/Day2.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/uk/co/cemerson/aoc/Day2/Day2.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/uk/co/cemerson/aoc/aoc.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/uk/co/cemerson/aoc/aoc.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -222,6 +223,9 @@
       </list>
     </option>
   </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="aec01011-cf63-40a6-9d6f-8a361bda379b" name="Default" comment="" />
@@ -242,14 +246,23 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="2671" y="255" key="#com.intellij.ide.util.MemberChooser" timestamp="1575435801999">
-      <screen x="1920" y="0" width="1920" height="1080" />
+    <state x="501" y="112" key="#com.intellij.ide.util.MemberChooser" timestamp="1575541304151">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
+    <state x="501" y="112" key="#com.intellij.ide.util.MemberChooser/0.0.1280.680@0.0.1280.680" timestamp="1575541304151" />
     <state x="2671" y="255" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040/1920.0.1920.1080@1920.0.1920.1080" timestamp="1575435801999" />
+    <state x="490" y="229" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog" timestamp="1575542586838">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="490" y="229" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog/0.0.1280.680@0.0.1280.680" timestamp="1575542586838" />
     <state x="2381" y="181" key="SettingsEditor" timestamp="1575375557222">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2381" y="181" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1080@1920.0.1920.1080" timestamp="1575375557222" />
+    <state x="297" y="151" key="run.anything.popup" timestamp="1575543368876">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="297" y="151" key="run.anything.popup/0.0.1280.680@0.0.1280.680" timestamp="1575543368876" />
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
