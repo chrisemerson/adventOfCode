@@ -10,7 +10,7 @@ class Day5 : AOCDay {
         val program = getProgram()
                 .toMutableList()
 
-        val computer = Computer(SpecifiedInputProvider(listOf(0)), PrintLnOutputConsumer())
+        val computer = Computer(SpecifiedInputProvider(listOf(1)), PrintLnOutputConsumer())
 
         computer.execute(program)
     }

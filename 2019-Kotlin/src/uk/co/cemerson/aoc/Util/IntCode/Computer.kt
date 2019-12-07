@@ -39,8 +39,6 @@ class Computer(private val inputProvider: InputProvider, private val outputConsu
     private fun takeInput(programState: Triple<Int, List<Int>, Boolean>): Triple<Int, List<Int>, Boolean> {
         val (position, program) = programState
 
-        program.replace(program[position + 1], inputProvider.getInput())
-
         return Triple(position + 2, program.replace(program[position + 1], inputProvider.getInput()), false)
     }
 
