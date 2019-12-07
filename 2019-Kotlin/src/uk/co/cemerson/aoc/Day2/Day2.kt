@@ -1,11 +1,13 @@
 package uk.co.cemerson.aoc.Day2
 
 import uk.co.cemerson.aoc.AOCDay
-import uk.co.cemerson.aoc.Util.IntCodeComputer
+import uk.co.cemerson.aoc.Util.IntCode.Computer
+import uk.co.cemerson.aoc.Util.IntCode.ZeroInputProvider
 
 class Day2 : AOCDay {
     private val DESIRED_OUTPUT = 19690720
-    private val computer: IntCodeComputer = IntCodeComputer()
+    private val outputConsumer = GetFinalProgramStateOutputConsumer()
+    private val computer = Computer(ZeroInputProvider(), outputConsumer)
 
     override fun part1() {
         val program = getProgram()
@@ -13,7 +15,8 @@ class Day2 : AOCDay {
                 .replace(1, 12)
                 .replace(2, 2)
 
-        val programResult = computer.execute(program)
+        computer.execute(program)
+        val programResult = outputConsumer.getFinalOutput()
 
         println("Opcode at position 0 is: " + programResult)
     }
@@ -23,7 +26,9 @@ class Day2 : AOCDay {
 
         for (noun in 0..99) {
             for (verb in 0..99) {
-                if (computer.execute(program.replace(1, noun).replace(2, verb)) == DESIRED_OUTPUT) {
+                computer.execute(program.replace(1, noun).replace(2, verb))
+
+                if (outputConsumer.getFinalOutput() == DESIRED_OUTPUT) {
                     println("Noun: " + noun + ", Verb: " + verb)
                     println("Answer: " + (100 * noun + verb))
                 }

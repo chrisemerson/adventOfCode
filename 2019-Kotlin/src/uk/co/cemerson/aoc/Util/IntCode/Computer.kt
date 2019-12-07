@@ -1,11 +1,13 @@
-package uk.co.cemerson.aoc.Util
+package uk.co.cemerson.aoc.Util.IntCode
 
-class IntCodeComputer {
-    fun execute(program: List<Int>): Int =
-            generateSequence(Triple(0, program, false)) { executeProgramStep(it) }
-                    .takeWhile { !it.third }
-                    .map { it.second[0] }
-                    .last()
+class Computer(private val inputProvider: InputProvider, private val outputConsumer: OutputConsumer) {
+    fun execute(program: List<Int>): Unit =
+            outputConsumer.consumeFinalValueInPositionZero(
+                    generateSequence(Triple(0, program, false)) { executeProgramStep(it) }
+                            .takeWhile { !it.third }
+                            .map { it.second[0] }
+                            .last()
+            )
 
     private fun executeProgramStep(programState: Triple<Int, List<Int>, Boolean>): Triple<Int, List<Int>, Boolean> {
         val parameterModes = getParameterModes(programState.second[programState.first])
@@ -36,18 +38,17 @@ class IntCodeComputer {
 
     private fun takeInput(programState: Triple<Int, List<Int>, Boolean>): Triple<Int, List<Int>, Boolean> {
         val (position, program) = programState
-        print("Provide Input: ")
-        val input = readLine()!!.toInt()
 
-        program.replace(program[position + 1], input)
+        program.replace(program[position + 1], inputProvider.getInput())
 
-        return Triple(position + 2, program.replace(program[position + 1], input), false)
+        return Triple(position + 2, program.replace(program[position + 1], inputProvider.getInput()), false)
     }
 
     private fun printOutput(programState: Triple<Int, List<Int>, Boolean>, parameterModes: List<Int>): Triple<Int, List<Int>, Boolean> {
         val (position, program) = programState
+        val output = getValue(program, position + 1, parameterModes[0])
 
-        println(getValue(program, position + 1, parameterModes[0]))
+        outputConsumer.consumeOutput(output)
 
         return Triple(position + 2, program, false)
     }
