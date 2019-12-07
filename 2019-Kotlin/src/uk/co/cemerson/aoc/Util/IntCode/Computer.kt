@@ -9,8 +9,10 @@ class Computer(private val inputProvider: InputProvider, private val outputConsu
                             .last()
             )
 
-    private fun executeProgramStep(programState: Triple<Int, List<Int>, Boolean>): Triple<Int, List<Int>, Boolean> {
+    fun executeProgramStep(programState: Triple<Int, List<Int>, Boolean>): Triple<Int, List<Int>, Boolean> {
         val parameterModes = getParameterModes(programState.second[programState.first])
+
+        if (programState.third) return programState
 
         return when (programState.second[programState.first] % 100) {
             1 -> performOperation(programState, { a, b -> a + b }, parameterModes)
@@ -39,7 +41,11 @@ class Computer(private val inputProvider: InputProvider, private val outputConsu
     private fun takeInput(programState: Triple<Int, List<Int>, Boolean>): Triple<Int, List<Int>, Boolean> {
         val (position, program) = programState
 
-        return Triple(position + 2, program.replace(program[position + 1], inputProvider.getInput()), false)
+        val input = inputProvider.getInput()
+
+        return if (input == null) programState
+        else Triple(position + 2, program.replace(program[position + 1], input), false)
+
     }
 
     private fun printOutput(programState: Triple<Int, List<Int>, Boolean>, parameterModes: List<Int>): Triple<Int, List<Int>, Boolean> {
