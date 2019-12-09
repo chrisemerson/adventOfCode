@@ -3,22 +3,20 @@ package uk.co.cemerson.aoc.Util.IntCode
 import java.math.BigInteger
 
 class Computer(private val inputProvider: InputProvider, private val outputConsumer: OutputConsumer) {
-    var relativeBase = 0.toBigInteger()
-
     fun execute(program: List<BigInteger>): Unit =
             outputConsumer.consumeFinalValueInPositionZero(
-                    generateSequence(Triple(0, program, false)) { executeProgramStep(it) }
-                            .takeWhile { !it.third }
-                            .map { it.second[0] }
+                    generateSequence(getInitialProgramState(program)) { executeProgramStep(it) }
+                            .takeWhile { !it.halted }
+                            .map { it.program[0] }
                             .last()
             )
 
-    fun executeProgramStep(programState: Triple<Int, List<BigInteger>, Boolean>): Triple<Int, List<BigInteger>, Boolean> {
-        val parameterModes = getParameterModes(programState.second[programState.first].toInt())
+    fun executeProgramStep(programState: ProgramState): ProgramState {
+        val parameterModes = getParameterModes(programState.program[programState.position])
 
-        if (programState.third) return programState
+        if (programState.halted) return programState
 
-        return when ((programState.second[programState.first] % 100.toBigInteger()).toInt()) {
+        return when ((programState.program[programState.position] % 100.toBigInteger()).toInt()) {
             1 -> performOperation(programState, { a, b -> a + b }, parameterModes)
             2 -> performOperation(programState, { a, b -> a * b }, parameterModes)
             3 -> takeInput(programState, parameterModes)
@@ -29,88 +27,132 @@ class Computer(private val inputProvider: InputProvider, private val outputConsu
             8 -> equals(programState, parameterModes)
             9 -> alterRelativeBase(programState, parameterModes)
 
-            else -> Triple(programState.first, programState.second, true)
+            else -> ProgramState(programState.position, programState.program, programState.relativeBase, true)
         }
     }
 
-    private fun performOperation(programState: Triple<Int, List<BigInteger>, Boolean>, operation: (BigInteger, BigInteger) -> BigInteger, parameterModes: List<Int>): Triple<Int, List<BigInteger>, Boolean> {
-        val (position, program) = programState
+    fun getInitialProgramState(program: List<BigInteger>): ProgramState =
+            ProgramState(0, program, 0.toBigInteger(), false)
 
-        val operand1 = getValue(program, position + 1, parameterModes[0])
-        val operand2 = getValue(program, position + 2, parameterModes[1])
-        val outputposition = getAddress(program, position + 3, parameterModes[2])
+    private fun performOperation(programState: ProgramState, operation: (BigInteger, BigInteger) -> BigInteger, parameterModes: List<Int>): ProgramState =
+            ProgramState(
+                    programState.position + 4,
+                    programState.program.replace(
+                            getAddress(programState.program, programState.position + 3, programState.relativeBase, parameterModes[2]),
+                            operation(
+                                    getValue(programState.program, programState.position + 1, programState.relativeBase, parameterModes[0]),
+                                    getValue(programState.program, programState.position + 2, programState.relativeBase, parameterModes[1])
+                            )
+                    ),
+                    programState.relativeBase,
+                    false
+            )
 
-        return Triple(position + 4, program.replace(outputposition, operation(operand1, operand2)), false)
-    }
-
-    private fun takeInput(programState: Triple<Int, List<BigInteger>, Boolean>, parameterModes: List<Int>): Triple<Int, List<BigInteger>, Boolean> {
-        val (position, program) = programState
-
+    private fun takeInput(programState: ProgramState, parameterModes: List<Int>): ProgramState {
         val input = inputProvider.getInput()
 
         return if (input == null) programState
-        else Triple(position + 2, program.replace(getAddress(program, position + 1, parameterModes[0]), input), false)
+        else ProgramState(
+                programState.position + 2,
+                programState.program.replace(
+                        getAddress(programState.program, programState.position + 1, programState.relativeBase, parameterModes[0]),
+                        input
+                ),
+                programState.relativeBase,
+                false
+        )
     }
 
-    private fun printOutput(programState: Triple<Int, List<BigInteger>, Boolean>, parameterModes: List<Int>): Triple<Int, List<BigInteger>, Boolean> {
-        val (position, program) = programState
-        val output = getValue(program, position + 1, parameterModes[0])
+    private fun printOutput(programState: ProgramState, parameterModes: List<Int>): ProgramState {
+        outputConsumer.consumeOutput(
+                getValue(programState.program, programState.position + 1, programState.relativeBase, parameterModes[0])
+        )
 
-        outputConsumer.consumeOutput(output)
-
-        return Triple(position + 2, program, false)
+        return ProgramState(
+                programState.position + 2,
+                programState.program,
+                programState.relativeBase,
+                false
+        )
     }
 
-    private fun jumpIfTrue(programState: Triple<Int, List<BigInteger>, Boolean>, parameterModes: List<Int>): Triple<Int, List<BigInteger>, Boolean> {
-        val (position, program) = programState
+    private fun jumpIfTrue(programState: ProgramState, parameterModes: List<Int>): ProgramState =
+            if (getValue(programState.program, programState.position + 1, programState.relativeBase, parameterModes[0]).toInt() != 0)
+                ProgramState(
+                        getValue(programState.program, programState.position + 2, programState.relativeBase, parameterModes[1]).toInt(),
+                        programState.program,
+                        programState.relativeBase,
+                        false
+                )
+            else ProgramState(
+                    programState.position + 3,
+                    programState.program,
+                    programState.relativeBase,
+                    false
+            )
 
-        return if (getValue(program, position + 1, parameterModes[0]).toInt() != 0)
-            Triple(getValue(program, position + 2, parameterModes[1]).toInt(), program, false)
-        else Triple(position + 3, program, false)
-    }
+    private fun jumpIfFalse(programState: ProgramState, parameterModes: List<Int>): ProgramState =
+            if (getValue(programState.program, programState.position + 1, programState.relativeBase, parameterModes[0]).toInt() == 0)
+                ProgramState(
+                        getValue(programState.program, programState.position + 2, programState.relativeBase, parameterModes[1]).toInt(),
+                        programState.program,
+                        programState.relativeBase,
+                        false
+                )
+            else ProgramState(
+                    programState.position + 3,
+                    programState.program,
+                    programState.relativeBase,
+                    false
+            )
 
-    private fun jumpIfFalse(programState: Triple<Int, List<BigInteger>, Boolean>, parameterModes: List<Int>): Triple<Int, List<BigInteger>, Boolean> {
-        val (position, program) = programState
+    private fun lessThan(programState: ProgramState, parameterModes: List<Int>): ProgramState =
+            if (getValue(programState.program, programState.position + 1, programState.relativeBase, parameterModes[0]) < getValue(programState.program, programState.position + 2, programState.relativeBase, parameterModes[1]))
+                ProgramState(
+                        programState.position + 4,
+                        programState.program.replace(getAddress(programState.program, programState.position + 3, programState.relativeBase, parameterModes[2]), 1),
+                        programState.relativeBase,
+                        false
+                )
+            else ProgramState(
+                    programState.position + 4,
+                    programState.program.replace(getAddress(programState.program, programState.position + 3, programState.relativeBase, parameterModes[2]), 0),
+                    programState.relativeBase,
+                    false
+            )
 
-        return if (getValue(program, position + 1, parameterModes[0]).toInt() == 0)
-            Triple(getValue(program, position + 2, parameterModes[1]).toInt(), program, false)
-        else Triple(position + 3, program, false)
-    }
+    private fun equals(programState: ProgramState, parameterModes: List<Int>): ProgramState =
+            if (getValue(programState.program, programState.position + 1, programState.relativeBase, parameterModes[0]) == getValue(programState.program, programState.position + 2, programState.relativeBase, parameterModes[1]))
+                ProgramState(
+                        programState.position + 4,
+                        programState.program.replace(getAddress(programState.program, programState.position + 3, programState.relativeBase, parameterModes[2]), 1),
+                        programState.relativeBase,
+                        false
+                )
+            else ProgramState(
+                    programState.position + 4,
+                    programState.program.replace(getAddress(programState.program, programState.position + 3, programState.relativeBase, parameterModes[2]), 0),
+                    programState.relativeBase,
+                    false
+            )
 
-    private fun lessThan(programState: Triple<Int, List<BigInteger>, Boolean>, parameterModes: List<Int>): Triple<Int, List<BigInteger>, Boolean> {
-        val (position, program) = programState
+    private fun alterRelativeBase(programState: ProgramState, parameterModes: List<Int>): ProgramState =
+            ProgramState(
+                    programState.position + 2,
+                    programState.program,
+                    programState.relativeBase + getValue(programState.program, programState.position + 1, programState.relativeBase, parameterModes[0]),
+                    false)
 
-        return if (getValue(program, position + 1, parameterModes[0]) < getValue(program, position + 2, parameterModes[1]))
-            Triple(position + 4, program.replace(getAddress(program, position + 3, parameterModes[2]), 1), false)
-        else Triple(position + 4, program.replace(getAddress(program, position + 3, parameterModes[2]), 0), false)
-    }
-
-    private fun equals(programState: Triple<Int, List<BigInteger>, Boolean>, parameterModes: List<Int>): Triple<Int, List<BigInteger>, Boolean> {
-        val (position, program) = programState
-
-        return if (getValue(program, position + 1, parameterModes[0]) == getValue(program, position + 2, parameterModes[1]))
-            Triple(position + 4, program.replace(getAddress(program, position + 3, parameterModes[2]), 1), false)
-        else Triple(position + 4, program.replace(getAddress(program, position + 3, parameterModes[2]), 0), false)
-    }
-
-    private fun alterRelativeBase(programState: Triple<Int, List<BigInteger>, Boolean>, parameterModes: List<Int>): Triple<Int, List<BigInteger>, Boolean> {
-        val (position, program) = programState
-
-        relativeBase += getValue(program, position + 1, parameterModes[0])
-
-        return Triple(position + 2, program, false)
-    }
-
-    private fun getParameterModes(instruction: Int): List<Int> =
-            (instruction / 100)
+    private fun getParameterModes(instruction: BigInteger): List<Int> =
+            (instruction / 100.toBigInteger())
                     .toString()
                     .padStart(3, '0')
                     .toMutableList()
                     .map { it.toString().toInt() }
                     .reversed()
 
-    private fun getValue(program: List<BigInteger>, position: Int, parameterMode: Int): BigInteger {
-        val address = getAddress(program, position, parameterMode)
+    private fun getValue(program: List<BigInteger>, position: Int, relativeBase: BigInteger, parameterMode: Int): BigInteger {
+        val address = getAddress(program, position, relativeBase, parameterMode)
 
         return if (address >= program.count()) {
             0.toBigInteger()
@@ -119,7 +161,7 @@ class Computer(private val inputProvider: InputProvider, private val outputConsu
         }
     }
 
-    private fun getAddress(program: List<BigInteger>, position: Int, parameterMode: Int): Int =
+    private fun getAddress(program: List<BigInteger>, position: Int, relativeBase: BigInteger, parameterMode: Int): Int =
             when (parameterMode) {
                 0 -> program[position].toInt()
                 1 -> position
