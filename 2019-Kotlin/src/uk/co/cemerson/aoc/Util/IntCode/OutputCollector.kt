@@ -1,14 +1,16 @@
 package uk.co.cemerson.aoc.Util.IntCode
 
-class OutputCollector : OutputConsumer {
-    private val output = mutableListOf<Int>()
+import java.math.BigInteger
 
-    override fun consumeOutput(output: Int) {
+class OutputCollector : OutputConsumer {
+    private val output = mutableListOf<BigInteger>()
+
+    override fun consumeOutput(output: BigInteger) {
         this.output.add(output)
     }
 
-    override fun consumeFinalValueInPositionZero(output: Int) {
+    override fun consumeFinalValueInPositionZero(output: BigInteger) {
     }
 
-    fun getOutput(): List<Int> = output
+    fun getOutput(): List<BigInteger> = output
 }

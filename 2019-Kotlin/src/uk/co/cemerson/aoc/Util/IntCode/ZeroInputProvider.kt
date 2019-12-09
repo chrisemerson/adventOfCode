@@ -1,5 +1,7 @@
 package uk.co.cemerson.aoc.Util.IntCode
 
+import java.math.BigInteger
+
 class ZeroInputProvider : InputProvider {
-    override fun getInput(): Int = 0
+    override fun getInput(): BigInteger = 0.toBigInteger()
 }

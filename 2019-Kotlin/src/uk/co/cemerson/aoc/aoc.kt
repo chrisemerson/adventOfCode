@@ -8,6 +8,7 @@ import uk.co.cemerson.aoc.Day5.Day5
 import uk.co.cemerson.aoc.Day6.Day6
 import uk.co.cemerson.aoc.Day7.Day7
 import uk.co.cemerson.aoc.Day8.Day8
+import uk.co.cemerson.aoc.Day9.Day9
 
 fun main(args: Array<String>) {
     if (args.size != 2) {
@@ -26,6 +27,7 @@ fun main(args: Array<String>) {
         "6" -> dayClass = Day6()
         "7" -> dayClass = Day7()
         "8" -> dayClass = Day8()
+        "9" -> dayClass = Day9()
 
         else -> {
             println("Invalid Day specified")

@@ -1,5 +1,7 @@
 package uk.co.cemerson.aoc.Util.IntCode
 
+import java.math.BigInteger
+
 interface InputProvider {
-    fun getInput(): Int?
+    fun getInput(): BigInteger?
 }

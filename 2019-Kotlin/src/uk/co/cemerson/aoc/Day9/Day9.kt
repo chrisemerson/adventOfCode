@@ -1,4 +1,4 @@
-package uk.co.cemerson.aoc.Day5
+package uk.co.cemerson.aoc.Day9
 
 import uk.co.cemerson.aoc.AOCDay
 import uk.co.cemerson.aoc.Util.IntCode.Computer
@@ -6,10 +6,9 @@ import uk.co.cemerson.aoc.Util.IntCode.PrintLnOutputConsumer
 import uk.co.cemerson.aoc.Util.IntCode.SpecifiedInputProvider
 import java.math.BigInteger
 
-class Day5 : AOCDay {
+class Day9 : AOCDay {
     override fun part1() {
         val program = getProgram()
-                .toMutableList()
 
         val computer = Computer(SpecifiedInputProvider(listOf(1)), PrintLnOutputConsumer())
 
@@ -18,14 +17,14 @@ class Day5 : AOCDay {
 
     override fun part2() {
         val program = getProgram()
-                .toMutableList()
 
-        val computer = Computer(SpecifiedInputProvider(listOf(5)), PrintLnOutputConsumer())
+        val computer = Computer(SpecifiedInputProvider(listOf(2)), PrintLnOutputConsumer())
 
         computer.execute(program)
     }
 
     private fun getProgram(): List<BigInteger> =
-            readFileSplitByChar(filename = "Day5/input.txt", splitBy = ',')
+            readFileSplitByChar(filename = "Day9/input.txt", splitBy = ',')
                     .map { it.toInt().toBigInteger() }
+
 }

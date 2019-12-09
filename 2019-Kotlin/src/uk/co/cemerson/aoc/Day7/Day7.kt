@@ -4,6 +4,7 @@ import uk.co.cemerson.aoc.AOCDay
 import uk.co.cemerson.aoc.Util.IntCode.Computer
 import uk.co.cemerson.aoc.Util.IntCode.OutputCollector
 import uk.co.cemerson.aoc.Util.IntCode.SpecifiedInputProvider
+import java.math.BigInteger
 
 class Day7 : AOCDay {
     override fun part1() {
@@ -34,11 +35,11 @@ class Day7 : AOCDay {
         println("Max thrust: " + result)
     }
 
-    private fun getProgram(): List<Int> =
+    private fun getProgram(): List<BigInteger> =
             readFileSplitByChar(filename = "Day7/input.txt", splitBy = ',')
-                    .map(String::toInt)
+                    .map { it.toInt().toBigInteger() }
 
-    private fun runSettingsThroughAmplifiers(it: String): Int {
+    private fun runSettingsThroughAmplifiers(it: String): BigInteger {
         val program = getProgram()
 
         val outputA = OutputCollector()
@@ -50,29 +51,29 @@ class Day7 : AOCDay {
         val computerA = Computer(SpecifiedInputProvider(listOf(it[0].toString().toInt(), 0)), outputA)
         computerA.execute(program)
 
-        val computerB = Computer(SpecifiedInputProvider(listOf(it[1].toString().toInt(), outputA.getOutput()[0])), outputB)
+        val computerB = Computer(SpecifiedInputProvider(listOf(it[1].toString().toInt(), outputA.getOutput()[0].toInt())), outputB)
         computerB.execute(program)
 
-        val computerC = Computer(SpecifiedInputProvider(listOf(it[2].toString().toInt(), outputB.getOutput()[0])), outputC)
+        val computerC = Computer(SpecifiedInputProvider(listOf(it[2].toString().toInt(), outputB.getOutput()[0].toInt())), outputC)
         computerC.execute(program)
 
-        val computerD = Computer(SpecifiedInputProvider(listOf(it[3].toString().toInt(), outputC.getOutput()[0])), outputD)
+        val computerD = Computer(SpecifiedInputProvider(listOf(it[3].toString().toInt(), outputC.getOutput()[0].toInt())), outputD)
         computerD.execute(program)
 
-        val computerE = Computer(SpecifiedInputProvider(listOf(it[4].toString().toInt(), outputD.getOutput()[0])), outputE)
+        val computerE = Computer(SpecifiedInputProvider(listOf(it[4].toString().toInt(), outputD.getOutput()[0].toInt())), outputE)
         computerE.execute(program)
 
         return outputE.getOutput()[0]
     }
 
-    private fun runSettingsThroughAmplifiersInLoop(it: String): Int {
+    private fun runSettingsThroughAmplifiersInLoop(it: String): BigInteger {
         val program = getProgram()
 
-        val ABLink = AmplifierLink(listOf(it[0].toString().toInt()))
-        val BCLink = AmplifierLink(listOf(it[1].toString().toInt()))
-        val CDLink = AmplifierLink(listOf(it[2].toString().toInt()))
-        val DELink = AmplifierLink(listOf(it[3].toString().toInt()))
-        val EALink = AmplifierLink(listOf(it[4].toString().toInt(), 0))
+        val ABLink = AmplifierLink(listOf(it[0].toString().toInt().toBigInteger()))
+        val BCLink = AmplifierLink(listOf(it[1].toString().toInt().toBigInteger()))
+        val CDLink = AmplifierLink(listOf(it[2].toString().toInt().toBigInteger()))
+        val DELink = AmplifierLink(listOf(it[3].toString().toInt().toBigInteger()))
+        val EALink = AmplifierLink(listOf(it[4].toString().toInt().toBigInteger(), 0.toBigInteger()))
 
         val computerA = Computer(EALink, ABLink)
         val computerB = Computer(ABLink, BCLink)

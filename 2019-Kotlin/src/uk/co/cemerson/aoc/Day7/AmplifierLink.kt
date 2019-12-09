@@ -2,9 +2,10 @@ package uk.co.cemerson.aoc.Day7
 
 import uk.co.cemerson.aoc.Util.IntCode.InputProvider
 import uk.co.cemerson.aoc.Util.IntCode.OutputConsumer
+import java.math.BigInteger
 
-class AmplifierLink(initialInput: List<Int>? = null) : InputProvider, OutputConsumer {
-    private var signals = mutableListOf<Int>()
+class AmplifierLink(initialInput: List<BigInteger>? = null) : InputProvider, OutputConsumer {
+    private var signals = mutableListOf<BigInteger>()
 
     init {
         if (initialInput != null) {
@@ -12,7 +13,7 @@ class AmplifierLink(initialInput: List<Int>? = null) : InputProvider, OutputCons
         }
     }
 
-    override fun getInput(): Int? {
+    override fun getInput(): BigInteger? {
         if (signals.isEmpty()) return null
 
         val input = signals.first()
@@ -21,12 +22,12 @@ class AmplifierLink(initialInput: List<Int>? = null) : InputProvider, OutputCons
         return input
     }
 
-    override fun consumeOutput(output: Int) {
+    override fun consumeOutput(output: BigInteger) {
         signals.add(output)
     }
 
-    override fun consumeFinalValueInPositionZero(output: Int) {
+    override fun consumeFinalValueInPositionZero(output: BigInteger) {
     }
 
-    fun getOutput(): List<Int> = signals
+    fun getOutput(): List<BigInteger> = signals
 }

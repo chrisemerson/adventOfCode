@@ -3,6 +3,7 @@ package uk.co.cemerson.aoc.Day2
 import uk.co.cemerson.aoc.AOCDay
 import uk.co.cemerson.aoc.Util.IntCode.Computer
 import uk.co.cemerson.aoc.Util.IntCode.ZeroInputProvider
+import java.math.BigInteger
 
 class Day2 : AOCDay {
     private val DESIRED_OUTPUT = 19690720
@@ -12,8 +13,8 @@ class Day2 : AOCDay {
     override fun part1() {
         val program = getProgram()
                 .toMutableList()
-                .replace(1, 12)
-                .replace(2, 2)
+                .replace(1, 12.toBigInteger())
+                .replace(2, 2.toBigInteger())
 
         computer.execute(program)
         val programResult = outputConsumer.getFinalOutput()
@@ -26,9 +27,9 @@ class Day2 : AOCDay {
 
         for (noun in 0..99) {
             for (verb in 0..99) {
-                computer.execute(program.replace(1, noun).replace(2, verb))
+                computer.execute(program.replace(1, noun.toBigInteger()).replace(2, verb.toBigInteger()))
 
-                if (outputConsumer.getFinalOutput() == DESIRED_OUTPUT) {
+                if (outputConsumer.getFinalOutput().toInt() == DESIRED_OUTPUT) {
                     println("Noun: " + noun + ", Verb: " + verb)
                     println("Answer: " + (100 * noun + verb))
                 }
@@ -36,10 +37,10 @@ class Day2 : AOCDay {
         }
     }
 
-    private fun getProgram(): List<Int> =
+    private fun getProgram(): List<BigInteger> =
             readFileSplitByChar(filename = "Day2/input.txt", splitBy = ',')
-                    .map(String::toInt)
+                    .map { it.toInt().toBigInteger() }
 
-    private fun List<Int>.replace(position: Int, newValue: Int) =
+    private fun List<BigInteger>.replace(position: Int, newValue: BigInteger) =
             this.take(position) + listOf(newValue) + this.drop(position + 1)
 }
