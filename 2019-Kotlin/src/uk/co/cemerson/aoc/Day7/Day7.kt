@@ -81,13 +81,13 @@ class Day7 : AOCDay {
         val computerD = Computer(CDLink, DELink)
         val computerE = Computer(DELink, EALink)
 
-        var programStateA = Triple(0, program, false)
-        var programStateB = Triple(0, program, false)
-        var programStateC = Triple(0, program, false)
-        var programStateD = Triple(0, program, false)
-        var programStateE = Triple(0, program, false)
+        var programStateA = computerA.getInitialProgramState(program)
+        var programStateB = computerB.getInitialProgramState(program)
+        var programStateC = computerC.getInitialProgramState(program)
+        var programStateD = computerD.getInitialProgramState(program)
+        var programStateE = computerE.getInitialProgramState(program)
 
-        while (!programStateA.third || !programStateB.third || !programStateC.third || !programStateD.third || !programStateE.third) {
+        while (!programStateA.halted || !programStateB.halted || !programStateC.halted || !programStateD.halted || !programStateE.halted) {
             programStateA = computerA.executeProgramStep(programStateA)
             programStateB = computerB.executeProgramStep(programStateB)
             programStateC = computerC.executeProgramStep(programStateC)
