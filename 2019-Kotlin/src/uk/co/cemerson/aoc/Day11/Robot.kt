@@ -19,9 +19,7 @@ class Robot(val startingPanelColour: BigInteger) : InputProvider, OutputConsumer
 
     override fun getInput(): BigInteger? {
         return if (panelGrid.filter { it.first == x && it.second == y }.count() != 0) {
-            val colour = panelGrid.filter { it.first == x && it.second == y }.map { it.third }.first()
-
-            colour
+            panelGrid.filter { it.first == x && it.second == y }.map { it.third }.first()
         } else {
             0.toBigInteger()
         }
