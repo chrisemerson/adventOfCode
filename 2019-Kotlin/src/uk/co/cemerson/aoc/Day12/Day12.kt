@@ -11,115 +11,68 @@ class Day12 : AOCDay {
                             .map { getTotalEnergy(it) }
                             .last())
 
-    override fun part2() {
-        var counts = mutableMapOf<Char, Int>()
+    override fun part2() =
+            println(
+                    "Repeats after "
+                            + listOf('x', 'y', 'z')
+                            .map { findCycleLengthforAxis(it) }
+                            .reduce { a, b -> lcm(a, b) }
+                            + " steps")
 
-        for (axis in 'x'..'z') {
-            counts[axis] = 1
+    private fun findCycleLengthforAxis(axis: Char): Long {
+        val initialState = getHashFromMoonState(getMoonsFromInput(), axis)
 
-            var currentState = getMoonsFromInput()
-            val initialState = getHashFromMoonState(currentState, axis)
-
-            currentState = step(currentState)
-
-            while (getHashFromMoonState(currentState, axis) != initialState) {
-                currentState = step(currentState)
-                counts[axis] = counts[axis]!! + 1
-            }
-        }
-
-        val answer = counts
-                .map { it.value.toLong() }
-                .reduce { a, b -> lcm(a, b) }
-
-        println("Repeats after " + answer + " steps")
+        return generateSequence(getMoonsFromInput()) { step(it) }
+                .map { getHashFromMoonState(it, axis) }
+                .drop(1)
+                .takeWhile { it != initialState }
+                .count() + 1
+                .toLong()
     }
 
     private fun step(moons: List<Moon>): List<Moon> =
-            calculateVelocities(moons)
+            moons
+                    .map { calculateVelocities(it, moons) }
                     .map { calculateNewPosition(it) }
 
-    private fun calculateVelocities(moons: List<Moon>): List<Moon> {
-        var moon1 = moons.get(0)
-        var moon2 = moons.get(1)
-        var moon3 = moons.get(2)
-        var moon4 = moons.get(3)
+    private fun calculateVelocities(moon: Moon, otherMoons: List<Moon>): Moon {
+        var returnMoon = moon
 
-        val moonpair12 = calculateVelocity(Pair(moon1, moon2))
-        moon1 = moonpair12.first
-        moon2 = moonpair12.second
+        otherMoons.forEach {
+            returnMoon = calculateVelocity(returnMoon, it)
+        }
 
-        val moonpair13 = calculateVelocity(Pair(moon1, moon3))
-        moon1 = moonpair13.first
-        moon3 = moonpair13.second
-
-        val moonpair14 = calculateVelocity(Pair(moon1, moon4))
-        moon1 = moonpair14.first
-        moon4 = moonpair14.second
-
-        val moonpair23 = calculateVelocity(Pair(moon2, moon3))
-        moon2 = moonpair23.first
-        moon3 = moonpair23.second
-
-        val moonpair24 = calculateVelocity(Pair(moon2, moon4))
-        moon2 = moonpair24.first
-        moon4 = moonpair24.second
-
-        val moonpair34 = calculateVelocity(Pair(moon3, moon4))
-        moon3 = moonpair34.first
-        moon4 = moonpair34.second
-
-        return listOf(moon1, moon2, moon3, moon4);
+        return returnMoon
     }
 
-    private fun calculateVelocity(moons: Pair<Moon, Moon>): Pair<Moon, Moon> {
-        var moon1vx = 0
-        var moon1vy = 0
-        var moon1vz = 0
-        var moon2vx = 0
-        var moon2vy = 0
-        var moon2vz = 0
+    private fun calculateVelocity(moon: Moon, otherMoon: Moon): Moon {
+        var vx = 0
+        var vy = 0
+        var vz = 0
 
-        if (moons.first.x > moons.second.x) {
-            moon1vx -= 1
-            moon2vx += 1
-        } else if (moons.first.x < moons.second.x) {
-            moon1vx += 1
-            moon2vx -= 1
+        if (moon.x > otherMoon.x) {
+            vx -= 1
+        } else if (moon.x < otherMoon.x) {
+            vx += 1
         }
 
-        if (moons.first.y > moons.second.y) {
-            moon1vy -= 1
-            moon2vy += 1
-        } else if (moons.first.y < moons.second.y) {
-            moon1vy += 1
-            moon2vy -= 1
+        if (moon.y > otherMoon.y) {
+            vy -= 1
+        } else if (moon.y < otherMoon.y) {
+            vy += 1
         }
 
-        if (moons.first.z > moons.second.z) {
-            moon1vz -= 1
-            moon2vz += 1
-        } else if (moons.first.z < moons.second.z) {
-            moon1vz += 1
-            moon2vz -= 1
+        if (moon.z > otherMoon.z) {
+            vz -= 1
+        } else if (moon.z < otherMoon.z) {
+            vz += 1
         }
 
-        return Pair(
-                Moon(moons.first.x, moons.first.y, moons.first.z, moons.first.vx + moon1vx, moons.first.vy + moon1vy, moons.first.vz + moon1vz),
-                Moon(moons.second.x, moons.second.y, moons.second.z, moons.second.vx + moon2vx, moons.second.vy + moon2vy, moons.second.vz + moon2vz)
-        )
-
+        return Moon(moon.x, moon.y, moon.z, moon.vx + vx, moon.vy + vy, moon.vz + vz)
     }
 
     private fun calculateNewPosition(moon: Moon): Moon =
-            Moon(
-                    moon.x + moon.vx,
-                    moon.y + moon.vy,
-                    moon.z + moon.vz,
-                    moon.vx,
-                    moon.vy,
-                    moon.vz
-            )
+            Moon(moon.x + moon.vx, moon.y + moon.vy, moon.z + moon.vz, moon.vx, moon.vy, moon.vz)
 
     private fun getTotalEnergy(moons: List<Moon>): Int = moons
             .map { (abs(it.x) + abs(it.y) + abs(it.z)) * (abs(it.vx) + abs(it.vy) + abs(it.vz)) }
