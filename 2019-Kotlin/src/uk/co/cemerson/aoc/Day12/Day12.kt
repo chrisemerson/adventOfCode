@@ -4,16 +4,12 @@ import uk.co.cemerson.aoc.AOCDay
 import java.lang.Math.abs
 
 class Day12 : AOCDay {
-    override fun part1() {
-        val moons = getMoonsFromInput()
-
-        val energyAfter1000Steps = generateSequence(step(moons)) { step(it) }
-                .take(1000)
-                .map { getTotalEnergy(it) }
-                .last()
-
-        println(energyAfter1000Steps)
-    }
+    override fun part1() =
+            println(
+                    generateSequence(step(getMoonsFromInput())) { step(it) }
+                            .take(1000)
+                            .map { getTotalEnergy(it) }
+                            .last())
 
     override fun part2() {
         var counts = mutableMapOf<Char, Int>()
@@ -32,12 +28,9 @@ class Day12 : AOCDay {
             }
         }
 
-        val x = counts['x']!!
-        val y = counts['y']!!
-        val z = counts['z']!!
-
-        var answer = (x.toLong() * y.toLong()) / gcd(x.toLong(), y.toLong())
-        answer = answer * z.toLong() / gcd(answer, z.toLong())
+        val answer = counts
+                .map { it.value.toLong() }
+                .reduce { a, b -> lcm(a, b) }
 
         println("Repeats after " + answer + " steps")
     }
@@ -148,6 +141,8 @@ class Day12 : AOCDay {
 
                 else -> "?"
             }
+
+    private fun lcm(a: Long, b: Long): Long = a * b / gcd(a, b)
 
     private fun gcd(a: Long, b: Long): Long = if (b == 0L) a else gcd(b, a % b)
 
