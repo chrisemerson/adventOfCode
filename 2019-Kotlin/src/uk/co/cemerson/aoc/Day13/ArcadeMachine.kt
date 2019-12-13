@@ -16,8 +16,6 @@ class ArcadeMachine : InputProvider, OutputConsumer {
 
     private var score = 0
 
-    private var inputList = mutableListOf<BigInteger>()
-
     override fun getInput(): BigInteger? {
         var move = 0
 
@@ -68,12 +66,5 @@ class ArcadeMachine : InputProvider, OutputConsumer {
 
     fun getScore(): Int = score
 
-    fun feedInput(input: List<BigInteger>) {
-        inputList = input.toMutableList()
-    }
-
-    fun gameEnded(): Boolean = grid.count() != 0 && getBlockTilesLeft() == 0
-
-    override fun consumeFinalValueInPositionZero(output: BigInteger) {
-    }
+    override fun consumeFinalValueInPositionZero(output: BigInteger) = Unit
 }
