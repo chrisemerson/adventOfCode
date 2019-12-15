@@ -12,9 +12,13 @@ class Computer(private val inputProvider: InputProvider, private val outputConsu
             )
 
     fun executeProgramStep(programState: ProgramState): ProgramState {
-        val parameterModes = getParameterModes(programState.program[programState.position])
+        if (inputProvider.shouldHalt()) {
+            return ProgramState(programState.position, programState.program, programState.relativeBase, true)
+        }
 
         if (programState.halted) return programState
+
+        val parameterModes = getParameterModes(programState.program[programState.position])
 
         return when ((programState.program[programState.position] % 100.toBigInteger()).toInt()) {
             1 -> performOperation(programState, { a, b -> a + b }, parameterModes)

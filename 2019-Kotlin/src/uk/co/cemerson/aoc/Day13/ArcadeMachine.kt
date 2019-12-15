@@ -28,6 +28,8 @@ class ArcadeMachine : InputProvider, OutputConsumer {
         return move.toBigInteger()
     }
 
+    override fun shouldHalt(): Boolean = false
+
     override fun consumeOutput(output: BigInteger) {
         when (outputCount) {
             0 -> collectXCoord(output)

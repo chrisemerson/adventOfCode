@@ -4,4 +4,6 @@ import java.math.BigInteger
 
 class ZeroInputProvider : InputProvider {
     override fun getInput(): BigInteger = 0.toBigInteger()
+
+    override fun shouldHalt(): Boolean = false
 }

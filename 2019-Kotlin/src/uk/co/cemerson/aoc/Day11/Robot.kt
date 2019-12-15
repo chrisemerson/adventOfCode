@@ -25,6 +25,8 @@ class Robot(val startingPanelColour: BigInteger) : InputProvider, OutputConsumer
         }
     }
 
+    override fun shouldHalt(): Boolean = false
+
     override fun consumeOutput(output: BigInteger) {
         if (!oneOutputReceived) {
             if (panelGrid.filter { it.first == x && it.second == y }.count() == 0) {

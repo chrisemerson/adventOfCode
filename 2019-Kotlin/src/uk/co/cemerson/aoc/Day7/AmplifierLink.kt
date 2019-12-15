@@ -22,6 +22,8 @@ class AmplifierLink(initialInput: List<BigInteger>? = null) : InputProvider, Out
         return input
     }
 
+    override fun shouldHalt(): Boolean = false
+
     override fun consumeOutput(output: BigInteger) {
         signals.add(output)
     }
