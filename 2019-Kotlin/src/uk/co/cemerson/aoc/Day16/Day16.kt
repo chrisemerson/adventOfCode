@@ -8,12 +8,12 @@ class Day16 : AOCDay {
             println(run100Phases(getInput(), this::iterateOnePhase))
 
     override fun part2() {
-        var input = getInput().repeat(10000)
-        val positionToSkipTo = input.take(7).toInt()
+        val input = getInput().repeat(10000)
 
-        input = input.drop(positionToSkipTo)
-
-        println(run100Phases(input, this::iterateOnePhasePt2))
+        println(run100Phases(
+                input.drop(input.take(7).toInt()),
+                this::iterateOnePhasePt2
+        ))
     }
 
     private fun run100Phases(input: String, callBack: (String) -> String): String =
