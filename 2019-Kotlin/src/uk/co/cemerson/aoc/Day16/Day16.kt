@@ -29,9 +29,11 @@ class Day16 : AOCDay {
 
     private fun iterateOnePhasePt2(number: String): String {
         //Take advantage of known properties about position and number length to shortcut process!
+        //Because position is well over half way into the input, we know we are past the 0s in the pattern, and that all that are left must be 1s
+        // - ie, we can not bother with a pattern at all, since multiplying each digit by 1 is itself
         val result = mutableListOf<Int>()
 
-        //Because each digit in the output depends on the digit in the same position in the input and all subsequent digits, better to work backwards
+        //Because each digit in the output depends only on the digit in the same position in the input and all subsequent digits, better to work backwards for linear time algorithm
         val reversedNumber = number.toCharArray().reversed()
 
         for (i in reversedNumber.indices) {
