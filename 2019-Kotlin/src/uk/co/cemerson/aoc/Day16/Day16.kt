@@ -4,16 +4,8 @@ import uk.co.cemerson.aoc.AOCDay
 import java.lang.Math.abs
 
 class Day16 : AOCDay {
-    override fun part1() {
-        val input = getInput()
-
-        val answer = generateSequence(iterateOnePhase(input)) { iterateOnePhase(it) }
-                .map { it.take(8) }
-                .take(100)
-                .last()
-
-        println(answer)
-    }
+    override fun part1() =
+            println(run100Phases(getInput(), this::iterateOnePhase))
 
     override fun part2() {
         var input = getInput().repeat(10000)
@@ -21,25 +13,22 @@ class Day16 : AOCDay {
 
         input = input.drop(positionToSkipTo)
 
-        for (i in 1..100) {
-            input = iterateOnePhasePt2(input)
-        }
-
-        val answer = input
-                .take(8)
-
-        println(answer)
+        println(run100Phases(input, this::iterateOnePhasePt2))
     }
 
-    private fun iterateOnePhase(number: String): String {
-        val result = mutableListOf<String>()
+    private fun run100Phases(input: String, callBack: (String) -> String): String =
+            generateSequence(callBack(input)) { callBack(it) }
+                    .map { it.take(8) }
+                    .take(100)
+                    .last()
 
-        number.forEachIndexed { index, _ -> result.add(calculateSingleDigit(number, index + 1)) }
-
-        return result.joinToString("")
-    }
+    private fun iterateOnePhase(number: String): String =
+            number
+                    .mapIndexed { index, _ -> calculateSingleDigit(number, index + 1) }
+                    .joinToString("")
 
     private fun iterateOnePhasePt2(number: String): String {
+        //Take advantage of known properties about position and number length to shortcut process!
         val result = mutableListOf<Int>()
         val reversedNumber = number.toCharArray().reversed()
 
@@ -54,53 +43,40 @@ class Day16 : AOCDay {
         return result.reversed().joinToString("")
     }
 
-    private fun calculateSingleDigit(number: String, position: Int): String {
-        val answer: Int
+    private fun calculateSingleDigit(number: String, position: Int): Int {
+        //Drop the first <position - 1> digits, they all get multiplied by 0 so have no effect
+        val numberAsInts = number.drop(position - 1).map { it.toString().toInt() }
 
-        if (position > number.length / 2) {
-            answer = number
-                    .drop(position - 1)
-                    .map { it.toString().toInt() }
-                    .reduce { a, b -> a + b }
-        } else if (position > number.length / 3) {
-            answer = number
-                    .drop(position - 1)
-                    .take(position)
-                    .map { it.toString().toInt() }
-                    .reduce { a, b -> a + b }
+        val answer = if (position > number.length / 3) {
+            //Shortcut when position is more than 1/3 the way along input
+            // - just sum the next <position> digits
+            numberAsInts.take(position).sum()
         } else {
-            //Drop first position - 1 chars (will be multiplied by 0 anyway), group rest into groups of position long
-            val numberGroups = number
-                    .drop(position - 1)
-                    .withIndex()
-                    .groupBy { it.index / position }
-                    .map { it.value.map { it.value } }
+            numberAsInts
 
-            //Group again into groups of 4 for repeating pattern
-            val result = numberGroups
-                    .withIndex()
-                    .groupBy { it.index / 4 }
-                    .map { it.value.map { it.value } }
+                    //Chunk up by position, as this is the length of each element in the pattern
+                    .chunk(position)
 
-            answer = result
-                    .map {
-                        if (it.count() < 3) {
-                            addCharList(it.first())
-                        } else {
-                            (addCharList(it.first()) - addCharList(it.take(3).last()))
-                        }
-                    }
-                    .reduce { a, b -> a + b }
+                    //Then chunk into groups of 4 position-long lists for repeated pattern
+                    .chunk(4)
+
+                    //Because we dropped the first (position -1) digits, pattern is shifted
+                    // - is effectively now 1, 0, -1, 0
+
+                    //This is equivalent to summing the first group, then taking off the sum
+                    //of the third group, if it exists
+                    .map { it.first().sum() - (it.drop(2).firstOrNull()?.sum() ?: 0) }
+
+                    //Sum the results of each pattern repetition
+                    .sum()
         }
 
-        return (abs(answer) % 10).toString()
+        //Take the absolute value of the answer and return the last digit as a string
+        return abs(answer) % 10
     }
 
-    private fun addCharList(list: List<Char>): Int {
-        return list.map { it.toString().toInt() }.reduce { a, b -> a + b }
-    }
+    private fun getInput(): String = readFileContents("Day16/input.txt")
 
-    private fun getInput(): String {
-        return readFileContents("Day16/input.txt")
-    }
+    private fun <T> List<T>.chunk(size: Int): List<List<T>> =
+            this.withIndex().groupBy { it.index / size }.map { it.value.map { it.value } }
 }
