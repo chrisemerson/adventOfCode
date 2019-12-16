@@ -30,16 +30,21 @@ class Day16 : AOCDay {
     private fun iterateOnePhasePt2(number: String): String {
         //Take advantage of known properties about position and number length to shortcut process!
         val result = mutableListOf<Int>()
+
+        //Because each digit in the output depends on the digit in the same position in the input and all subsequent digits, better to work backwards
         val reversedNumber = number.toCharArray().reversed()
 
         for (i in reversedNumber.indices) {
             if (i == 0) {
-                result.add(reversedNumber[i].toString().toInt() % 10)
+                //Special case for last digit - just copy across
+                result.add(reversedNumber[i].toString().toInt())
             } else {
+                //For any other digit, add the previous output digit to the current input digit and mod 10
                 result.add((result[i - 1] + reversedNumber[i].toString().toInt()) % 10)
             }
         }
 
+        //Reverse the result again to get the output the right way around
         return result.reversed().joinToString("")
     }
 
@@ -48,30 +53,28 @@ class Day16 : AOCDay {
         val numberAsInts = number.drop(position - 1).map { it.toString().toInt() }
 
         val answer = if (position > number.length / 3) {
-            //Shortcut when position is more than 1/3 the way along input
-            // - just sum the next <position> digits
+            //Shortcut when position is more than 1/3 the way along input - just sum the next <position> digits
             numberAsInts.take(position).sum()
         } else {
             numberAsInts
-
                     //Chunk up by position, as this is the length of each element in the pattern
+                    //For position p, this gives... [[a, b, c, d, e, f,... p], [g, h, i, j, k, l,... p], ...
                     .chunk(position)
 
                     //Then chunk into groups of 4 position-long lists for repeated pattern
+                    //For position p, this gives... [[[a, b, c,... p], [d, e, f,... p], [g, h, i,... p], [j, k, l,... p]], [[a2, b2, c2,... p], ...
+                    //                               |--------------------------- Group of 4 ---------------------------|  |-----------------------
                     .chunk(4)
 
-                    //Because we dropped the first (position -1) digits, pattern is shifted
-                    // - is effectively now 1, 0, -1, 0
-
-                    //This is equivalent to summing the first group, then taking off the sum
-                    //of the third group, if it exists
+                    //Because we dropped the first (position -1) digits, pattern is shifted - is effectively now 1, 0, -1, 0
+                    //This is equivalent to summing the first group in each group of 4, then taking off the sum of the third, if it exists
                     .map { it.first().sum() - (it.drop(2).firstOrNull()?.sum() ?: 0) }
 
                     //Sum the results of each pattern repetition
                     .sum()
         }
 
-        //Take the absolute value of the answer and return the last digit as a string
+        //Return the last digit of the answer
         return abs(answer) % 10
     }
 
