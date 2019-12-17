@@ -95,7 +95,7 @@ class ASCII : InputProvider, OutputConsumer {
         val individualMovements = getInstructionsAsIndividualMovements()
 
         var fCounter = 0
-        var outputInstructionsList = mutableListOf<String>()
+        val outputInstructionsList = mutableListOf<String>()
 
         for (i in individualMovements.indices) {
             when (individualMovements[i]) {
