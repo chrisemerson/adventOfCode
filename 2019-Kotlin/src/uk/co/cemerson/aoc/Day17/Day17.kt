@@ -20,24 +20,17 @@ class Day17 : AOCDay {
     override fun part2() {
         val ASCII = ASCII()
         val computer = Computer(ASCII, ASCII)
-        val program = getProgram().toMutableList()
+        var program = getProgram().toMutableList()
+
+//        computer.execute(program)
+//
+//        ASCII.drawGrid()
+
+        program = (listOf(2.toBigInteger()) + program.drop(1)).toMutableList()
 
         computer.execute(program)
 
-        ASCII.drawGrid()
-
-        program[0] = 2.toBigInteger()
-
-        val instructionsList = ASCII.getInstructionsList()
-        val commonSubSequences = ASCII.findCommonSubsequences(instructionsList)
-
-        println(instructionsList)
-//        println(commonSubSequences)
-
-        println(ASCII.splitIntoSubSequences(instructionsList, commonSubSequences))
-
-
-//        computer.execute(program)
+        println(ASCII.getStarDustCollected())
     }
 
     private fun getProgram(): List<BigInteger> =

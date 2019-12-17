@@ -15,12 +15,25 @@ class ASCII : InputProvider, OutputConsumer {
     private var robotY = 0
     private var robotDir = 0
 
+    private val inputSeq = (
+            "A,B,A,B,A,C,B,C,A,C".toList() + listOf(10.toChar())
+                    + "R,4,L,10,L,10".toList() + listOf(10.toChar())
+                    + "L,8,R,12,R,10,R,4".toList() + listOf(10.toChar())
+                    + "L,8,L,8,R,10,R,4".toList() + listOf(10.toChar())
+                    + "n".toList() + listOf(10.toChar()))
+
+    private var inputPointer = 0
+    private var starDustCollected = 0.toBigInteger()
+
     override fun getInput(): BigInteger? {
+        if (inputPointer >= inputSeq.count()) {
+            return null
+        }
 
+        val input = inputSeq[inputPointer].toInt().toBigInteger()
+        inputPointer++
 
-
-
-        return null
+        return input
     }
 
     override fun shouldHalt(): Boolean {
@@ -28,6 +41,10 @@ class ASCII : InputProvider, OutputConsumer {
     }
 
     override fun consumeOutput(output: BigInteger) {
+        if (output > 255.toBigInteger()) {
+            starDustCollected = output
+        }
+
         if (output.toInt().toChar() == '^' || output.toInt().toChar() == '>' || output.toInt().toChar() == 'v' || output.toInt().toChar() == '<') {
             robotX = x
             robotY = y
@@ -74,41 +91,7 @@ class ASCII : InputProvider, OutputConsumer {
     private fun isIntersection(x: Int, y: Int): Boolean =
             grid[Pair(x, y)] == '#' && grid[Pair(x - 1, y)] == '#' && grid[Pair(x, y - 1)] == '#' && grid[Pair(x + 1, y)] == '#' && grid[Pair(x, y + 1)] == '#'
 
-    fun splitIntoSubSequences(list: List<Pair<String, Int>>, subSequences: List<List<Pair<String, Int>>>): List<String> {
-        var instructionKey = 0
-        val instructionMap = mutableMapOf<Pair<String, Int>, Int>()
-
-        list.groupBy { it }.forEach {
-            instructionMap[it.value.first()] = instructionKey++
-        }
-
-        val instructionList = list.map { instructionMap[it]!! }
-
-        println(instructionMap)
-        println(instructionList)
-
-
-        return listOf<String>()
-    }
-
-    fun findCommonSubsequences(list: List<Pair<String, Int>>): List<List<Pair<String, Int>>> {
-        val candidates = mutableListOf<List<Pair<String, Int>>>()
-
-        for (subSeqLengthToTry in 20.downTo(2)) {
-            for (start in 0..(list.count() - subSeqLengthToTry)) {
-                candidates += list
-                        .drop(start)
-                        .chunk(subSeqLengthToTry)
-                        .groupBy { it }
-                        .filter { it.value.count() > 1 }
-                        .map { it.key }
-            }
-        }
-
-        return candidates
-    }
-
-    fun getInstructionsList(): List<Pair<String, Int>> {
+    fun getInstructionsList(): List<String> {
         val individualMovements = getInstructionsAsIndividualMovements()
 
         var fCounter = 0
@@ -130,13 +113,10 @@ class ASCII : InputProvider, OutputConsumer {
             }
         }
 
-        while (outputInstructionsList.last() == "R" || outputInstructionsList.last() == "L") {
-            outputInstructionsList = outputInstructionsList.dropLast(1).toMutableList()
-        }
+        outputInstructionsList.add((fCounter + 1).toString())
 
-        return outputInstructionsList.chunk(2).map { Pair(it.first(), it.drop(1).first().toInt()) }
+        return outputInstructionsList
     }
-
 
     private fun getInstructionsAsIndividualMovements(): List<Char> {
         val movements = mutableListOf<Char>()
@@ -211,6 +191,8 @@ class ASCII : InputProvider, OutputConsumer {
                 3 -> Pair(currentSpace.first - 1, currentSpace.second)
                 else -> currentSpace
             }
+
+    fun getStarDustCollected(): BigInteger = starDustCollected
 
     fun drawGrid() {
         val maxX = grid.map { it.key.first }.max()!!
