@@ -1,0 +1,14 @@
+# Same as before - if there is ground 4 spaces away and a hole before then, jump
+NOT A J
+NOT B T
+OR T J
+NOT C T
+OR T J
+AND D J
+# However, only jump if there is ground at either E or H
+# If there's no ground at E we have to immediately jump again, and end up at H
+# If there's ground at E we roll forwards and start the detection from the top again
+NOT D T
+OR E T
+OR H T
+AND T J
