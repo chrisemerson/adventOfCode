@@ -42,6 +42,8 @@ class Day23 : AOCDay {
             //If all the inputs are empty, we are idling - send last received packet to NAT to computer 0
             if (nat.isNewPacketReceived() && inputInterfaces.map { it.value.isIdle() }.filter { !it }.count() == 0) {
                 stepsWithoutInput++
+            } else {
+                stepsWithoutInput = 0
             }
 
             if (stepsWithoutInput > 1000) {
