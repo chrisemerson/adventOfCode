@@ -34,7 +34,7 @@ class RepairDroid(val part2: Boolean) : InputProvider, OutputConsumer {
 
     private fun foundOxygenSystem() = oxygenSystemLocation.first != 0 || oxygenSystemLocation.second != 0
 
-    private fun fullyExploredMap(): Boolean = foundOxygenSystem() && maze.map{it.value}.filter{!it}.count() == distancesFromHome.count()
+    private fun fullyExploredMap(): Boolean = foundOxygenSystem() && maze.map { it.value }.filter { !it }.count() == distancesFromHome.count()
 
     override fun consumeOutput(output: BigInteger) {
         when (output.toInt()) {

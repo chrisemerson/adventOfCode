@@ -3,7 +3,6 @@ package uk.co.cemerson.aoc.Day22
 import uk.co.cemerson.aoc.AOCDay
 import java.math.BigInteger
 
-
 class Day22 : AOCDay {
     override fun part1() {
         val deckSize = 10007.toBigInteger()
