@@ -30,16 +30,16 @@ fn main() {
     println!("Part 2: You encountered {} trees (1, 1)", count_trees_encountered(map.clone(), start.clone(), &Velocity {x: 1, y: 1}));
     tree_product *= count_trees_encountered(map.clone(), start.clone(), &Velocity {x: 1, y: 1});
 
-    println!("Part 2: You encountered {} trees (1, 1)", count_trees_encountered(map.clone(), start.clone(), &Velocity {x: 3, y: 1}));
+    println!("Part 2: You encountered {} trees (3, 1)", count_trees_encountered(map.clone(), start.clone(), &Velocity {x: 3, y: 1}));
     tree_product *= count_trees_encountered(map.clone(), start.clone(), &Velocity {x: 3, y: 1});
 
-    println!("Part 2: You encountered {} trees (1, 1)", count_trees_encountered(map.clone(), start.clone(), &Velocity {x: 5, y: 1}));
+    println!("Part 2: You encountered {} trees (5, 1)", count_trees_encountered(map.clone(), start.clone(), &Velocity {x: 5, y: 1}));
     tree_product *= count_trees_encountered(map.clone(), start.clone(), &Velocity {x: 5, y: 1});
 
-    println!("Part 2: You encountered {} trees (1, 1)", count_trees_encountered(map.clone(), start.clone(), &Velocity {x: 7, y: 1}));
+    println!("Part 2: You encountered {} trees (7, 1)", count_trees_encountered(map.clone(), start.clone(), &Velocity {x: 7, y: 1}));
     tree_product *= count_trees_encountered(map.clone(), start.clone(), &Velocity {x: 7, y: 1});
 
-    println!("Part 2: You encountered {} trees (1, 1)", count_trees_encountered(map.clone(), start.clone(), &Velocity {x: 1, y: 2}));
+    println!("Part 2: You encountered {} trees (1, 2)", count_trees_encountered(map.clone(), start.clone(), &Velocity {x: 1, y: 2}));
     tree_product *= count_trees_encountered(map.clone(), start.clone(), &Velocity {x: 1, y: 2});
 
     println!("Part 2: Product of trees encountered was {}", tree_product);
