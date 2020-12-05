@@ -59,16 +59,7 @@ fn parse_passport(passport_text: &str) -> Passport {
         }
     }
 
-    return Passport {
-        byr: byr,
-        iyr: iyr,
-        eyr: eyr,
-        hgt: hgt,
-        hcl: hcl,
-        ecl: ecl,
-        pid: pid,
-        cid: cid
-    }
+    return Passport { byr, iyr, eyr, hgt, hcl, ecl, pid, cid }
 }
 
 fn passport_has_required_fields(passport: &Passport) -> bool {
@@ -85,6 +76,76 @@ fn passport_has_required_fields(passport: &Passport) -> bool {
 fn passport_is_valid(passport: &Passport) -> bool {
     if !passport_has_required_fields(passport) {
         return false;
+    }
+
+    return
+        validate_year(passport.byr.as_ref().unwrap(), 1920, 2020)
+            && validate_year(passport.iyr.as_ref().unwrap(), 2010, 2020)
+            && validate_year(passport.eyr.as_ref().unwrap(), 2020, 2030)
+            && validate_height(passport.hgt.as_ref().unwrap())
+            && validate_hair_color(passport.hcl.as_ref().unwrap())
+            && validate_eye_color(passport.ecl.as_ref().unwrap())
+            && validate_passport_id(passport.pid.as_ref().unwrap());
+}
+
+fn validate_year(year: &str, min: u32, max: u32) -> bool {
+    let parsed_year = year.parse::<u32>();
+
+    return match parsed_year {
+        Ok(y) => y >= min && y <= max,
+        Err(_e) => false
+    };
+}
+
+fn validate_height(height: &str) -> bool {
+    let unit = &height[(height.len() - 2)..];
+    let value = &height[..(height.len() - 2)].parse::<i32>();
+
+    return match value {
+        Err(_e) => false,
+        Ok(v) => match unit {
+            "cm" => v >= &150 && v <= &193,
+            "in" => v >= &59 && v <= &76,
+            _ => false
+        }
+    };
+}
+
+fn validate_hair_color(hair_color: &str) -> bool {
+    let first_char = &hair_color[..1];
+    let remaining_chars = &hair_color[1..];
+
+    if first_char != "#" || remaining_chars.len() != 6 {
+        return false;
+    }
+
+    for char in remaining_chars.chars() {
+        match char {
+            'a' | 'b' | 'c' | 'd' | 'e' | 'f' | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' => (),
+            _ => return false
+        }
+    }
+
+    return true;
+}
+
+fn validate_eye_color(eye_color: &str) -> bool {
+    return match eye_color {
+        "amb" | "blu" | "brn" | "gry" | "grn" | "hzl" | "oth" => true,
+        _ => false
+    }
+}
+
+fn validate_passport_id(passport_id: &str) -> bool {
+    if passport_id.len() != 9 {
+        return false;
+    }
+
+    for char in passport_id.chars() {
+        match char {
+            '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' => (),
+            _ => return false
+        }
     }
 
     return true;
