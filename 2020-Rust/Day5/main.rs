@@ -7,7 +7,7 @@ fn main() {
     let seats = input
         .split("\n")
         .map(|str|
-            isize::from_str_radix(
+            i32::from_str_radix(
                 &str
                     .replace("F", "0")
                     .replace("B", "1")
@@ -15,7 +15,7 @@ fn main() {
                     .replace("R", "1"),
                 2)
                 .unwrap())
-        .collect::<Vec<isize>>();
+        .collect::<Vec<i32>>();
 
     let max_seat_id = seats
         .iter()
@@ -25,7 +25,7 @@ fn main() {
     println!("The highest seat number is {}", max_seat_id);
 
     for seat in 0..1023 {
-        if !seats.contains(&(seat as isize)) && seats.contains(&(seat - 1 as isize)) && seats.contains(&(seat + 1 as isize)) {
+        if !seats.contains(&seat) && seats.contains(&(seat - 1)) && seats.contains(&(seat + 1)) {
             println!("Our seat is {}", seat);
         }
     }
