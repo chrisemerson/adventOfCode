@@ -29,14 +29,15 @@ fn main() {
         let mut sum_of_contiguous_numbers:i64 = 0;
 
         for end in start..numbers.len() {
-            let contiguous_numbers:Vec<i64> = numbers[start..end + 1].to_vec();
             sum_of_contiguous_numbers += numbers[end];
 
             if sum_of_contiguous_numbers > sum {
                 break;
             }
 
-            if contiguous_numbers.len() != 1 && sum_of_contiguous_numbers == sum {
+            if end - start != 1 && sum_of_contiguous_numbers == sum {
+                let contiguous_numbers:Vec<i64> = numbers[start..end + 1].to_vec();
+
                 println!("Contiguous group found that sum to {}: {:?}", &sum, contiguous_numbers);
 
                 let min_number = contiguous_numbers.iter().min().unwrap();
