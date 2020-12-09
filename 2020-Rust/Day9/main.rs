@@ -26,9 +26,15 @@ fn main() {
     }
 
     for start in 0..numbers.len() {
+        let mut sum_of_contiguous_numbers:i64 = 0;
+
         for end in start..numbers.len() {
             let contiguous_numbers:Vec<i64> = numbers[start..end + 1].to_vec();
-            let sum_of_contiguous_numbers = contiguous_numbers.iter().fold(0, |a, b| a + b);
+            sum_of_contiguous_numbers += numbers[end];
+
+            if sum_of_contiguous_numbers > sum {
+                break;
+            }
 
             if contiguous_numbers.len() != 1 && sum_of_contiguous_numbers == sum {
                 println!("Contiguous group found that sum to {}: {:?}", &sum, contiguous_numbers);
@@ -42,10 +48,6 @@ fn main() {
                     max_number,
                     min_number + max_number
                 );
-            }
-
-            if sum_of_contiguous_numbers > sum {
-                break;
             }
         }
     }
