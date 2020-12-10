@@ -25,31 +25,28 @@ fn main() {
         }
     }
 
-    for start in 0..numbers.len() {
-        let mut sum_of_contiguous_numbers:i64 = 0;
+    let mut start:usize = 0;
+    let mut end:usize = 1;
 
-        for end in start..numbers.len() {
-            sum_of_contiguous_numbers += numbers[end];
+    loop {
+        let slice = &numbers[start..end];
+        let sum_of_contiguous_numbers:i64 = slice.iter().sum();
 
-            if sum_of_contiguous_numbers > sum {
-                break;
-            }
+        if sum_of_contiguous_numbers == sum {
+            let min = slice.iter().min().unwrap();
+            let max = slice.iter().max().unwrap();
 
-            if end - start != 1 && sum_of_contiguous_numbers == sum {
-                let contiguous_numbers:Vec<i64> = numbers[start..end + 1].to_vec();
+            println!("Sum of start and end of group ({} and {}) is {}", min, max, min + max);
 
-                println!("Contiguous group found that sum to {}: {:?}", &sum, contiguous_numbers);
+            break;
+        }
 
-                let min_number = contiguous_numbers.iter().min().unwrap();
-                let max_number = contiguous_numbers.iter().max().unwrap();
+        if sum_of_contiguous_numbers < sum {
+            end += 1;
+        }
 
-                println!(
-                    "Sum of start and end of group ({} and {}) is {}",
-                    min_number,
-                    max_number,
-                    min_number + max_number
-                );
-            }
+        if sum_of_contiguous_numbers > sum {
+            start += 1;
         }
     }
 }
