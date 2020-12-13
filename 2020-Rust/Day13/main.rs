@@ -68,19 +68,18 @@ fn main() {
             }
         }
 
+        if biggest_bus_not_in_skip_time == 0 {
+            println!("The amazing bus sequence starts at time {}", time);
+            break;
+        }
+
         let biggest_bus_offsets = bus_times
             .iter()
             .filter(|(_k, v)| *v == &biggest_bus_not_in_skip_time)
             .map(|(k, _v)| *k)
             .collect::<Vec<i64>>();
 
-        let biggest_bus_offset = match biggest_bus_offsets.get(0) {
-            Some(i) => i,
-            None => {
-                println!("The amazing bus sequence starts at time {}", time);
-                break;
-            }
-        };
+        let biggest_bus_offset = biggest_bus_offsets.get(0).unwrap();
 
         loop {
             if (time + biggest_bus_offset) % biggest_bus_not_in_skip_time == 0 {
