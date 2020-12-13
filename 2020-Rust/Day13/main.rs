@@ -56,35 +56,39 @@ fn main() {
         }
     }
 
-    let product_of_moduli: i64 = bus_times.iter().fold(1, |a, (_t, b)| a * b );
+    let mut skip_time:i64 = 1;
+    let mut time:i64 = 0;
 
-    let mut timestamp: i64 = bus_times
-        .iter()
-        .map(|(t, b)| (0 - t) * (product_of_moduli / b) * mod_inv(product_of_moduli / b, *b))
-        .fold(0, |a, b| a + b);
+    loop {
+        let mut biggest_bus_not_in_skip_time:i64 = 0;
 
-    while timestamp > 0 {
-        timestamp -= product_of_moduli;
+        for (_t, bus) in &bus_times {
+            if bus > &biggest_bus_not_in_skip_time && &skip_time % bus != 0 {
+                biggest_bus_not_in_skip_time = bus.to_owned();
+            }
+        }
+
+        let biggest_bus_offsets = bus_times
+            .iter()
+            .filter(|(_k, v)| *v == &biggest_bus_not_in_skip_time)
+            .map(|(k, _v)| *k)
+            .collect::<Vec<i64>>();
+
+        let biggest_bus_offset = match biggest_bus_offsets.get(0) {
+            Some(i) => i,
+            None => {
+                println!("The amazing bus sequence starts at time {}", time);
+                break;
+            }
+        };
+
+        loop {
+            if (time + biggest_bus_offset) % biggest_bus_not_in_skip_time == 0 {
+                skip_time *= biggest_bus_not_in_skip_time;
+                break;
+            }
+
+            time += skip_time;
+        }
     }
-
-    while timestamp < 0 {
-        timestamp += product_of_moduli;
-    }
-
-    println!("The amazing bus sequence starts at time {}", timestamp);
-}
-
-fn mod_inv(a: i64, module: i64) -> i64 {
-    let mut mn = (module, a);
-    let mut xy = (0, 1);
-
-    while mn.1 != 0 {
-        xy = (xy.1, xy.0 - (mn.0 / mn.1) * xy.1);
-        mn = (mn.1, mn.0 % mn.1);
-    }
-
-    while xy.0 < 0 {
-        xy.0 += module;
-    }
-    xy.0
 }
