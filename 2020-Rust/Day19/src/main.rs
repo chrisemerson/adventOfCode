@@ -1,6 +1,6 @@
-use std::fs;
-use std::collections::HashMap;
 use regex::Regex;
+use std::collections::HashMap;
+use std::fs;
 
 fn main() {
     let input = fs::read_to_string("input.txt")

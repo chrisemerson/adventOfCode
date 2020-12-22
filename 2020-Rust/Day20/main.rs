@@ -1,5 +1,5 @@
-use std::fs;
 use std::cmp::min;
+use std::fs;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 enum PieceType {

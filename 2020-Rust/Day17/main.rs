@@ -1,7 +1,7 @@
-use std::fs;
-use std::collections::HashMap;
-use std::cmp::min;
 use std::cmp::max;
+use std::cmp::min;
+use std::collections::HashMap;
+use std::fs;
 
 #[derive(Debug, Clone)]
 struct Cell {
