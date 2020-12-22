@@ -28,33 +28,21 @@ fn main() {
         }
     }
 
-    let mut player1cards = player1deck.clone();
-    let mut player2cards = player2deck.clone();
+    let mut player1result = VecDeque::new();
+    let mut player2result = VecDeque::new();
 
-    loop {
-        let mut player1result = VecDeque::new();
-        let mut player2result = VecDeque::new();
+    match play_round_recursive_combat(&player1deck, &player2deck) {
+        Ok(result) => {
+            player1result = result.0;
+            player2result = result.1;
+        },
+        Err(_) => ()
+    };
 
-        match play_round_recursive_combat(&player1cards, &player2cards) {
-            Ok(result) => {
-                player1result = result.0;
-                player2result = result.1;
-            },
-            Err(_) => ()
-        };
-
-        player1cards = player1result;
-        player2cards = player2result;
-
-        if player1cards.len() == 0 || player2cards.len() == 0 {
-            if player2cards.len() == 0 {
-                println!("The score of the winning player's hand in Recursive Combat is {}", calculate_score(player1cards));
-            } else {
-                println!("The score of the winning player's hand in Recursive Combat is {}", calculate_score(player2cards));
-            }
-
-            break;
-        }
+    if player2result.len() == 0 {
+        println!("The score of the winning player's hand in Recursive Combat is {}", calculate_score(player1result));
+    } else {
+        println!("The score of the winning player's hand in Recursive Combat is {}", calculate_score(player2result));
     }
 }
 
