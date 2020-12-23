@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 fn main() {
     let cups:Vec<u32> = vec![9, 5, 2, 3, 1, 6, 4, 8, 7];
 
@@ -16,7 +14,7 @@ fn main() {
 
         print!("{}", cup);
 
-        cup = get_next_cup(&final_cups_pt1, cup);
+        cup = get_next_cup(&final_cups_pt1, cup as usize);
     }
 
     println!();
@@ -24,22 +22,22 @@ fn main() {
     let final_cups_pt2 = run_game(cups.clone(), 1000000, 10000000);
 
     let cup_after_1 = get_next_cup(&final_cups_pt2, 1);
-    let cup_after_that = get_next_cup(&final_cups_pt2, cup_after_1);
+    let cup_after_that = get_next_cup(&final_cups_pt2, cup_after_1 as usize);
 
     println!("Product of 2 cups after 1 with 10,000,000 turns and 1,000,000 cups: {}", cup_after_1 as u64 * cup_after_that as u64)
 }
 
-fn run_game(initial_cups: Vec<u32>, num_cups: usize, turns: u32) -> HashMap<u32, u32> {
+fn run_game(initial_cups: Vec<u32>, num_cups: usize, turns: u32) -> Vec<u32> {
     let mut current_turn = 1;
 
-    let mut cups = create_hashmap_structure_for_cups(&initial_cups, num_cups);
+    let mut cups = create_cups_linked_list(&initial_cups, num_cups);
     let mut current_cup = initial_cups[0];
 
     loop {
-        let moved_cup_1 = get_next_cup(&cups, current_cup);
-        let moved_cup_2 = get_next_cup(&cups, moved_cup_1);
-        let moved_cup_3 = get_next_cup(&cups, moved_cup_2);
-        let cup_after_moved_cups = get_next_cup(&cups, moved_cup_3);
+        let moved_cup_1 = get_next_cup(&cups, current_cup as usize);
+        let moved_cup_2 = get_next_cup(&cups, moved_cup_1 as usize);
+        let moved_cup_3 = get_next_cup(&cups, moved_cup_2 as usize);
+        let cup_after_moved_cups = get_next_cup(&cups, moved_cup_3 as usize);
 
         let mut destination_cup_label = current_cup - 1;
 
@@ -51,13 +49,13 @@ fn run_game(initial_cups: Vec<u32>, num_cups: usize, turns: u32) -> HashMap<u32,
             }
         }
 
-        let cup_after_destination_cup = get_next_cup(&cups, destination_cup_label);
+        let cup_after_destination_cup = get_next_cup(&cups, destination_cup_label as usize);
 
-        cups.insert(current_cup, cup_after_moved_cups);
-        cups.insert(destination_cup_label, moved_cup_1);
-        cups.insert(moved_cup_3, cup_after_destination_cup);
+        cups[current_cup as usize] = cup_after_moved_cups;
+        cups[destination_cup_label as usize] = moved_cup_1;
+        cups[moved_cup_3 as usize] = cup_after_destination_cup;
 
-        current_cup = get_next_cup(&cups, current_cup);
+        current_cup = get_next_cup(&cups, current_cup as usize);
 
         if current_turn == turns {
             break;
@@ -69,29 +67,26 @@ fn run_game(initial_cups: Vec<u32>, num_cups: usize, turns: u32) -> HashMap<u32,
     return cups;
 }
 
-fn get_next_cup(cups: &HashMap<u32, u32>, index: u32) -> u32 {
-    return *cups.get(&index).unwrap();
+fn get_next_cup(cups: &Vec<u32>, index: usize) -> u32 {
+    return cups[index];
 }
 
-fn create_hashmap_structure_for_cups(initial_cups: &Vec<u32>, num_cups: usize) -> HashMap<u32, u32>
+fn create_cups_linked_list(initial_cups: &Vec<u32>, num_cups: usize) -> Vec<u32>
 {
-    let mut cups:HashMap<u32, u32> = HashMap::new();
-
+    let mut cups:Vec<u32> = vec![0; num_cups + 1];
     let mut last_label = 0;
 
     for cup in initial_cups {
-        cups.insert(last_label, *cup);
-        last_label = *cup;
+        cups[last_label] = *cup;
+        last_label = *cup as usize;
     }
 
     for i in initial_cups.len() + 1 .. num_cups + 1 {
-        cups.insert(last_label, i as u32);
-        last_label = i as u32;
+        cups[last_label] = i as u32;
+        last_label = i;
     }
 
-    cups.insert(last_label, initial_cups[0]);
-
-    cups.remove(&0);
+    cups[last_label] = initial_cups[0];
 
     return cups;
 }
