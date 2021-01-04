@@ -71,7 +71,7 @@ class NiceStringFinder
         $doubleLetterFound = false;
 
         for ($i = 1; $i < strlen($string); $i++) {
-            if ($string{$i} == $string{$i - 1}) {
+            if ($string[$i] == $string[$i - 1]) {
                 $doubleLetterFound = true;
             }
         }

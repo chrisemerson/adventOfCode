@@ -7,6 +7,11 @@
             "AdventOfCode\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "speo\\AdventOfCode\\": "spec/"
+        }
+    },
     "config": {
         "bin-dir": "bin"
     }

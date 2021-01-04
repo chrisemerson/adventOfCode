@@ -6,12 +6,12 @@ class RPGSim
     private $decorators = [];
     private $players = [];
 
-    public function __construct($decorators = [])
+    public function __construct(array $decorators = [])
     {
         $this->decorators = $decorators;
     }
 
-    public function addPlayer($label, Player $player)
+    public function addPlayer(string $label, Player $player)
     {
         $this->players[$label] = $player;
     }
@@ -52,21 +52,31 @@ class RPGSim
 
     private function getDecoratorCombinations()
     {
-        $decoratorCombinations = [];
+        return array_filter(
+            $this->getCombinationsOfArrayItems($this->decorators),
+            function (array $decorators) {
+                return count(array_unique($decorators)) == count($decorators);
+            }
+        );
+    }
 
-        foreach ($this->decorators[0] as $decorator0Class) {
-            foreach ($this->decorators[1] as $decorator1Class) {
-                foreach ($this->decorators[2] as $decorator2Class) {
-                    foreach ($this->decorators[3] as $decorator3Class) {
-                        if ($decorator2Class != $decorator3Class) {
-                            $decoratorCombinations[] = [$decorator0Class, $decorator1Class, $decorator2Class, $decorator3Class];
-                        }
-                    }
+    private function getCombinationsOfArrayItems(array $listOfLists)
+    {
+        $combinations = [];
+
+        if (!empty($listOfLists)) {
+            $combinationsOfRemainingItems = $this->getCombinationsOfArrayItems(array_slice($listOfLists, 1));
+
+            foreach ($listOfLists[0] as $item) {
+                foreach ($combinationsOfRemainingItems as $combinationOfRemainingItems) {
+                    $combinations[] = array_merge($combinationOfRemainingItems, [$item]);
                 }
             }
+        } else {
+            $combinations[] = [];
         }
 
-        return $decoratorCombinations;
+        return $combinations;
     }
 
     private function playerWinsGame($combination, $playerToWin)

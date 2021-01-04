@@ -4,7 +4,6 @@ namespace spec\AdventOfCode\Day21;
 
 use AdventOfCode\Day21\Player;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class GameSpec extends ObjectBehavior
 {

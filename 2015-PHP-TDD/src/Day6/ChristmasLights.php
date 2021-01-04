@@ -81,23 +81,23 @@ class ChristmasLights
 
     private function turnOn($x, $y)
     {
-        $this->lights[$x]{$y} = chr(1);
+        $this->lights[$x][$y] = chr(1);
     }
 
     private function turnOff($x, $y)
     {
-        $this->lights[$x]{$y} = chr(0);
+        $this->lights[$x][$y] = chr(0);
     }
 
     private function toggle($x, $y)
     {
-        $this->lights[$x]{$y} = chr(1 - ord($this->lights[$x]{$y}));
+        $this->lights[$x][$y] = chr(1 - ord($this->lights[$x][$y]));
     }
 
     private function changeBrightness($x, $y, $change)
     {
-        $currentBrightness = ord($this->brightLights[$x]{$y});
+        $currentBrightness = ord($this->brightLights[$x][$y]);
         $newBrightness = max(0, $currentBrightness + $change);
-        $this->brightLights[$x]{$y} = chr($newBrightness);
+        $this->brightLights[$x][$y] = chr($newBrightness);
     }
 }

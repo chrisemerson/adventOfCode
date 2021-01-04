@@ -1,11 +1,9 @@
 <?php
-
 namespace spec\AdventOfCode\Day21;
 
 use AdventOfCode\Day21\Player;
 use AdventOfCode\Day21\PlayerDecorators\Weapons\GreataxeDecorator;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class RPGSimSpec extends ObjectBehavior
 {
@@ -28,6 +26,8 @@ class RPGSimSpec extends ObjectBehavior
     function it_finds_the_cheapest_way_to_win_a_game_with_no_decorators(Player $player, Player $opponent)
     {
         $player->getDamage()->willReturn(10);
+        $opponent->attack(10)->shouldBeCalled();
+        $opponent->isDefeated()->willReturn(true);
 
         $this->addPlayer('player', $player);
         $this->addPlayer('opponent', $opponent);
@@ -38,6 +38,10 @@ class RPGSimSpec extends ObjectBehavior
     function it_finds_the_cheapest_way_to_win_a_game_with_1_decorator_in_1_group(Player $player, Player $opponent)
     {
         $this->beConstructedWith([[GreataxeDecorator::class]]);
+
+        $player->getDamage()->willReturn(0);
+        $opponent->attack(8)->shouldBeCalled();
+        $opponent->isDefeated()->willReturn(true);
 
         $this->addPlayer('player', $player);
         $this->addPlayer('opponent', $opponent);

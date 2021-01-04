@@ -33,14 +33,14 @@ class PasswordFinder
             return $password;
         }
 
-        $nextIndex = array_search($password{$charToIterate}, self::VALID_CHARS) + 1;
+        $nextIndex = array_search($password[$charToIterate], self::VALID_CHARS) + 1;
 
         if ($nextIndex >= count(self::VALID_CHARS)) {
             $password = $this->iteratePassword($password, $charToIterate - 1);
             $nextIndex = 0;
         }
 
-        $password{$charToIterate} = self::VALID_CHARS[$nextIndex];
+        $password[$charToIterate] = self::VALID_CHARS[$nextIndex];
 
         return $password;
     }
@@ -77,10 +77,10 @@ class PasswordFinder
         $ambiguousLetters = ['i', 'l', 'o'];
 
         for ($i = 0; $i <=7; $i++) {
-            if (in_array($password{$i}, $ambiguousLetters)) {
+            if (in_array($password[$i], $ambiguousLetters)) {
                 return
                     substr($password, 0, $i)
-                    . chr(ord($password{$i}) + 1)
+                    . chr(ord($password[$i]) + 1)
                     . str_repeat('a', 7 - $i);
             }
         }

@@ -18,7 +18,7 @@ class LookAndSay
 
         if (preg_match_all('/(.)\1*/', $input, $groups)) {
             foreach ($groups[0] as $group) {
-                $output .= strlen($group) . $group{0};
+                $output .= strlen($group) . $group[0];
             }
         }
 
