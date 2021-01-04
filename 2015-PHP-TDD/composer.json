@@ -1,5 +1,6 @@
 {
-    "require": {
+    "require-dev": {
+        "phpspec/phpspec": "^7.0"
     },
     "autoload": {
         "psr-4": {
@@ -8,14 +9,5 @@
     },
     "config": {
         "bin-dir": "bin"
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:chrisemerson/phpspec.git"
-        }
-    ],
-    "require-dev": {
-        "phpspec/phpspec": "dev-fix-code-generation-errors-on-windows"
     }
 }

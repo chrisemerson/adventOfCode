@@ -1,13 +1,1 @@
 /.idea/
-/2015/bin/
-/2015/vendor/
-
-/2016/target
-/2016/classes
-/2016/checkouts
-/2016/pom.xml
-/2016/pom.xml.asc
-/2016/*.jar
-/2016/*.class
-/2016/.lein-*
-/2016/.nrepl-port

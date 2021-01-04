@@ -39,4 +39,28 @@ This will download the project dependencies. To run the code for a particular da
 2017
 ----
 
-Right, no more excuses - it's about time I learned Python.
+Right, no more excuses - it's about time I learned Python. This ended up being the first year I completed all 50 stars
+ - hooray!
+
+2018
+----
+
+Decided to use Go this year, but wasn't a fan. I still have a few to finish off so will come back to it.
+
+2019
+----
+
+Kotlin this year - really loved using this language. Loads of functional features, lots of stuff made really elegant for
+the developer, thumbs up!
+
+2020
+----
+
+Decided to try Rust this year. I can see how it's good for the applications for which it was designed, but I think it's
+a pretty niche case, and there's a lot of boilerplate / admin / babysitting you have to do for 99% of applications which
+don't need it. Glad I have given it a go though.
+
+2021
+----
+
+C#, JavaScript, Haskell, Ruby or Scala perhaps?
