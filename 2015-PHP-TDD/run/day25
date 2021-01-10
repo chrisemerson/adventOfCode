@@ -1,0 +1,13 @@
+#!/usr/bin/env php
+<?php
+
+use AdventOfCode\Day25\WeatherMachine;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$row = 2981;
+$col = 3075;
+
+$weatherMachine = new WeatherMachine();
+
+echo "Number at row " . $row . " and column " . $col . " is " . $weatherMachine->getNumberAt($row, $col) . PHP_EOL;
