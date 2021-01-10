@@ -10,6 +10,4 @@ class WizardSimulatorSpec extends ObjectBehavior
     {
         $this->shouldHaveType('AdventOfCode\Day22\WizardSimulator');
     }
-
-    function it_
 }
