@@ -8,7 +8,8 @@ class Wizard extends Player
 {
     public function __construct(
         int $hitPoints,
-        private int $mana
+        private int $mana,
+        private bool $hardMode
     ) {
         parent::__construct($hitPoints);
     }
@@ -31,8 +32,21 @@ class Wizard extends Player
 
     protected function performPerTurnSpellEffects(Spell $spell)
     {
+        if ($this->hardMode) {
+            $this->hitPoints -= 1;
+
+            if ($this->isDefeated()) {
+                throw new PlayerDefeated();
+            }
+        }
+
         $this->armor += $spell->getPerTurnArmor();
         $this->hitPoints += $spell->getPerTurnPointsHealed();
         $this->mana += $spell->getPerTurnManaRecharge();
+    }
+
+    public function isHardMode(): bool
+    {
+        return $this->hardMode;
     }
 }

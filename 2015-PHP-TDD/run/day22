@@ -14,20 +14,24 @@ require_once __DIR__ . "/../vendor/autoload.php";
 
 $wizardSimulator = new WizardSimulator();
 
-//$wizardSimulator->addWizard(new Wizard(50, 500));
-//$wizardSimulator->addBoss(new Boss(55, 8));
-
-$wizardSimulator->addWizard(new Wizard(10, 250));
-$wizardSimulator->addBoss(new Boss(14, 8));
-
 $wizardSimulator->addAvailableSpell(new MagicMissile());
 $wizardSimulator->addAvailableSpell(new Drain());
 $wizardSimulator->addAvailableSpell(new Shield());
 $wizardSimulator->addAvailableSpell(new Poison());
 $wizardSimulator->addAvailableSpell(new Recharge());
 
-$cheapestBattleWin = $wizardSimulator->findCheapestWayForWizardToWinBattle();
-echo "Least amount of Mana you can spend and still win: " . $cheapestBattleWin . PHP_EOL;
+//$wizardSimulator->setWizard(new Wizard(50, 500, false));
+//$wizardSimulator->setBoss(new Boss(55, 8));
+//
+//$cheapestBattleWin = $wizardSimulator->findCheapestWayForWizardToWinBattle();
+//echo "Least amount of Mana you can spend and still win: " . $cheapestBattleWin . PHP_EOL;
 
-$mostExpensiveBattleLose = $wizardSimulator->findMostExpensiveWayForWizardToLoseBattle();
-echo "Most amount of Mana you can spend and still lose: " . $mostExpensiveBattleLose;
+$wizardSimulator->setWizard(new Wizard(50, 500, true));
+$wizardSimulator->setBoss(new Boss(55, 8));
+
+try {
+    $cheapestBattleWin = $wizardSimulator->findCheapestWayForWizardToWinBattle();
+    echo "Least amount of Mana you can spend and still win in hard mode: " . $cheapestBattleWin . PHP_EOL;
+} catch (Exception $e) {
+    echo "Got here, not really sure how..." . PHP_EOL;
+}

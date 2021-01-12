@@ -17,7 +17,7 @@ abstract class Player
     {
         foreach ($this->activeSpells as $activeSpell) {
             if ($activeSpell['spell']::class == $spell::class) {
-                return $activeSpell['timer'] == 1;
+                return $activeSpell['timer'] === 1;
             }
         }
 
@@ -51,9 +51,7 @@ abstract class Player
             ];
         }
 
-        $this->activeSpells = array_filter($newSpells, function ($activeSpell) {
-            return $activeSpell['timer'] > 0;
-        });
+        $this->activeSpells = array_filter($newSpells, fn($s) => $s['timer'] > 0);
     }
 
     public function receiveDamage(int $damageAmount)

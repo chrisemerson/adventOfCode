@@ -7,20 +7,22 @@ use Exception;
 class WizardSimulator
 {
     /** @var Wizard */
-    private $wizard;
+    private Wizard $wizard;
 
     /** @var Boss */
-    private $boss;
+    private Boss $boss;
 
     /** @var Spell[] */
-    private $spells = [];
+    private array $spells = [];
 
-    public function addWizard(Wizard $wizard): void
+    private ?int $minCost = null;
+
+    public function setWizard(Wizard $wizard): void
     {
         $this->wizard = $wizard;
     }
 
-    public function addBoss(Boss $boss): void
+    public function setBoss(Boss $boss): void
     {
         $this->boss = $boss;
     }
@@ -35,14 +37,17 @@ class WizardSimulator
         return $this->findCostOfCheapestWinToGameRecursive($this->wizard, $this->boss);
     }
 
-    public function findMostExpensiveWayForWizardToLoseBattle(): int
-    {
-        return $this->findCostOfMostExpensiveLossToGameRecursive($this->wizard, $this->boss);
-    }
-
-    private function findCostOfCheapestWinToGameRecursive(Wizard $wizard, Boss $boss, int $costSoFar = 0, ?int $minCostSoFar = null): int
+    private function findCostOfCheapestWinToGameRecursive(Wizard $wizard, Boss $boss, int $costSoFar = 0): int
     {
         if ($boss->isDefeated()) {
+            if (is_null($this->minCost)) {
+                $this->minCost = $costSoFar;
+            }
+
+            echo $costSoFar . PHP_EOL;
+
+            $this->minCost = min($costSoFar, $this->minCost);
+
             return 0;
         }
 
@@ -50,26 +55,31 @@ class WizardSimulator
             throw new PlayerDefeated();
         }
 
+        if (!is_null($this->minCost) && $costSoFar > $this->minCost) {
+            //No point continuing, this branch already costs more than the current best cost
+            throw new PlayerDefeated();
+        }
+
         $availableSpells = array_filter(
             $this->spells,
-            function ($spell) {
-                return $this->wizard->canReceiveSpell($spell) && $this->boss->canReceiveSpell($spell);
-            }
+            fn ($s) => $wizard->canReceiveSpell($s) && $boss->canReceiveSpell($s)
         );
 
         $costsOfCastingSpells = [];
 
         foreach ($availableSpells as $spell) {
             try {
-                $cost = $spell->getManaCost()
-                    + $this->findCostOfCheapestWinToGameRecursive(
-                        ...$this->performTurnsUsingSpell($wizard, $boss, $spell)
+                [$newWizard, $newBoss] = $this->performTurnsUsingSpell($wizard, $boss, $spell);
+
+                $cost = $spell->getManaCost() + $this->findCostOfCheapestWinToGameRecursive(
+                        $newWizard,
+                        $newBoss,
+                        $costSoFar + $spell->getManaCost()
                     );
 
                 $costsOfCastingSpells[] = $cost;
             } catch (Exception $e)
             {}
-
         }
 
         if (count($costsOfCastingSpells) == 0) {
@@ -77,54 +87,6 @@ class WizardSimulator
         }
 
         return min($costsOfCastingSpells);
-    }
-
-    private function findCostOfMostExpensiveLossToGameRecursive(Wizard $wizard, Boss $boss): int
-    {
-        if ($boss->isDefeated()) {
-            throw new PlayerDefeated();
-        }
-
-        if ($wizard->isDefeated()) {
-            return 0;
-        }
-
-        $availableSpells = array_filter(
-            $this->spells,
-            function ($spell) {
-                return $this->wizard->canReceiveSpell($spell) && $this->boss->canReceiveSpell($spell);
-            }
-        );
-
-        $costsOfCastingSpells = array_map(
-            function ($spell) use ($wizard, $boss) {
-                try {
-                    return
-                        $spell->getManaCost()
-                        + $this->findCostOfMostExpensiveLossToGameRecursive(
-                            ...$this->performTurnsUsingSpell($wizard, $boss, $spell)
-                        );
-                } catch (PlayerDefeated $e) {
-                    return null;
-                } catch (CantAffordSpell $e) {
-                    return 0;
-                }
-            },
-            $availableSpells
-        );
-
-        $availableSpellCosts = array_filter(
-            $costsOfCastingSpells,
-            function ($cost) {
-                return $cost !== null;
-            }
-        );
-
-        if (count($availableSpellCosts) == 0) {
-            return 0;
-        }
-
-        return max($availableSpellCosts);
     }
 
     private function performTurnsUsingSpell(Wizard $wizard, Boss $boss, Spell $spell)
@@ -139,11 +101,13 @@ class WizardSimulator
         $newWizard->castSpell($spell);
         $newBoss->castSpell($spell);
 
-        //Boss's Turn
-        $newWizard->performSpellEffects();
-        $newBoss->performSpellEffects();
+        if (!$newBoss->isDefeated()) {
+            //Boss's Turn
+            $newWizard->performSpellEffects();
+            $newBoss->performSpellEffects();
 
-        $newWizard->receiveDamage($newBoss->getAttackPoints());
+            $newWizard->receiveDamage($newBoss->getAttackPoints());
+        }
 
         return [$newWizard, $newBoss];
     }
