@@ -1,6 +1,14 @@
 import * as fs from 'fs';
 
-export default function (filename: string) {
+function part1 (filename: string) {
+    const counter = calculateLargerMeasurements(
+        getInput(filename)
+    );
+
+    console.log(counter + " measurements are larger than the previous measurement");
+}
+
+function part2 (filename: string) {
     const counter = calculateLargerMeasurements(
         getInput(filename)
     );
@@ -28,3 +36,5 @@ function calculateLargerMeasurements(input: number[]) {
 
     return counter;
 }
+
+export { part1, part2 };
