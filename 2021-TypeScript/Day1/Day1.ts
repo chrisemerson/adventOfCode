@@ -5,7 +5,9 @@ function part1 (filename: string) {
         getInput(filename)
     );
 
-    console.log(counter + " measurements are larger than the previous measurement");
+    console.log(
+        counter + " measurements are larger than the previous measurement"
+    );
 }
 
 function part2 (filename: string) {
@@ -18,7 +20,11 @@ function part2 (filename: string) {
         )
     );
 
-    console.log(counter + " measurements are larger than the previous measurement using a sliding window");
+    console.log(
+        counter
+        + " measurements are larger than the previous measurement"
+        + " using a sliding window"
+    );
 }
 
 function calculateLargerMeasurements(input: number[]) {
@@ -35,7 +41,10 @@ function calculateLargerMeasurements(input: number[]) {
     return counter;
 }
 
-function partitionArrayWithSlidingWindow(array: number[], partitionSize: number): number[][] {
+function partitionArrayWithSlidingWindow(
+    array: number[],
+    partitionSize: number
+): number[][] {
     let partitionedArray: number[][] = [];
 
     for (let i = 0; i + partitionSize <= array.length; i++) {
@@ -56,7 +65,10 @@ function sumArrayPartitions(array: number[][]): number[] {
 
     for (let window of array) {
         arrayOfSums.push(
-            window.reduce((sum, current) => sum + current, 0)
+            window.reduce(
+                (sum, current) => sum + current,
+                0
+            )
         );
     }
 
