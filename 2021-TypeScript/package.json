@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "fs": "0.0.1-security"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.11"
+  },
+  "scripts": {
+    "aoc": "node run.js"
+  }
+}

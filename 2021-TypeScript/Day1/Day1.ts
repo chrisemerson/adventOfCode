@@ -1,8 +1,9 @@
 import * as fs from 'fs';
+import path from 'path';
 
-function part1 (filename: string) {
+function part1 () {
     const counter = calculateLargerMeasurements(
-        getInput(filename)
+        getInput()
     );
 
     console.log(
@@ -10,11 +11,11 @@ function part1 (filename: string) {
     );
 }
 
-function part2 (filename: string) {
+function part2 () {
     const counter = calculateLargerMeasurements(
         sumArrayPartitions(
             partitionArrayWithSlidingWindow(
-                getInput(filename),
+                getInput(),
                 3
             )
         )
@@ -75,9 +76,9 @@ function sumArrayPartitions(array: number[][]): number[] {
     return arrayOfSums;
 }
 
-function getInput(filename: string) {
+function getInput() {
     return fs
-        .readFileSync(filename, 'utf8')
+        .readFileSync(__dirname + "/input.txt", 'utf8')
         .split("\n")
         .map(l => parseInt(l));
 }

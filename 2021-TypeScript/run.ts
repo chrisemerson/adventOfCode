@@ -1,4 +1,16 @@
-import {part1 as Day1Part1, part2 as Day1Part2} from "./Day1/Day1"
+(async () => {
+    const day = process.argv[2];
+    const part = process.argv[3];
 
-Day1Part1('./Day1/input.txt');
-Day1Part2('./Day1/input.txt');
+    const module = await import("./Day" + day + "/Day" + day);
+
+    switch (part) {
+        case "1":
+            module.part1();
+            break;
+
+        case "2":
+            module.part2();
+            break;
+    }
+})();
