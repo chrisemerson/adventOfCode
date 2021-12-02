@@ -1,18 +1,81 @@
 import * as fs from 'fs';
 
-function part1 () {
+interface Position {
+    forward: number,
+    depthPt1: number,
+    depthPt2: number
+}
 
+interface Instruction {
+    direction: string,
+    value: number
+}
+
+function part1 () {
+    const position = runInstructions(getInput());
+
+    console.log(
+        'Part 1: Depth is '
+        + position.depthPt1
+        + ', forward distance is '
+        + position.forward
+        + ', multiplication is '
+        + (position.depthPt1 * position.forward)
+    );
 }
 
 function part2 () {
+    const position = runInstructions(getInput());
 
+    console.log(
+        'Part 2: Depth is '
+        + position.depthPt2
+        + ', forward distance is '
+        + position.forward
+        + ', multiplication is '
+        + (position.depthPt2 * position.forward)
+    );
 }
 
-function getInput() {
+function runInstructions(input: Instruction[]): Position {
+    let depthPt1 = 0;
+    let depthPt2 = 0;
+    let forward = 0;
+    let aim = 0;
+
+    for (let instruction of input) {
+        switch (instruction.direction) {
+            case 'up':
+                depthPt1 -= instruction.value;
+                aim -= instruction.value;
+                break;
+
+            case 'down':
+                depthPt1 += instruction.value;
+                aim += instruction.value;
+                break;
+
+            case 'forward':
+                forward += instruction.value;
+                depthPt2 += (aim * instruction.value);
+                break;
+        }
+    }
+
+    return {
+        forward,
+        depthPt1,
+        depthPt2
+    }
+}
+
+function getInput(): Instruction[] {
     return fs
         .readFileSync(__dirname + "/input.txt", 'utf8')
         .split("\n")
-        .map(l => parseInt(l));
+        .filter(l => l !== '')
+        .map(l => l.split(" "))
+        .map(parts => ({direction: parts[0], value: parseInt(parts[1])}));
 }
 
 export { part1, part2 };
