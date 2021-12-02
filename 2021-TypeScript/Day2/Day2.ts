@@ -14,27 +14,13 @@ interface Instruction {
 function part1 () {
     const position = runInstructions(getInput());
 
-    console.log(
-        'Part 1: Depth is '
-        + position.depthPt1
-        + ', forward distance is '
-        + position.forward
-        + ', multiplication is '
-        + (position.depthPt1 * position.forward)
-    );
+    outputAnswer(1, position.depthPt1, position.forward);
 }
 
 function part2 () {
     const position = runInstructions(getInput());
 
-    console.log(
-        'Part 2: Depth is '
-        + position.depthPt2
-        + ', forward distance is '
-        + position.forward
-        + ', multiplication is '
-        + (position.depthPt2 * position.forward)
-    );
+    outputAnswer(2, position.depthPt2, position.forward);
 }
 
 function runInstructions(input: Instruction[]): Position {
@@ -76,6 +62,17 @@ function getInput(): Instruction[] {
         .filter(l => l !== '')
         .map(l => l.split(" "))
         .map(parts => ({direction: parts[0], value: parseInt(parts[1])}));
+}
+
+function outputAnswer(partNo: number, depth: number, forward: number) {
+    console.log(
+        'Part ' + partNo + ': Depth is '
+        + depth
+        + ', forward distance is '
+        + forward
+        + ', multiplication is '
+        + (depth * forward)
+    );
 }
 
 export { part1, part2 };
