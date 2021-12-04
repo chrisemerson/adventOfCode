@@ -11,15 +11,11 @@ interface BingoCard {
 }
 
 function part1 () {
-    let game = getInput();
-
-    playGame(game, checkForWinningCards);
+    playGame(getInput(), checkForWinningCards);
 }
 
 function part2 () {
-    let game = getInput();
-
-    playGame(game, checkForLastRemainingCard);
+    playGame(getInput(), checkForLastRemainingCard);
 }
 
 function playGame(
@@ -48,10 +44,7 @@ function checkForWinningCards(game: BingoGame, scoredCard: string): boolean {
     let winningCard = false;
 
     game.cards.forEach(c => {
-        let isWinningCard = checkForWinningCard(c, game.lastNumber, scoredCard);
-        winningCard = winningCard || isWinningCard;
-
-        return isWinningCard
+        winningCard = winningCard || checkForWinningCard(c, game.lastNumber, scoredCard);
     });
 
     return winningCard;
@@ -90,14 +83,10 @@ function checkForWinningCard(card: BingoCard, lastNumber: number, scoredCard: st
         let winningCardThisCol = true;
 
         Object.values(card).forEach(r => {
-            if (r[i] !== 'X') {
-                winningCardThisCol = false;
-            }
+            winningCardThisCol = winningCardThisCol && r[i] === 'X';
         });
 
-        if (winningCardThisCol) {
-            winningCard = true;
-        }
+        winningCard = winningCard || winningCardThisCol;
     }
 
     if (winningCard && scoredCard !== '') {
