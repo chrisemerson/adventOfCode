@@ -13,10 +13,24 @@ interface BingoCard {
 function part1 () {
     let game = getInput();
 
+    playGame(game, checkForWinningCards);
+}
+
+function part2 () {
+    let game = getInput();
+
+    playGame(game, checkForLastRemainingCard);
+}
+
+function playGame(
+    game: BingoGame,
+    endConditionCallback: (g: BingoGame, sc: string) => boolean,
+    checkForLosingCard: boolean = false
+) {
     while (true) {
         game = processNextBingoNumber(game);
 
-        if (checkForWinningCards(game)) {
+        if (endConditionCallback(game, checkForLosingCard ? "Losing" : "Winning")) {
             break;
         }
     }
@@ -30,11 +44,11 @@ function processNextBingoNumber(game: BingoGame): BingoGame {
     }
 }
 
-function checkForWinningCards(game: BingoGame): boolean {
+function checkForWinningCards(game: BingoGame, scoredCard: string): boolean {
     let winningCard = false;
 
     game.cards.forEach(c => {
-        let isWinningCard = checkForWinningCard(c, game.lastNumber);
+        let isWinningCard = checkForWinningCard(c, game.lastNumber, scoredCard);
         winningCard = winningCard || isWinningCard;
 
         return isWinningCard
@@ -43,7 +57,27 @@ function checkForWinningCards(game: BingoGame): boolean {
     return winningCard;
 }
 
-function checkForWinningCard(card: BingoCard, lastNumber: number): boolean {
+function checkForLastRemainingCard(game: BingoGame, scoredCard: string): boolean {
+    const filterWinningCards = game.cards.filter(c => !checkForWinningCard(c, game.lastNumber, ""));
+
+    if (filterWinningCards.length === 1) {
+        playGame(
+            {
+                numbers: game.numbers,
+                cards: filterWinningCards,
+                lastNumber: game.lastNumber
+            },
+            checkForWinningCards,
+            true
+        );
+
+        return true;
+    }
+
+    return false;
+}
+
+function checkForWinningCard(card: BingoCard, lastNumber: number, scoredCard: string): boolean {
     let winningCard = false;
 
     Object.values(card).forEach(c => {
@@ -66,14 +100,14 @@ function checkForWinningCard(card: BingoCard, lastNumber: number): boolean {
         }
     }
 
-    if (winningCard) {
+    if (winningCard && scoredCard !== '') {
         let sumOfUnmarkedNumbers = Object.values(card)
             .map(r => r
                 .filter((v: number|string) => v !== 'X')
                 .reduce((a: number, b: number) => a + b, 0))
             .reduce((a, b) => a + b, 0);
 
-        console.log("Winning card's score is " + (sumOfUnmarkedNumbers * lastNumber));
+        console.log(scoredCard + " card's score is " + (sumOfUnmarkedNumbers * lastNumber));
     }
 
     return winningCard;
@@ -83,10 +117,6 @@ function markNumberOnCard(number: number, card: BingoCard): BingoCard {
     return Object.values(card).map(r => r.map((c: number|string) => {
         return c === number ? 'X' : c;
     }));
-}
-
-function part2 () {
-    getInput();
 }
 
 function getInput(): BingoGame {
