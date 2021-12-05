@@ -12,31 +12,21 @@ type HeatMap = {
 }
 
 function part1 () {
-    const hydrothermalVentPoints = getInput().map(l => returnAllPointsOnLine(l[0], l[1], false));
-
-    const heatMap = hydrothermalVentPoints
-        .reduce((acc, pointsArray) => acc.concat(pointsArray), [])
-        .reduce((heatMap: HeatMap, point: Point) => addPointToHeatmap(heatMap, point), {});
-
-    const numberOfCrossingPoints = Object.values(heatMap)
-        .map(yCoords => Object.values(yCoords).filter(y => y > 1).length)
-        .reduce((total, current) => total + current, 0);
-
-    console.log(numberOfCrossingPoints);
+    console.log(getNumberOfCrossingPoints(false));
 }
 
 function part2 () {
-    const hydrothermalVentPoints = getInput().map(l => returnAllPointsOnLine(l[0], l[1], true));
+    console.log(getNumberOfCrossingPoints(true));
+}
 
-    const heatMap = hydrothermalVentPoints
-        .reduce((acc, pointsArray) => acc.concat(pointsArray), [])
-        .reduce((heatMap: HeatMap, point: Point) => addPointToHeatmap(heatMap, point), {});
-
-    const numberOfCrossingPoints = Object.values(heatMap)
+function getNumberOfCrossingPoints(includeDiagonals = false): number {
+    return Object.values(
+        getInput()
+            .map(l => returnAllPointsOnLine(l[0], l[1], includeDiagonals))
+            .reduce((acc, pointsArray) => acc.concat(pointsArray), [])
+            .reduce((heatMap: HeatMap, point: Point) => addPointToHeatmap(heatMap, point), {}))
         .map(yCoords => Object.values(yCoords).filter(y => y > 1).length)
         .reduce((total, current) => total + current, 0);
-
-    console.log(numberOfCrossingPoints);
 }
 
 function addPointToHeatmap(heatMap: HeatMap, point: Point): HeatMap {
