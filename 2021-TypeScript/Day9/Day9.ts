@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { getHorizontalEdgeLocations } from "../Utils/grid";
 
 function part1() {
     const input = getInput();
@@ -7,7 +8,7 @@ function part1() {
 
     for (let i = 0; i < input.length; i++) {
         for (let j = 0; j < input[i].length; j++) {
-            if (input[i][j] < Math.min(...getEdgeLocations(input, i, j).map(([i, j]) => input[i][j]))) {
+            if (input[i][j] < Math.min(...getHorizontalEdgeLocations(input, i, j).map(([i, j]) => input[i][j]))) {
                 lowPoints.push(input[i][j]);
             }
         }
@@ -23,7 +24,7 @@ function part2() {
 
     for (let i = 0; i < input.length; i++) {
         for (let j = 0; j < input[i].length; j++) {
-            if (input[i][j] < Math.min(...getEdgeLocations(input, i, j).map(([i, j]) => input[i][j]))) {
+            if (input[i][j] < Math.min(...getHorizontalEdgeLocations(input, i, j).map(([i, j]) => input[i][j]))) {
                 //Have to do this nonsense because tuple equality is stupid
                 let basin = [
                     ...new Set(
@@ -45,21 +46,10 @@ function part2() {
 
 function findBasinFromStartingPoint(input: number[][], i: number, j: number): [number, number][] {
     return [[i, j]].concat(
-        ...getEdgeLocations(input, i, j)
+        ...getHorizontalEdgeLocations(input, i, j)
             .filter(([ie, je]) => input[ie][je] > input[i][j] && input[ie][je] < 9)
             .map(([ie, je]) => findBasinFromStartingPoint(input, ie, je))
     ) as [number, number][];
-}
-
-function getEdgeLocations(input: number[][], i: number, j: number): number[][] {
-    let edgeLocations: [number, number][] = [];
-
-    if (i > 0) edgeLocations.push([i - 1, j]);
-    if (i < (input.length - 1)) edgeLocations.push([i + 1, j]);
-    if (j > 0) edgeLocations.push([i, j - 1]);
-    if (j < (input[i].length - 1)) edgeLocations.push([i, j + 1]);
-
-    return edgeLocations;
 }
 
 function getInput(): number[][] {
