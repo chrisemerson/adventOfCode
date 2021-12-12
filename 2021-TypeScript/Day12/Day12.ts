@@ -33,7 +33,7 @@ function part2() {
     console.log("There are " + paths.length + " paths through this cave system");
 }
 
-function findPaths(currentState: CurrentState, caveMap: Map, availableCavesCallback): string[][] {
+function findPaths(currentState: CurrentState, caveMap: Map, availableCavesCallback: (a: string[], b: string) => boolean): string[][] {
     let paths = [];
 
     const currentCave = currentState.currentPath[currentState.currentPath.length - 1];
@@ -74,7 +74,7 @@ function canVisitSingleSmallCaveTwice(visited: string[], cave: string): boolean 
     visited = visited.filter(c => !isBigCave(c));
 
     //Find out how many times we've visited each cave
-    const frequencies = visited.reduce((f, c) => {
+    const frequencies = visited.reduce((f:{[_: string]: number}, c) => {
         if (!f[c]) f[c] = 0;
         f[c]++;
         return f;
@@ -98,7 +98,7 @@ function getInput(): Map {
         .trim()
         .split("\n")
         .map(l => l.split('-'))
-        .reduce((map, x) => {
+        .reduce((map: Map, x: string[]) => {
             if (!map[x[0]]) map[x[0]] = [];
             if (!map[x[1]]) map[x[1]] = [];
 
