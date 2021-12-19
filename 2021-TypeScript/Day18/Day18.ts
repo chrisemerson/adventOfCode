@@ -174,6 +174,8 @@ function getPairMagnitude(pair: string): number {
             }
         }
     }
+
+    return 0;
 }
 
 function getInput(): string[] {
