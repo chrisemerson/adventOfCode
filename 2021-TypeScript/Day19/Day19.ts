@@ -71,7 +71,8 @@ function getScannerAndBeaconInfo(): [[number, number, number][], {[_:string]: [n
                                 .map(c => c.join('|')))]
                         .map(c => c
                             .split('|')
-                            .map(d => parseInt(d)));
+                            .map(d => parseInt(d)))
+                        .map(c => [c[0], c[1], c[2]]); //Silly line that does nothing to keep the compiler happy
 
                     scannerOffsets[i] = [scannerOrientation[0], scannerOrientation[1], scannerOrientation[2]];
                 }
@@ -121,7 +122,7 @@ function orientScannerField(
     scanner: number[][],
     offset: [number, number, number],
     orientation: [string, string, string],
-): number[][] {
+): [number, number, number][] {
     let orientedScanner = scanner.map(c => {
         const coordMap: { [_: string]: number } = {x: c[0], y: c[1], z: c[2]};
         const results = [...orientation];
@@ -188,7 +189,8 @@ function getInput(): coords {
                 .slice(1)
                 .map(c => c
                     .split(',')
-                    .map(d => parseInt(d)));
+                    .map(d => parseInt(d)))
+                .map(c => [c[0], c[1], c[2]]); //Silly line that does nothing to keep the compiler happy
 
             return acc;
         }, {});
