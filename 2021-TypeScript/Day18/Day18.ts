@@ -13,7 +13,21 @@ function part1() {
 function part2() {
     let input = getInput();
 
-    console.log(input);
+    let largestMagnitude = 0;
+
+    for (let i in input) {
+        for (let j in input) {
+            if (i !== j) {
+                let pairMagnitude = getPairMagnitude(addPairs(input[i], input[j]));
+
+                if (pairMagnitude > largestMagnitude) {
+                    largestMagnitude = pairMagnitude;
+                }
+            }
+        }
+    }
+
+    console.log("Largest magnitude is " + largestMagnitude);
 }
 
 function addPairs(pair1: string, pair2: string): string {
