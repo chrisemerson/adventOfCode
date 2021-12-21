@@ -27,7 +27,7 @@ function part1() {
 function part2() {
     let gameResults = playGameWithQuantumDice(7, 6, 0, 0);
 
-    console.log("The first player wins in " + gameResults[0]  + " universes and loses in " + gameResults[1] + " universes");
+    console.log("The first player wins in " + gameResults[0] + " universes and loses in " + gameResults[1] + " universes");
 }
 
 function playGameWithQuantumDice(nextPlayerSpace: number, lastPlayerSpace: number, nextPlayerScore: number, lastPlayerScore: number): [number, number] {
@@ -37,48 +37,27 @@ function playGameWithQuantumDice(nextPlayerSpace: number, lastPlayerSpace: numbe
 
     let gamesWonByNextPlayer = 0, gamesWonByLastPlayer = 0, gamesWonNP = 0, gamesWonLP = 0;
 
-    // There is only 1 way to roll 3 with 3 dice - [1 1 1]
-    nextPlayerSpace = ((nextPlayerSpace + 2) % 10) + 1;
-    [gamesWonNP, gamesWonLP] = playGameWithQuantumDice(lastPlayerSpace, nextPlayerSpace, lastPlayerScore, (nextPlayerScore + nextPlayerSpace));
-    gamesWonByNextPlayer += gamesWonNP;
-    gamesWonByLastPlayer += gamesWonLP;
+    const rollDistribution = [
+        1, //There is only 1 way to roll 3 with 3 dice - [1 1 1]
+        3, //There are 3 ways to roll 4 - [1 1 2, 1 2 1, 2 1 1]
+        6, //There are 6 ways to roll 5 - [1 1 3, 1 2 2, 1 3 1, 2 1 2, 2 2 1, 3 1 1]
+        7, //There are 7 ways to roll 6 - [1 2 3, 1 3 2, 2 1 3, 2 2 2, 2 3 1, 3 1 2, 3 2 1]
+        6, //There are 6 ways to roll 7 - [1 3 3, 2 2 3, 2 3 2, 3 1 3, 3 2 2, 3 3 1]
+        3, //There are 3 ways to roll 8 - [1 1 2, 1 2 1, 2 1 1]
+        1  //There is only 1 way to roll 9 - [3 3 3]
+    ];
 
-    // There are 3 ways to roll 4 - [1 1 2, 1 2 1, 2 1 1]
-    nextPlayerSpace = (nextPlayerSpace % 10) + 1;
-    [gamesWonNP, gamesWonLP] = playGameWithQuantumDice(lastPlayerSpace, nextPlayerSpace, lastPlayerScore, (nextPlayerScore + nextPlayerSpace));
-    gamesWonByNextPlayer += 3 * gamesWonNP;
-    gamesWonByLastPlayer += 3 * gamesWonLP;
+    //We want to start at 3 and then increment, so increase by 2 before first loop iteration
+    nextPlayerSpace += 2;
 
-    // There are 6 ways to roll 5 - [1 1 3, 1 2 2, 1 3 1, 2 1 2, 2 2 1, 3 1 1]
-    nextPlayerSpace = (nextPlayerSpace % 10) + 1;
-    [gamesWonNP, gamesWonLP] = playGameWithQuantumDice(lastPlayerSpace, nextPlayerSpace, lastPlayerScore, (nextPlayerScore + nextPlayerSpace));
-    gamesWonByNextPlayer += 6 * gamesWonNP;
-    gamesWonByLastPlayer += 6 * gamesWonLP;
+    for (let rollCount of rollDistribution) {
+        //Add 1 to dice roll & space
+        nextPlayerSpace = (nextPlayerSpace % 10) + 1;
 
-    // There are 7 ways to roll 6 - [1 2 3, 1 3 2, 2 1 3, 2 2 2, 2 3 1, 3 1 2, 3 2 1]
-    nextPlayerSpace = (nextPlayerSpace % 10) + 1;
-    [gamesWonNP, gamesWonLP] = playGameWithQuantumDice(lastPlayerSpace, nextPlayerSpace, lastPlayerScore, (nextPlayerScore + nextPlayerSpace));
-    gamesWonByNextPlayer += 7 * gamesWonNP;
-    gamesWonByLastPlayer += 7 * gamesWonLP;
-
-    // There are 6 ways to roll 7 - [1 3 3, 2 2 3, 2 3 2, 3 1 3, 3 2 2, 3 3 1]
-    nextPlayerSpace = (nextPlayerSpace % 10) + 1;
-    [gamesWonNP, gamesWonLP] = playGameWithQuantumDice(lastPlayerSpace, nextPlayerSpace, lastPlayerScore, (nextPlayerScore + nextPlayerSpace));
-    gamesWonByNextPlayer += 6 * gamesWonNP;
-    gamesWonByLastPlayer += 6 * gamesWonLP;
-
-
-    // There are 3 ways to roll 8 - [1 1 2, 1 2 1, 2 1 1]
-    nextPlayerSpace = (nextPlayerSpace % 10) + 1;
-    [gamesWonNP, gamesWonLP] = playGameWithQuantumDice(lastPlayerSpace, nextPlayerSpace, lastPlayerScore, (nextPlayerScore + nextPlayerSpace));
-    gamesWonByNextPlayer += 3 * gamesWonNP;
-    gamesWonByLastPlayer += 3 * gamesWonLP;
-
-    // There is only 1 way to roll 9 - [3 3 3]
-    nextPlayerSpace = (nextPlayerSpace % 10) + 1;
-    [gamesWonNP, gamesWonLP] = playGameWithQuantumDice(lastPlayerSpace, nextPlayerSpace, lastPlayerScore, (nextPlayerScore + nextPlayerSpace));
-    gamesWonByNextPlayer += gamesWonNP;
-    gamesWonByLastPlayer += gamesWonLP;
+        [gamesWonNP, gamesWonLP] = playGameWithQuantumDice(lastPlayerSpace, nextPlayerSpace, lastPlayerScore, (nextPlayerScore + nextPlayerSpace));
+        gamesWonByNextPlayer += rollCount * gamesWonNP;
+        gamesWonByLastPlayer += rollCount * gamesWonLP;
+    }
 
     return [gamesWonByLastPlayer, gamesWonByNextPlayer];
 }
