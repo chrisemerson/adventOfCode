@@ -1,4 +1,4 @@
-function getHorizontalEdgeLocations(input: number[][], i: number, j: number): [number, number][] {
+function getHorizontalEdgeLocations(input: any[][], i: number, j: number): [number, number][] {
     let edgeLocations: [number, number][] = [];
 
     if (i > 0) edgeLocations.push([i - 1, j]);
@@ -9,7 +9,7 @@ function getHorizontalEdgeLocations(input: number[][], i: number, j: number): [n
     return edgeLocations;
 }
 
-function getAllEdgeLocations(input: number[][], i: number, j: number): [number, number][] {
+function getAllEdgeLocations(input: any[][], i: number, j: number): [number, number][] {
     let edgeLocations: [number, number][] = [];
 
     for (let ii = -1; ii <= 1; ii++) {
