@@ -1,7 +1,7 @@
 const part1 = () => console.log("The highest valid model number is " + findHighestInputThatGivesCorrectOutput());
 const part2 = () => console.log("The lowest valid model number is " + findLowestInputThatGivesCorrectOutput());
 
-function findHighestInputThatGivesCorrectOutput(): number {
+function findHighestInputThatGivesCorrectOutput(): number|false {
     for (let a = 1; a >= 1; a--) {
         for (let b = 9; b >= 1; b--) {
             for (let cd = 9; cd >= 1; cd--) {
@@ -27,9 +27,11 @@ function findHighestInputThatGivesCorrectOutput(): number {
             }
         }
     }
+
+    return false;
 }
 
-function findLowestInputThatGivesCorrectOutput(): number {
+function findLowestInputThatGivesCorrectOutput(): number|false {
     for (let a = 1; a <= 9; a++) {
         for (let b = 1; b <= 9; b++) {
             for (let cd = 1; cd <= 9; cd++) {
@@ -55,9 +57,21 @@ function findLowestInputThatGivesCorrectOutput(): number {
             }
         }
     }
+
+    return false;
 }
 
-function constructInput(a, b, cd, e, f, gh, ij, k, l): number {
+function constructInput(
+    a: number,
+    b: number,
+    cd: number,
+    e: number,
+    f: number,
+    gh: number,
+    ij: number,
+    k: number,
+    l: number
+): number {
     return a * 100000000000
         + b * 10000000000
         + cd * 1000000000
