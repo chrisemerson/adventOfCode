@@ -2,7 +2,7 @@
 
 public interface IAdventOfCodeDay
 {
-    public string Part1();
+    public void Part1(string input);
 
-    public string Part2();
+    public void Part2(string input);
 }

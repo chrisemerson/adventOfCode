@@ -2,12 +2,12 @@ namespace AdventOfCode;
 
 public class Day21: IAdventOfCodeDay
 {
-    public string Part1()
+    public void Part1(string input)
     {
         throw new NotImplementedException();
     }
 
-    public string Part2()
+    public void Part2(string input)
     {
         throw new NotImplementedException();
     }
