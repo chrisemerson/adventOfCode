@@ -18,7 +18,8 @@ public class Day1: IAdventOfCodeDay
             .Select(elf => elf
                 .Split("\n")
                 .Where(calorie => calorie != "")
-                .Select(calorie => int.Parse(calorie)).Sum())
+                .Select(calorie => int.Parse(calorie))
+                .Sum())
             .ToList();
     }
 }
