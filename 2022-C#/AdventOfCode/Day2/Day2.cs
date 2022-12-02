@@ -2,6 +2,13 @@ namespace AdventOfCode;
 
 public class Day2 : IAdventOfCodeDay
 {
+    private const int ScoreForRock = 1;
+    private const int ScoreForPaper = 2;
+    private const int ScoreForScissors = 3;
+
+    private const int ScoreForDraw = 3;
+    private const int ScoreForWin = 6;
+
     public void Part1(string input) => Console.WriteLine(
         ScoreGame(input, new Dictionary<string, string>
         {
@@ -31,9 +38,9 @@ public class Day2 : IAdventOfCodeDay
     {
         var score = ourChoice switch
         {
-            'R' => 1,
-            'P' => 2,
-            'S' => 3,
+            'R' => ScoreForRock,
+            'P' => ScoreForPaper,
+            'S' => ScoreForScissors,
             _ => throw new ArgumentOutOfRangeException(
                 nameof(ourChoice),
                 ourChoice,
@@ -42,9 +49,9 @@ public class Day2 : IAdventOfCodeDay
         };
 
         if (theirChoice == ourChoice) {
-            score += 3;
+            score += ScoreForDraw;
         } else if (WeWin(theirChoice, ourChoice)) {
-            score += 6;
+            score += ScoreForWin;
         }
 
         return score;
