@@ -10,7 +10,6 @@ public class Day2 : IAdventOfCodeDay
             { "C X", "S R" }, { "C Y", "S P" }, { "C Z", "S S" }
         }));
 
-
     public void Part2(string input) => Console.WriteLine(
         ScoreGame(input, new Dictionary<string, string>
         {
@@ -19,7 +18,7 @@ public class Day2 : IAdventOfCodeDay
             { "C X", "S P" }, { "C Y", "S S" }, { "C Z", "S R" }
         }));
 
-    private static int ScoreGame(string input, Dictionary<string, string> moveKey) =>
+    private static int ScoreGame(string input, IReadOnlyDictionary<string, string> moveKey) =>
         input
             .Split("\n")
             .Where(l => l != "")
