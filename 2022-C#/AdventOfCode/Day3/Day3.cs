@@ -6,7 +6,6 @@ public class Day3 : IAdventOfCodeDay
         .Split("\n")
         .Where(l => l != "")
         .Select(s => s[..(s.Length / 2)]
-            .ToHashSet()
             .Intersect(s[(s.Length / 2)..])
             .ElementAt(0))
         .Select(Priority)
@@ -16,7 +15,7 @@ public class Day3 : IAdventOfCodeDay
         .Split("\n")
         .Where(l => l != "")
         .Chunk(3)
-        .Select(g => g[0].ToHashSet()
+        .Select(g => g[0]
             .Intersect(g[1])
             .Intersect(g[2])
             .ElementAt(0))
