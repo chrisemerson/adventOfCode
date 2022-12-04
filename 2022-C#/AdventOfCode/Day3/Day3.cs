@@ -23,5 +23,5 @@ public class Day3 : IAdventOfCodeDay
         .Select(Priority)
         .Sum());
 
-    private static int Priority(char c) => c > 96 ? c - 96 : c - 38;
+    private static int Priority(char c) => (c - 38) % 58;
 }
