@@ -15,9 +15,10 @@ public class Day5 : IAdventOfCodeDay
             string.Join("", inputParts[1]
                 .Split("\n")
                 .Where(i => i != "")
+                .Select(i => i.Split(" "))
                 .Aggregate(
                     CreateStacks(inputParts[0].Split("\n")),
-                    (agg, x) => ProcessInstruction(agg, x, crateMovingStrategy))
+                    (agg, ip) => crateMovingStrategy(agg, ip[3][0], ip[5][0], int.Parse(ip[1])))
                 .Select(s => s.Value.Peek())));
     }
 
@@ -31,21 +32,6 @@ public class Day5 : IAdventOfCodeDay
                 .Skip(1)
                 .Select(x => x.PadRight(i + 1)[i])
                 .Where(x => x != ' ')));
-
-    private static Stacks ProcessInstruction(
-        Stacks state,
-        string instruction,
-        Func<Stacks, char, char, int, Stacks> crateMovingStrategy
-    ) {
-        var instructionParts = instruction.Split(" ");
-
-        return crateMovingStrategy(
-            state,
-            instructionParts[3][0],
-            instructionParts[5][0],
-            int.Parse(instructionParts[1])
-        );
-    }
 
     private static Stacks MoveCrateMultipleTimes(Stacks state, char stackFrom, char stackTo, int times)
     {
