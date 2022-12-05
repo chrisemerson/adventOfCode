@@ -16,18 +16,17 @@ public class Day5 : IAdventOfCodeDay
                 .Split("\n")
                 .Where(i => i != "")
                 .Aggregate(
-                    CreateStacks(inputParts[0]),
+                    CreateStacks(inputParts[0].Split("\n")),
                     (agg, x) => ProcessInstruction(agg, x, crateMovingStrategy))
                 .Select(s => s.Value.Peek())));
     }
 
-    private static Stacks CreateStacks(string stacksString) => Enumerable
-        .Range(0, stacksString.Split("\n").Last().Length)
-        .Where(i => stacksString.Split("\n").Last()[i] != ' ')
+    private static Stacks CreateStacks(string[] stacksLines) => Enumerable
+        .Range(0, stacksLines.Last().Length)
+        .Where(i => stacksLines.Last()[i] != ' ')
         .ToDictionary(
-            i => stacksString.Split("\n").Last()[i],
-            i => new Stack<char>(stacksString
-                .Split("\n")
+            i => stacksLines.Last()[i],
+            i => new Stack<char>(stacksLines
                 .Reverse()
                 .Skip(1)
                 .Select(x => x.PadRight(i + 1)[i])
