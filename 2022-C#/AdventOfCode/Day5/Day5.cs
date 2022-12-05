@@ -1,14 +1,14 @@
 namespace AdventOfCode;
 
+using Stacks = Dictionary<char, Stack<char>>;
+
 public class Day5 : IAdventOfCodeDay
 {
     public void Part1(string input) => MoveCrates(input, MoveCrateMultipleTimes);
     public void Part2(string input) => MoveCrates(input, MoveMultipleCratesAtOnce);
 
-    private static void MoveCrates(
-        string input,
-        Func<Dictionary<int, Stack<char>>, int, int, int, Dictionary<int, Stack<char>>> crateMovingStrategy
-    ) {
+    private static void MoveCrates(string input, Func<Stacks, char, char, int, Stacks> crateMovingStrategy)
+    {
         var inputParts = input.Split("\n\n");
 
         Console.WriteLine(
@@ -21,52 +21,44 @@ public class Day5 : IAdventOfCodeDay
                 ).Select(s => s.Value.Peek())));
     }
 
-    private static Dictionary<int, Stack<char>> CreateStacks(string stacksString) => Enumerable
-        .Range(1, 9)
+    private static Stacks CreateStacks(string stacksString) => Enumerable
+        .Range(0, stacksString.Split("\n").Last().Length)
+        .Where(i => stacksString.Split("\n").Last()[i] != ' ')
         .ToDictionary(
-            i => i,
+            i => stacksString.Split("\n").Last()[i],
             i => new Stack<char>(stacksString
                 .Split("\n")
                 .Reverse()
                 .Skip(1)
-                .Select(x => x[4 * i - 3])
+                .Select(x => x.PadRight(i + 1)[i])
                 .Where(x => x != ' ')));
 
-    private static Dictionary<int, Stack<char>> ProcessInstruction(
-        Dictionary<int, Stack<char>> state,
+    private static Stacks ProcessInstruction(
+        Stacks state,
         string instruction,
-        Func<Dictionary<int, Stack<char>>, int, int, int, Dictionary<int, Stack<char>>> crateMovingStrategy
+        Func<Stacks, char, char, int, Stacks> crateMovingStrategy
     ) {
         var instructionParts = instruction.Split(" ");
 
         return crateMovingStrategy(
             state,
-            int.Parse(instructionParts[3]),
-            int.Parse(instructionParts[5]),
+            instructionParts[3][0],
+            instructionParts[5][0],
             int.Parse(instructionParts[1])
         );
     }
 
-    private static Dictionary<int, Stack<char>> MoveCrateMultipleTimes(
-        Dictionary<int, Stack<char>> state,
-        int stackFrom,
-        int stackTo,
-        int times
-    ) {
-        for (var i = 0; i < times; i++)
-        {
+    private static Stacks MoveCrateMultipleTimes(Stacks state, char stackFrom, char stackTo, int times)
+    {
+        for (var i = 0; i < times; i++) {
             state[stackTo].Push(state[stackFrom].Pop());
         }
 
         return state;
     }
 
-    private static Dictionary<int, Stack<char>> MoveMultipleCratesAtOnce(
-        Dictionary<int, Stack<char>> state,
-        int stackFrom,
-        int stackTo,
-        int crates
-    ) {
+    private static Stacks MoveMultipleCratesAtOnce(Stacks state, char stackFrom, char stackTo, int crates)
+    {
         var removedCrates = new List<char>();
 
         for (var i = 0; i < crates; i++) {
