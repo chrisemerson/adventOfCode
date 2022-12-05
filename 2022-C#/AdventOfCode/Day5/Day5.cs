@@ -17,8 +17,8 @@ public class Day5 : IAdventOfCodeDay
                 .Where(i => i != "")
                 .Aggregate(
                     CreateStacks(inputParts[0]),
-                    (agg, x) => ProcessInstruction(agg, x, crateMovingStrategy)
-                ).Select(s => s.Value.Peek())));
+                    (agg, x) => ProcessInstruction(agg, x, crateMovingStrategy))
+                .Select(s => s.Value.Peek())));
     }
 
     private static Stacks CreateStacks(string stacksString) => Enumerable
