@@ -7,10 +7,8 @@ public class Day6: IAdventOfCodeDay
 
     private static void FindFirstSetOfNDifferentCharacters(string input, int count)
     {
-        for (var i = count - 1; i < input.Length; i++)
-        {
-            if (input.Substring(i - count + 1, count).ToHashSet().Count == count)
-            {
+        for (var i = count - 1; i < input.Length; i++) {
+            if (input.Substring(i - count + 1, count).ToHashSet().Count == count) {
                 Console.WriteLine("First marker after " + (i + 1) + " characters");
                 break;
             }
