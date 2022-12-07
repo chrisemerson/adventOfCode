@@ -1,27 +1,6 @@
+using System.Collections.Immutable;
+
 namespace AdventOfCode;
-
-internal struct FileSystem
-{
-    public string CurrentDirectory;
-    public Dictionary<string, int> Directories = new() { { "/", 0 } };
-
-    public FileSystem(string currentDirectory)
-    {
-        CurrentDirectory = currentDirectory;
-    }
-
-    public FileSystem WithCurrentDirectory(string newCurrentDirectory)
-    {
-        CurrentDirectory = newCurrentDirectory;
-        return this;
-    }
-
-    public FileSystem WithDirectories(Dictionary<string, int> newDirectories)
-    {
-        Directories = newDirectories;
-        return this;
-    }
-}
 
 public class Day7 : IAdventOfCodeDay
 {
@@ -30,51 +9,65 @@ public class Day7 : IAdventOfCodeDay
 
     public void Part1(string input) => Console.WriteLine(
         GetFileSystem(input)
-            .Directories
+            .Item2
             .Where(d => d.Value <= 100000)
             .Select(d => d.Value)
             .Sum());
 
     public void Part2(string input) => Console.WriteLine(
         GetFileSystem(input)
-            .Directories
-            .Where(d => d.Value >= (SpaceRequired + GetFileSystem(input).Directories["/"]) - TotalSize)
+            .Item2
+            .Where(d => d.Value >= (SpaceRequired + GetFileSystem(input).Item2["/"]) - TotalSize)
             .Min(d => d.Value));
 
-    private static FileSystem GetFileSystem(string input) => input
+    private static (string, ImmutableDictionary<string, int>) GetFileSystem(string input) => input
         .Split("\n")
         .Where(l => l != "")
-        .Aggregate(new FileSystem("/"), (fs, l) => ProcessInputLine(fs, l.Split(" ")));
+        .Aggregate(
+            ("/", new Dictionary<string, int> { { "/", 0 } }.ToImmutableDictionary()),
+            (fs, l) => ProcessInputLine(fs, l.Split(" ")));
 
-    private static FileSystem ProcessInputLine(FileSystem fs, IReadOnlyList<string> inputLineParts) =>
-        inputLineParts.ElementAt(0) switch {
-            "$" => ProcessInstruction(fs, inputLineParts.Skip(1)),
-            "dir" => fs,
-            _ => ProcessFileEntry(fs, int.Parse(inputLineParts.ElementAt(0)))
-        };
+    private static (string, ImmutableDictionary<string, int>) ProcessInputLine(
+        (string, ImmutableDictionary<string, int>) fs,
+        IReadOnlyList<string> inputLineParts
+    ) => inputLineParts.ElementAt(0) switch {
+        "$" => ProcessInstruction(fs, inputLineParts.Skip(1)),
+        "dir" => fs,
+        _ => ProcessFileEntry(fs, int.Parse(inputLineParts.ElementAt(0)))
+    };
 
-    private static FileSystem ProcessInstruction(FileSystem fs, IEnumerable<string> instruction) =>
+    private static (string, ImmutableDictionary<string, int>) ProcessInstruction(
+        (string, ImmutableDictionary<string, int>) fs,
+        IEnumerable<string> instruction
+    ) =>
         instruction.ElementAt(0) switch {
             "cd" => ProcessDirectoryChange(fs, instruction.ElementAt(1)),
             _ => fs
         };
 
-    private static FileSystem ProcessDirectoryChange(FileSystem fs, string directory) =>
+    private static (string, ImmutableDictionary<string, int>) ProcessDirectoryChange(
+        (string, ImmutableDictionary<string, int>) fs,
+        string directory
+    ) =>
         directory switch {
-            "/" => fs.WithCurrentDirectory("/"),
-            ".." => fs.WithCurrentDirectory(string.Join('/', fs.CurrentDirectory.Split("/").SkipLast(1))),
-            _ => fs
-                .WithCurrentDirectory(fs.CurrentDirectory + directory + "/")
-                .WithDirectories(fs.Directories.Replace(fs.CurrentDirectory, 0))
+            "/" => ("/", fs.Item2),
+            ".." => (string.Join('/', fs.Item1.Split("/").SkipLast(1)), fs.Item2),
+            _ => (
+                fs.Item1 + directory + "/",
+                fs.Item2.Remove(fs.Item1 + directory + "/").Add(fs.Item1 + directory + "/", 0))
         };
 
-    private static FileSystem ProcessFileEntry(FileSystem fs, int fileSize) => fs.CurrentDirectory
+    private static (string, ImmutableDictionary<string, int>) ProcessFileEntry(
+        (string, ImmutableDictionary<string, int>) fs,
+        int fileSize
+    ) => fs.Item1
         .Split("/")
         .SkipLast(1)
-        .Aggregate(fs.WithCurrentDirectory(""), (f, dir) => f
-            .WithCurrentDirectory(f.CurrentDirectory + dir + "/")
-            .WithDirectories(f.Directories
-                .Replace(
-                    f.CurrentDirectory,
-                    f.Directories[f.CurrentDirectory] + fileSize)));
+        .Aggregate(
+            ("", fs.Item2),
+            (f, dir) => (
+                f.Item1 + dir + "/",
+                f.Item2
+                    .Remove(f.Item1 + dir + "/")
+                    .Add(f.Item1 + dir + "/", fs.Item2[f.Item1 + dir + "/"] + fileSize)));
 }
