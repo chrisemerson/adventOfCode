@@ -9,23 +9,22 @@ public class Day7 : IAdventOfCodeDay
 
     public void Part1(string input) => Console.WriteLine(
         GetFileSystem(input)
-            .Item2
             .Where(d => d.Value <= 100000)
             .Select(d => d.Value)
             .Sum());
 
     public void Part2(string input) => Console.WriteLine(
         GetFileSystem(input)
-            .Item2
-            .Where(d => d.Value >= (SpaceRequired + GetFileSystem(input).Item2["/"]) - TotalSize)
+            .Where(d => d.Value >= SpaceRequired + GetFileSystem(input)["/"] - TotalSize)
             .Min(d => d.Value));
 
-    private static (string, ImmutableDictionary<string, int>) GetFileSystem(string input) => input
+    private static ImmutableDictionary<string, int> GetFileSystem(string input) => input
         .Split("\n")
         .Where(l => l != "")
         .Aggregate(
             ("/", new Dictionary<string, int> { { "/", 0 } }.ToImmutableDictionary()),
-            (fs, l) => ProcessInputLine(fs, l.Split(" ")));
+            (fs, l) => ProcessInputLine(fs, l.Split(" ")))
+        .Item2;
 
     private static (string, ImmutableDictionary<string, int>) ProcessInputLine(
         (string, ImmutableDictionary<string, int>) fs,
