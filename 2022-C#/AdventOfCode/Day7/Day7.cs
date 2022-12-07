@@ -39,23 +39,21 @@ public class Day7 : IAdventOfCodeDay
     private static (string, ImmutableDictionary<string, int>) ProcessInstruction(
         (string, ImmutableDictionary<string, int>) fs,
         IEnumerable<string> instruction
-    ) =>
-        instruction.ElementAt(0) switch {
-            "cd" => ProcessDirectoryChange(fs, instruction.ElementAt(1)),
-            _ => fs
-        };
+    ) => instruction.ElementAt(0) switch {
+        "cd" => ProcessDirectoryChange(fs, instruction.ElementAt(1)),
+        _ => fs
+    };
 
     private static (string, ImmutableDictionary<string, int>) ProcessDirectoryChange(
         (string, ImmutableDictionary<string, int>) fs,
         string directory
-    ) =>
-        directory switch {
-            "/" => ("/", fs.Item2),
-            ".." => (string.Join('/', fs.Item1.Split("/").SkipLast(1)), fs.Item2),
-            _ => (
-                fs.Item1 + directory + "/",
-                fs.Item2.Remove(fs.Item1 + directory + "/").Add(fs.Item1 + directory + "/", 0))
-        };
+    ) => directory switch {
+        "/" => ("/", fs.Item2),
+        ".." => (string.Join('/', fs.Item1.Split("/").SkipLast(1)), fs.Item2),
+        _ => (
+            fs.Item1 + directory + "/",
+            fs.Item2.Remove(fs.Item1 + directory + "/").Add(fs.Item1 + directory + "/", 0))
+    };
 
     private static (string, ImmutableDictionary<string, int>) ProcessFileEntry(
         (string, ImmutableDictionary<string, int>) fs,
@@ -63,11 +61,9 @@ public class Day7 : IAdventOfCodeDay
     ) => fs.Item1
         .Split("/")
         .SkipLast(1)
-        .Aggregate(
-            ("", fs.Item2),
-            (f, dir) => (
-                f.Item1 + dir + "/",
-                f.Item2
-                    .Remove(f.Item1 + dir + "/")
-                    .Add(f.Item1 + dir + "/", fs.Item2[f.Item1 + dir + "/"] + fileSize)));
+        .Aggregate(("", fs.Item2), (f, dir) => (
+            f.Item1 + dir + "/",
+            f.Item2
+                .Remove(f.Item1 + dir + "/")
+                .Add(f.Item1 + dir + "/", fs.Item2[f.Item1 + dir + "/"] + fileSize)));
 }
