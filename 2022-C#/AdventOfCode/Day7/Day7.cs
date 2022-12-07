@@ -35,23 +35,11 @@ public class Day7 : IAdventOfCodeDay
             .Select(d => d.Value)
             .Sum());
 
-    public void Part2(string input)
-    {
-        var fs = GetFileSystem(input);
-
-        var spaceNeeded = (SpaceRequired + fs.Directories["/"]) - TotalSize;
-
-        Console.Write("Space needed: " + spaceNeeded);
-
-        foreach (var entry in fs.Directories) {
-            Console.WriteLine(entry.Key + ": " + entry.Value);
-        }
-
-        Console.WriteLine(fs
+    public void Part2(string input) => Console.WriteLine(
+        GetFileSystem(input)
             .Directories
-            .Where(d => d.Value >= (SpaceRequired + fs.Directories["/"]) - TotalSize)
+            .Where(d => d.Value >= (SpaceRequired + GetFileSystem(input).Directories["/"]) - TotalSize)
             .Min(d => d.Value));
-    }
 
     private static FileSystem GetFileSystem(string input) => input
         .Split("\n")
@@ -74,15 +62,16 @@ public class Day7 : IAdventOfCodeDay
     private static FileSystem ProcessDirectoryChange(FileSystem fs, string directory) =>
         directory switch {
             "/" => fs.WithCurrentDirectory("/"),
-            ".." => fs.WithCurrentDirectory("/" + string.Join('/', fs.CurrentDirectory.Split("/").SkipLast(1)) + "/"),
-            _ => fs.WithCurrentDirectory(fs.CurrentDirectory + directory + "/")
+            ".." => fs.WithCurrentDirectory(string.Join('/', fs.CurrentDirectory.Split("/").SkipLast(1))),
+            _ => fs
+                .WithCurrentDirectory(fs.CurrentDirectory + directory + "/")
                 .WithDirectories(fs.Directories.Replace(fs.CurrentDirectory, 0))
         };
 
     private static FileSystem ProcessFileEntry(FileSystem fs, int fileSize) => fs.CurrentDirectory
         .Split("/")
-        .Where(d => d != "")
-        .Aggregate(fs.WithCurrentDirectory("/"), (f, dir) => f
+        .SkipLast(1)
+        .Aggregate(fs.WithCurrentDirectory(""), (f, dir) => f
             .WithCurrentDirectory(f.CurrentDirectory + dir + "/")
             .WithDirectories(f.Directories
                 .Replace(
