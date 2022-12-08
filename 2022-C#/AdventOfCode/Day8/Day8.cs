@@ -6,8 +6,7 @@ public class Day8 : IAdventOfCodeDay
         "Visible trees: " + BuildTreeGridFromInput(input)
             .Select((r, y) => r
                 .Select((_, x) => IsVisibleFromEdge(x, y, BuildTreeGridFromInput(input)))
-                .Select(t => t ? 1 : 0)
-                .Sum())
+                .Count(t => t))
             .Sum());
 
     public void Part2(string input) => Console.WriteLine(
