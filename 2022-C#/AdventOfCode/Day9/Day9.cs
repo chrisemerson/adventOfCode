@@ -34,7 +34,10 @@ public class Day9 : IAdventOfCodeDay
         ((int, int), (int, int), ImmutableHashSet<(int, int)>) ropeState,
         char dir,
         int dist
-    ) => UpdateTailPositionAndVisitedCells(GetNextHeadPosition(ropeState.Item1, dir, dist), ropeState.Item2, ropeState.Item3);
+    ) => UpdateTailPositionAndVisitedCells(
+        GetNextHeadPosition(ropeState.Item1, dir, dist),
+        ropeState.Item2,
+        ropeState.Item3);
 
     private static (int, int) GetNextHeadPosition((int, int) headPos, char dir, int dist) => (
         headPos.Item1 + dist * MoveMap[dir].Item1,
