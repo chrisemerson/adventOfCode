@@ -23,12 +23,55 @@ public class Day9 : IAdventOfCodeDay
             .Count
         + " positions");
 
-    public void Part2(string input)
-    {
-        // input = "R 4\nU 4\nL 3\nD 1\nR 4\nD 1\nL 5\nR 2";
-
-        throw new NotImplementedException();
-    }
+    public void Part2(string input) => Console.WriteLine(
+        "Tail has visited "
+        + input
+            .Split("\n", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(l => l.Split(" "))
+            .Aggregate(
+                (
+                    (0, 0),
+                    new List<(int, int)> {
+                        (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0)
+                    }.ToImmutableList(),
+                    new HashSet<(int, int)> { (0, 0) }.ToImmutableHashSet()
+                ),
+                (state, instruction) => Enumerable
+                    .Repeat(instruction.ElementAt(0)[0], int.Parse(instruction.ElementAt(1)))
+                    .Aggregate(state, (iState, iInstruction) =>
+                        new List<((int, int), ImmutableList<(int, int)>, ImmutableHashSet<(int, int)>)>
+                                { iState }
+                            .Select(x => (x, GetNextHeadPosition(x.Item1, iInstruction, 1)))
+                            .Select(x => (x.Item1.Item2.Aggregate((
+                                    x.Item2,
+                                    new List<(int, int)>().ToImmutableList(),
+                                    new HashSet<(int, int)>().ToImmutableHashSet()),
+                                (iiState, nextTail) => new List<(
+                                        ((int, int), ImmutableList<(int, int)>, ImmutableHashSet<(int, int)>),
+                                        (int, int),
+                                        ((int, int), (int, int), ImmutableHashSet<(int, int)>)
+                                        )> {
+                                        (
+                                            iiState,
+                                            nextTail,
+                                            UpdateTailPositionAndVisitedCells(
+                                                iiState.Item1,
+                                                nextTail,
+                                                new HashSet<(int, int)> { nextTail }.ToImmutableHashSet()
+                                            ))
+                                    }
+                                    .Select(x => (x.Item3.Item2, iiState.Item2.Add(x.Item3.Item2), x.Item3.Item3))
+                                    .First()), x.Item2))
+                            .Select(x => (
+                                x.Item2,
+                                x.Item1.Item2,
+                                x.Item1.Item3.Aggregate(iState.Item3, (acc, item) => acc.Add(item))
+                            ))
+                            .First()
+                    )
+            )
+            .Item3.Count
+        + " positions");
 
     private static ((int, int), (int, int), ImmutableHashSet<(int, int)>) MakeMove(
         ((int, int), (int, int), ImmutableHashSet<(int, int)>) ropeState,
