@@ -9,7 +9,7 @@ public class Day10 : IAdventOfCodeDay
 
     public void Part1(string input) => Console.WriteLine(
         RunProgram(input)
-            .Aggregate(0, (acc, x) => new [] { 20, 60, 100, 140, 180, 220 }.Contains(x.Key)
+            .Aggregate(0, (acc, x) => (x.Key - 20) % 40 == 0
                 ? acc + x.Key * x.Value
                 : acc));
 
