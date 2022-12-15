@@ -10,7 +10,7 @@ public class Monkey
     private int MonkeyIfTrue;
     private int MonkeyIfFalse;
     private List<ulong> Items;
-    private ulong InspectionCount = 0;
+    private ulong InspectionCount;
 
     public Monkey(
         int id,
@@ -21,8 +21,7 @@ public class Monkey
         int monkeyIfTrue,
         int monkeyIfFalse,
         List<ulong> items
-    )
-    {
+    ) {
         Id = id;
         Operator = op;
         Operand1 = operand1;
