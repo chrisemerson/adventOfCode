@@ -4,8 +4,8 @@ namespace AdventOfCode;
 
 public class Day18 : IAdventOfCodeDay
 {
-    private static List<(int, int, int)> containedContiguousAreaCache;
-    private static List<(int, int, int)> nonContainedContiguousAreaCache;
+    private static List<(int, int, int)>? containedContiguousAreaCache;
+    private static List<(int, int, int)>? nonContainedContiguousAreaCache;
 
     public Day18()
     {
@@ -51,11 +51,11 @@ public class Day18 : IAdventOfCodeDay
 
     private static bool CellCanReachOutside(IEnumerable<(int, int, int)> grid, int x, int y, int z)
     {
-        if (containedContiguousAreaCache.Contains((x, y, z))) {
+        if (containedContiguousAreaCache != null && containedContiguousAreaCache.Contains((x, y, z))) {
             return false;
         }
 
-        if (nonContainedContiguousAreaCache.Contains((x, y, z))) {
+        if (nonContainedContiguousAreaCache != null && nonContainedContiguousAreaCache.Contains((x, y, z))) {
             return true;
         }
 
@@ -89,7 +89,7 @@ public class Day18 : IAdventOfCodeDay
                 )) {
                 //Our contiguous space has reached outside the bounds of the shape
                 foreach (var cell in contiguousSpace) {
-                    nonContainedContiguousAreaCache.Add(cell.Key);
+                    nonContainedContiguousAreaCache?.Add(cell.Key);
                 }
 
                 return true;
@@ -97,7 +97,7 @@ public class Day18 : IAdventOfCodeDay
         }
 
         foreach (var cell in contiguousSpace) {
-            containedContiguousAreaCache.Add(cell.Key);
+            containedContiguousAreaCache?.Add(cell.Key);
         }
 
         return false;
