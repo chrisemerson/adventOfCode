@@ -115,8 +115,7 @@ public class Day16 : IAdventOfCodeDay
         string valveA,
         string valveB,
         ImmutableList<string> visited
-    )
-    {
+    ) {
         if (valveA == valveB) {
             return 0;
         }
