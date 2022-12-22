@@ -13,6 +13,8 @@ public class Day21: IAdventOfCodeDay
 
     public void Part2(string input)
     {
+        ParseInput(input);
+
         throw new NotImplementedException();
     }
 
@@ -28,17 +30,21 @@ public class Day21: IAdventOfCodeDay
     {
         if (monkeys == null) return 0;
 
-        if (monkeys[monkey].Contains(" * ")) {
-            return monkeys[monkey].Split(" * ").Aggregate((long) 1, (acc, part) => acc * EvaluateMonkey(part));
-        }
-
         if (monkeys[monkey].Contains(" + ")) {
-            return monkeys[monkey].Split(" + ").Aggregate((long) 0, (acc, part) => acc + EvaluateMonkey(part));
+            return monkeys[monkey]
+                .Split(" + ")
+                .Aggregate((long) 0, (acc, part) => acc + EvaluateMonkey(part));
         }
 
         if (monkeys[monkey].Contains(" - ")) {
             var parts = monkeys[monkey].Split(" - ");
             return EvaluateMonkey(parts[0]) - EvaluateMonkey(parts[1]);
+        }
+
+        if (monkeys[monkey].Contains(" * ")) {
+            return monkeys[monkey]
+                .Split(" * ")
+                .Aggregate((long) 1, (acc, part) => acc * EvaluateMonkey(part));
         }
 
         if (monkeys[monkey].Contains(" / ")) {
