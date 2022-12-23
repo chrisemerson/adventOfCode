@@ -144,48 +144,50 @@ public class Day22 : IAdventOfCodeDay
             _ => currentPosition
         };
 
+        var newFacing = facing;
+
         if (newPosition.Item1 == 0 && newPosition.Item2 is >= 101 and <= 150) {
             newPosition = (200, newPosition.Item2 - 100);
         } else if (newPosition.Item1 == 201) {
             newPosition = (1, newPosition.Item2 + 100);
         } else if (newPosition.Item1 == 0) {
             newPosition = (newPosition.Item2 + 100, 1);
-            facing = 0;
+            newFacing = 0;
         } else if (newPosition.Item2 == 0 && newPosition.Item1 is >= 151 and <= 200) {
-            newPosition = (150 - newPosition.Item2 - 100, 1);
-            facing = 1;
+            newPosition = (1, newPosition.Item1 - 100);
+            newFacing = 1;
         } else if (newPosition.Item2 == 0 && newPosition.Item1 >= 101 && newPosition.Item1 <= 150) {
             newPosition = (151 - newPosition.Item1, 51);
-            facing = 0;
+            newFacing = 0;
         } else if (newPosition.Item2 == 50 && newPosition.Item1 is >= 1 and <= 50) {
             newPosition = (151 - newPosition.Item1, 1);
-            facing = 2;
+            newFacing = 0;
         } else if (newPosition.Item1 == 100 && newPosition.Item2 is >= 1 and <= 50 && facing == 3) {
             newPosition = (newPosition.Item2 + 50, 51);
-            facing = 0;
+            newFacing = 0;
         } else if (newPosition.Item2 == 50 && newPosition.Item1 is >= 51 and <= 100 && facing == 2) {
             newPosition = (101, newPosition.Item1 - 50);
-            facing = 1;
+            newFacing = 1;
         } else if (newPosition.Item1 == 51 && newPosition.Item2 >= 101 && facing == 1) {
             newPosition = (newPosition.Item2 - 50, 100);
-            facing = 2;
+            newFacing = 2;
         } else if (newPosition.Item2 == 101 && newPosition.Item1 is >= 51 and <= 100 && facing == 0) {
             newPosition = (50, newPosition.Item1 + 50);
-            facing = 3;
+            newFacing = 3;
         } else if (newPosition.Item2 == 151) {
             newPosition = (151 - newPosition.Item1, 100);
-            facing = (facing + 2) % 4;
+            newFacing = (facing + 2) % 4;
         } else if (newPosition.Item2 == 101 && newPosition.Item1 is >= 101 and <= 150) {
             newPosition = (151 - newPosition.Item1, 150);
-            facing = (facing + 2) % 4;
+            newFacing = (facing + 2) % 4;
         } else if (newPosition.Item1 == 151 && newPosition.Item2 is >= 51 and <= 100 && facing == 1) {
             newPosition = (newPosition.Item2 + 100, 50);
-            facing = 2;
+            newFacing = 2;
         } else if (newPosition.Item2 == 51 && newPosition.Item1 is >= 151 and <= 200 && facing == 0) {
             newPosition = (150, newPosition.Item1 - 100);
-            facing = 3;
+            newFacing = 3;
         }
 
-        return (board[newPosition] == '#' ? currentPosition : newPosition, facing);
+        return board[newPosition] == '#' ? (currentPosition, facing) : (newPosition, newFacing);
     }
 }
