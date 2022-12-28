@@ -17,7 +17,13 @@ public class Day16 : IAdventOfCodeDay
 
     public void Part2(string input)
     {
-        throw new NotImplementedException();
+        var bestScore = FindBestMove(new CurrentState("AA", 26, ParseInput(input)), "AA");
+
+        foreach (var move in bestScore.Item2.Reverse()) {
+            Console.WriteLine(move);
+        }
+
+        Console.WriteLine("Most pressure able to be released: " + bestScore.Item1);
     }
 
     private static (int, ImmutableList<string>) FindBestMove(CurrentState state, string? lastLocation)
