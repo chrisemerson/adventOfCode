@@ -4,71 +4,122 @@ namespace AdventOfCode;
 
 public class Day16 : IAdventOfCodeDay
 {
-    public void Part1(string input)
-    {
-        var bestScore = FindBestMove(new CurrentState("AA", 30, ParseInput(input)), "AA");
+    public void Part1(string input) => Console.WriteLine(
+        "Most pressure able to be released: "
+        + FindBestMove(new CurrentState(("AA", 0), 30, ParseInput(input))));
 
-        foreach (var move in bestScore.Item2.Reverse()) {
-            Console.WriteLine(move);
-        }
+    public void Part2(string input) => Console.WriteLine(
+        "Most pressure able to be released: "
+        + FindBestMove(new CurrentState(("AA", 0), 26, ParseInput(input), ("AA", 0))));
 
-        Console.WriteLine("Most pressure able to be released: " + bestScore.Item1);
-    }
-
-    public void Part2(string input)
-    {
-        var bestScore = FindBestMove(new CurrentState("AA", 26, ParseInput(input)), "AA");
-
-        foreach (var move in bestScore.Item2.Reverse()) {
-            Console.WriteLine(move);
-        }
-
-        Console.WriteLine("Most pressure able to be released: " + bestScore.Item1);
-    }
-
-    private static (int, ImmutableList<string>) FindBestMove(CurrentState state, string? lastLocation)
+    private static int FindBestMove(CurrentState state)
     {
         //If no time left, return 0
         if (state.TimeLeft <= 0) {
-            return (0, new List<string> { state.TimeLeft + ": Time out!" }.ToImmutableList());
+            return 0;
         }
 
-        var possibleFlows = new List<(int, ImmutableList<string>)>();
-        var currentValve = state.Valves[state.CurrentPosition];
+        var possibleFlows = new List<int>();
 
-        foreach (var nextValve in state.Valves.Where(v => !v.Value.Open && v.Key != state.CurrentPosition && v.Value.FlowRate > 0)) {
-            var travelCost = currentValve.Connections[nextValve.Key] + 1;
+        if (state.ElephantPosition.HasValue) {
+            //Elephant on board
+            var possibleRouting = new List<(string, string)>();
+            var weCanMove = state.CurrentPosition.Item2 == 0;
+            var elephantCanMove = state.ElephantPosition.Value.Item2 == 0;
+            var availableValves = state.Valves.Where(v => !v.Value.Open && v.Value.FlowRate > 0);
 
-            if (
-                nextValve.Key != lastLocation
-                && !state.Valves[nextValve.Key].Open
-                && travelCost <= state.TimeLeft
-            ) {
-                var bestMoveFromHere = FindBestMove(
-                    new CurrentState(
-                        nextValve.Key,
-                        state.TimeLeft - travelCost,
-                        state.Valves.Select(v => v.Key == nextValve.Key
+            if (weCanMove && elephantCanMove) {
+                //We need to choose new valves for both us and the elephant to visit
+                foreach (var nextValve in availableValves) {
+                    foreach (var elephantNextValve in availableValves) {
+                        if (nextValve.Key != elephantNextValve.Key) {
+                            possibleRouting.Add((nextValve.Key, elephantNextValve.Key));
+                        }
+                    }
+                }
+            } else {
+                //One of us is on a pre-determined route, but we still need to choose somewhere for the other to visit
+                foreach (var nextValve in availableValves) {
+                    possibleRouting.Add(weCanMove
+                        ? (nextValve.Key, state.ElephantPosition.Value.Item1)
+                        : (state.CurrentPosition.Item1, nextValve.Key));
+                }
+            }
+
+            foreach (var possibleRoute in possibleRouting) {
+                var myDestination = possibleRoute.Item1;
+                var elephantDestination = possibleRoute.Item2;
+
+                var myTravelCost = weCanMove
+                    ? state.Valves[state.CurrentPosition.Item1].Connections[myDestination] + 1
+                    : state.CurrentPosition.Item2;
+
+                var elephantTravelCost = elephantCanMove
+                    ? state.Valves[state.ElephantPosition.Value.Item1].Connections[elephantDestination] + 1
+                    : state.ElephantPosition.Value.Item2;
+
+                if (myTravelCost <= state.TimeLeft || elephantTravelCost <= state.TimeLeft) {
+                    var minTravelCost = Math.Min(myTravelCost, elephantTravelCost);
+                    Dictionary<string, Valve> newValves;
+
+                    if (myTravelCost == elephantTravelCost) {
+                        newValves = state.Valves.Select(v => (v.Key == myDestination || v.Key == elephantDestination)
                                 ? new Valve(v.Value.Name, v.Value.Connections, v.Value.FlowRate, true)
                                 : v.Value)
-                            .ToDictionary(v => v.Name, v => v)
-                    ), state.CurrentPosition
-                );
+                            .ToDictionary(v => v.Name, v => v);
+                    } else if (myTravelCost < elephantTravelCost) {
+                        newValves = state.Valves.Select(v => v.Key == myDestination
+                                ? new Valve(v.Value.Name, v.Value.Connections, v.Value.FlowRate, true)
+                                : v.Value)
+                            .ToDictionary(v => v.Name, v => v);
+                    } else {
+                        newValves = state.Valves.Select(v => v.Key == elephantDestination
+                                ? new Valve(v.Value.Name, v.Value.Connections, v.Value.FlowRate, true)
+                                : v.Value)
+                            .ToDictionary(v => v.Name, v => v);
+                    }
 
-                possibleFlows.Add((
-                        bestMoveFromHere.Item1 + state.Valves.Sum(v => v.Value.Open ? v.Value.FlowRate * travelCost : 0),
-                        bestMoveFromHere.Item2.Add(state.TimeLeft + ": Move to & open " + nextValve.Key))
-                );
+                    var bestMoveFromHere = FindBestMove(new CurrentState(
+                        (myDestination, myTravelCost - minTravelCost),
+                        state.TimeLeft - minTravelCost,
+                        newValves,
+                        (elephantDestination, elephantTravelCost - minTravelCost)
+                    ));
+
+                    possibleFlows.Add(bestMoveFromHere + state.Valves.Sum(v => v.Value.Open
+                        ? v.Value.FlowRate * minTravelCost
+                        : 0));
+                }
+            }
+        } else {
+            foreach (var nextValve in state.Valves
+                         .Where(v => !v.Value.Open && v.Key != state.CurrentPosition.Item1 && v.Value.FlowRate > 0)) {
+                var myTravelCost = state.Valves[state.CurrentPosition.Item1].Connections[nextValve.Key] + 1;
+
+                if (myTravelCost <= state.TimeLeft) {
+                    var bestMoveFromHere = FindBestMove(
+                        new CurrentState(
+                            (nextValve.Key, 0),
+                            state.TimeLeft - myTravelCost,
+                            state.Valves.Select(v => v.Key == nextValve.Key
+                                    ? new Valve(v.Value.Name, v.Value.Connections, v.Value.FlowRate, true)
+                                    : v.Value)
+                                .ToDictionary(v => v.Name, v => v)
+                        )
+                    );
+
+                    possibleFlows.Add(bestMoveFromHere + state.Valves.Sum(v => v.Value.Open
+                        ? v.Value.FlowRate * myTravelCost
+                        : 0));
+                }
             }
         }
 
         return possibleFlows.Any()
-            ? possibleFlows.First(pf => pf.Item1 == possibleFlows.Select(pf2 => pf2.Item1).Max())
-            : (state.Valves
-                    .Where(v => v.Value.Open)
-                    .Sum(v => v.Value.FlowRate) * state.TimeLeft,
-                new List<string> { "No further possible moves" }.ToImmutableList()
-            );
+            ? possibleFlows.Last(pf => pf == possibleFlows.Select(pf2 => pf2).Max())
+            : state.Valves
+                .Where(v => v.Value.Open)
+                .Sum(v => v.Value.FlowRate) * state.TimeLeft;
     }
 
     private static Dictionary<string, Valve> ParseInput(string input)
@@ -83,8 +134,10 @@ public class Day16 : IAdventOfCodeDay
                 return new Valve(
                     valveInfo[0][6..],
                     valveParts[1].StartsWith("tunnel ")
-                        ? valveParts[1][22..].Split(",", StringSplitOptions.TrimEntries).ToDictionary(v => v, _ => 1)
-                        : valveParts[1][23..].Split(",", StringSplitOptions.TrimEntries).ToDictionary(v => v, _ => 1),
+                        ? valveParts[1][22..].Split(",", StringSplitOptions.TrimEntries)
+                            .ToDictionary(v => v, _ => 1)
+                        : valveParts[1][23..].Split(",", StringSplitOptions.TrimEntries)
+                            .ToDictionary(v => v, _ => 1),
                     int.Parse(valveInfo[1])
                 );
             });
