@@ -1,3 +1,5 @@
+module Main where
+
 import qualified Day1.Day1 as Day1
 import qualified Day2.Day2 as Day2
 import qualified Day3.Day3 as Day3
@@ -23,6 +25,7 @@ import qualified Day22.Day22 as Day22
 import qualified Day23.Day23 as Day23
 import qualified Day24.Day24 as Day24
 import qualified Day25.Day25 as Day25
+import Paths_aoc
 import System.Environment
 
 main = do
@@ -37,7 +40,8 @@ runAOC dayNo partNo = do
     if or [dayNo > 25, dayNo < 1]
         then error $ "Invalid day number: " ++ show dayNo
         else do
-            input <- readFile ("Day" ++ show dayNo ++ "/input.txt")
+            inputFilePath <- getDataFileName ("app/Day" ++ show dayNo ++ "/input.txt")
+            input <- readFile inputFilePath
             runDayAndPart dayNo partNo input
 
 runDayAndPart :: Int -> Int -> String -> IO()
