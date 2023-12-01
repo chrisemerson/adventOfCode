@@ -33,18 +33,26 @@ main = do
 
 runAOC :: Int -> Int -> IO ()
 
-runAOC dayNo partNo = putStrLn result where
-    input = readFile ("Day" ++ show dayNo ++ "/input.txt")
+runAOC dayNo partNo = do
+    if or [dayNo > 25, dayNo < 1]
+        then error $ "Invalid day number: " ++ show dayNo
+        else do
+            input <- readFile ("Day" ++ show dayNo ++ "/input.txt")
+            runDayAndPart dayNo partNo input
+
+runDayAndPart :: Int -> Int -> String -> IO()
+
+runDayAndPart dayNo partNo input = putStrLn result where
     [part1Fn, part2Fn] = case dayNo of
-        1 -> [Day1.part1, Day1.part2]
-        2 -> [Day2.part1, Day2.part2]
-        3 -> [Day3.part1, Day3.part2]
-        4 -> [Day4.part1, Day4.part2]
-        5 -> [Day5.part1, Day5.part2]
-        6 -> [Day6.part1, Day6.part2]
-        7 -> [Day7.part1, Day7.part2]
-        8 -> [Day8.part1, Day8.part2]
-        9 -> [Day9.part1, Day9.part2]
+        1  -> [Day1.part1, Day1.part2]
+        2  -> [Day2.part1, Day2.part2]
+        3  -> [Day3.part1, Day3.part2]
+        4  -> [Day4.part1, Day4.part2]
+        5  -> [Day5.part1, Day5.part2]
+        6  -> [Day6.part1, Day6.part2]
+        7  -> [Day7.part1, Day7.part2]
+        8  -> [Day8.part1, Day8.part2]
+        9  -> [Day9.part1, Day9.part2]
         10 -> [Day10.part1, Day10.part2]
         11 -> [Day11.part1, Day11.part2]
         12 -> [Day12.part1, Day12.part2]
@@ -64,3 +72,4 @@ runAOC dayNo partNo = putStrLn result where
     result = case partNo of
         1 -> part1Fn input
         2 -> part2Fn input
+        _ -> error $ "Invalid part number: " ++ show partNo
