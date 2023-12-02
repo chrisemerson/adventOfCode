@@ -36,14 +36,14 @@ module Day2.Day2 where
 
     stringEndsWith str search = (drop ((length str) - (length search)) str) == search
 
-    trim :: String -> String
     trim = f . f where
         f = reverse . dropWhile isSpace
 
     findSumOfValidGameIDs games maxRed maxGreen maxBlue =
         sum $ map (\x -> gameNo x) (filter (\x -> isValidGame x maxRed maxGreen maxBlue) games)
 
-    isValidGame game maxRed maxGreen maxBlue = length (draws game) == (length (filter id (map (\x -> isValidDraw x maxRed maxGreen maxBlue) (draws game))))
+    isValidGame game maxRed maxGreen maxBlue =
+        length (draws game) == (length (filter id (map (\x -> isValidDraw x maxRed maxGreen maxBlue) (draws game))))
 
     isValidDraw draw maxRed maxGreen maxBlue = and [red draw <= maxRed, green draw <= maxGreen, blue draw <= maxBlue]
 
