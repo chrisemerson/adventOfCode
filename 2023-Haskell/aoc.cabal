@@ -19,7 +19,7 @@ maintainer:         git@chris.emerson.email
 -- A copyright notice.
 -- copyright:
 -- category:
-extra-source-files: CHANGELOG.md
+extra-source-files:
 data-files:
     app/Day1/input.txt
     app/Day2/input.txt
@@ -57,12 +57,15 @@ executable aoc
     -- other-extensions:
     build-depends:
         base ^>=4.17.2.0,
-        regex-pcre-builtin
+        regex-pcre-builtin,
+        split,
+        text
     hs-source-dirs:   app
     default-language: Haskell2010
     other-modules:
         Day1.Day1
         Day2.Day2
+        Day2.Game
         Day3.Day3
         Day4.Day4
         Day5.Day5
