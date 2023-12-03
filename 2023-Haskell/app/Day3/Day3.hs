@@ -14,11 +14,11 @@ module Day3.Day3 where
     part1 :: String -> String
     part2 :: String -> String
 
-    part1 input = sumEnginePartNumbers input
+    part1 input = show $ sumEnginePartNumbers input
     part2 input = show $ sumGearRatios input
 
     sumEnginePartNumbers input =
-        show $ sum (pmap number (filter (hasAdjacentSymbol inputGrid) (findNumbers inputGrid))) where
+        sum (pmap number (filter (hasAdjacentSymbol inputGrid) (findNumbers inputGrid))) where
             inputGrid = getInputGrid input
 
     sumGearRatios input = sum (pmap product (filter (\x -> length x == 2) numbersAdjacentToGears)) where
