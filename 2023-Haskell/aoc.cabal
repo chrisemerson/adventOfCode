@@ -59,7 +59,8 @@ executable aoc
         base ^>=4.17.2.0,
         regex-pcre-builtin,
         split,
-        text
+        text,
+        vector
     hs-source-dirs:   app
     default-language: Haskell2010
     other-modules:
@@ -89,4 +90,5 @@ executable aoc
         Day23.Day23
         Day24.Day24
         Day25.Day25
-        Paths_aoc
+        Paths_aoc,
+        Util

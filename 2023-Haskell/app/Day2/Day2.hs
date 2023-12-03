@@ -2,6 +2,7 @@ module Day2.Day2 where
     import Day2.Game
     import Data.Char (isSpace)
     import Data.List.Split
+    import Util
 
     part1 :: String -> String
     part2 :: String -> String
@@ -33,11 +34,6 @@ module Day2.Day2 where
     getCubeStrings drawString = map trim (splitOn "," drawString)
 
     getCubeColour drawString cubeColour = filter (\x -> stringEndsWith x cubeColour) (getCubeStrings drawString)
-
-    stringEndsWith str search = (drop ((length str) - (length search)) str) == search
-
-    trim = f . f where
-        f = reverse . dropWhile isSpace
 
     findSumOfValidGameIDs games maxRed maxGreen maxBlue =
         sum $ map (\x -> gameNo x) (filter (\x -> isValidGame x maxRed maxGreen maxBlue) games)
