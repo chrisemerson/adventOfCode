@@ -30,7 +30,10 @@ module Day4.Day4 where
         length (intersect (winningNumbers scratchcard) (ourNumbers scratchcard))
 
     determineNumberOfScratchcards :: [Card] -> Int
-    determineNumberOfScratchcards scratchcards = ifoldl (\a i x -> a + x) 0 (foldl processScratchcard (generate (length scratchcards) (\a -> 1)) scratchcards)
+    determineNumberOfScratchcards scratchcards = ifoldl
+        (\a i x -> a + x)
+        0
+        (foldl processScratchcard (generate (length scratchcards) (\a -> 1)) scratchcards)
 
     processScratchcard :: Vector Int -> Card -> Vector Int
     processScratchcard currentQuantities scratchcard = currentQuantities // quantitiesToIncrease where
