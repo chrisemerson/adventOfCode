@@ -10,3 +10,6 @@ module Util where
 
     stringEndsWith :: String -> String -> Bool
     stringEndsWith str search = (drop ((length str) - (length search)) str) == search
+
+    range :: Int -> Int -> [Int]
+    range start end = take (end - start + 1) (iterate (+ 1) start)

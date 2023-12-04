@@ -1,7 +1,7 @@
 module Day3.Day3 where
     import Data.Char
     import Data.Typeable
-    import Data.Vector (fromList, ifoldl, imap, ifilter, Vector, (!), toList, map)
+    import Data.Vector (fromList, ifoldl, imap, ifilter, Vector, map)
     import Util
 
     vmap = Data.Vector.map
