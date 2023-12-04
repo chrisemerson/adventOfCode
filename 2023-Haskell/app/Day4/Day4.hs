@@ -25,17 +25,14 @@ module Day4.Day4 where
     getScratchcardPoints scratchcard = if matchingNumbers == 0 then 0 else 2 ^ (matchingNumbers - 1) where
         matchingNumbers = getNumberOfMatchingNumbersOnScratchcard scratchcard
 
-    getNumberOfMatchingNumbersOnScratchcard :: Card -> Int
     getNumberOfMatchingNumbersOnScratchcard scratchcard =
         length (intersect (winningNumbers scratchcard) (ourNumbers scratchcard))
 
-    determineNumberOfScratchcards :: [Card] -> Int
     determineNumberOfScratchcards scratchcards = ifoldl
         (\a i x -> a + x)
         0
         (foldl processScratchcard (generate (length scratchcards) (\a -> 1)) scratchcards)
 
-    processScratchcard :: Vector Int -> Card -> Vector Int
     processScratchcard currentQuantities scratchcard = currentQuantities // quantitiesToIncrease where
         cardIndex = (cardNo scratchcard) - 1
         matchingNumbers = getNumberOfMatchingNumbersOnScratchcard scratchcard
