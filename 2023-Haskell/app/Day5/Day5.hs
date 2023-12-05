@@ -6,9 +6,14 @@ module Day5.Day5 where
     part1 :: String -> String
     part2 :: String -> String
 
-    part1 input = show $ minimum (map (findLocationForSeed almanac) (seeds almanac)) where
-        almanac = parseInput input
-    part2 input = show $ filter (\x -> mapMapsValue x 79) (seedToSoil (parseInput input))
+    part1 input = show $ findLowestLocation (parseInput input False)
+    part2 input = show $ findLowestLocation (parseInput input True)
+
+    findLowestLocation :: Almanac -> Int
+    findLowestLocation almanac = minimum (map (\x -> minimum (map (findLocationForSeed almanac) (getSeedRange x))) (seeds almanac))
+
+    getSeedRange :: SeedRange -> [Int]
+    getSeedRange seedRange = take (size seedRange - 1) (iterate (+ 1) (startNo seedRange))
 
     findLocationForSeed :: Almanac -> Int -> Int
     findLocationForSeed almanac seedNo =

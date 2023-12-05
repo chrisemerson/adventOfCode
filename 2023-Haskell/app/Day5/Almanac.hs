@@ -1,7 +1,8 @@
 module Day5.Almanac where
+    data SeedRange = SeedRange { startNo :: Int, size :: Int } deriving (Show)
     data Map = Map { destStart :: Int, sourceStart :: Int, rangeSize :: Int} deriving (Show)
     data Almanac = Almanac {
-        seeds :: [Int],
+        seeds :: [SeedRange],
         seedToSoil :: [Map],
         soilToFertilizer :: [Map],
         fertilizerToWater :: [Map],

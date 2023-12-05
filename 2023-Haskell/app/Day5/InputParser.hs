@@ -5,8 +5,8 @@ module Day5.InputParser where
 
     data ParseState = ParseState { almanac :: Almanac, stage :: String } deriving (Show)
 
-    parseInput :: String -> Almanac
-    parseInput input = almanac (foldl parseLine ParseState {
+    parseInput :: String -> Bool -> Almanac
+    parseInput input useSeedRanges = almanac (foldl (\a x -> parseLine a x useSeedRanges) ParseState {
             almanac = Almanac {
                 seeds = [],
                 seedToSoil = [],
@@ -21,11 +21,11 @@ module Day5.InputParser where
         } inputLines) where
             inputLines = filter (/= "") (map trim (lines input))
 
-    parseLine :: ParseState -> String -> ParseState
-    parseLine parseState line =
+    parseLine :: ParseState -> String -> Bool -> ParseState
+    parseLine parseState line useSeedRanges =
         if stringStartsWith line "seeds:"
             then ParseState { almanac = Almanac {
-                seeds = map read (filter (/= "") (map trim (splitOn " " (drop 6 line)))),
+                seeds = if useSeedRanges then parseSeedsWithRanges line else parseSeeds line,
                 seedToSoil = seedToSoil (almanac parseState),
                 soilToFertilizer = seedToSoil (almanac parseState),
                 fertilizerToWater = seedToSoil (almanac parseState),
@@ -147,6 +147,14 @@ module Day5.InputParser where
                 stage = stage parseState
             }
         else parseState
+
+    parseSeeds :: String -> [SeedRange]
+    parseSeeds line = map (\x -> SeedRange { startNo = read x, size = 1}) (readSeedsLine line)
+
+    parseSeedsWithRanges :: String -> [SeedRange]
+    parseSeedsWithRanges line = map (\x -> SeedRange { startNo = read (head x), size = read (head (tail x))}) (chunksOf 2 (readSeedsLine line))
+
+    readSeedsLine line = (filter (/= "") (map trim (splitOn " " (drop 6 line))))
 
     readMapLine :: String -> Map
     readMapLine line = Map {
