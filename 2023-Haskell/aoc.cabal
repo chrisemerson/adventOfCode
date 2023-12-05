@@ -70,6 +70,8 @@ executable aoc
         Day3.Day3
         Day4.Day4
         Day5.Day5
+        Day5.Almanac
+        Day5.InputParser
         Day6.Day6
         Day7.Day7
         Day8.Day8
