@@ -11,7 +11,10 @@ module Day8.Day8 where
         nodes = snd parsedInput
         parsedInput = parseInput input
 
-    part2 input = input
+    part2 input = show $ map (\s -> getPathToAnyEnd nodes (concat (repeat instructions)) s) (map (\n -> (nodeId n)) (filter (\n -> stringEndsWith (nodeId n) "A") nodes)) where
+        instructions = fst parsedInput
+        nodes = snd parsedInput
+        parsedInput = parseInput input
 
     parseInput input = (head inputLines, parseNodes (tail inputLines)) where
         inputLines = filter (\l -> l /= "") (map trim (lines input))
@@ -25,6 +28,10 @@ module Day8.Day8 where
     getPath :: [Node] -> [Char] -> String -> [String]
     getPath nodes instructions currentNode = if currentNode == "ZZZ"
         then ["ZZZ"]
+        else [currentNode] ++ (getPath nodes (tail instructions) (getNextNode nodes currentNode (head instructions)))
+
+    getPathToAnyEnd nodes instructions currentNode = if stringEndsWith currentNode "Z"
+        then [currentNode]
         else [currentNode] ++ (getPath nodes (tail instructions) (getNextNode nodes currentNode (head instructions)))
 
     getNextNode :: [Node] -> String -> Char -> String
