@@ -1,5 +1,6 @@
 module Day10.Day10 where
     import Data.Vector (fromList, head, Vector, ifoldl, ifilter, imap, map, empty, (//))
+    import Grid
     import Util
 
     vmap = Data.Vector.map
@@ -16,15 +17,12 @@ module Day10.Day10 where
     part2 :: String -> String
 
     part1 input = show $ findFurthestPipeDistance grid where
-        grid = getInputGrid input
+        grid = convertToGrid input
 
     part2 input = show $ findNoCellsInsidePipes gridWithoutStart pipeLocations where
         pipeLocations = getPipeLocations grid
-        grid = getInputGrid input
+        grid = convertToGrid input
         gridWithoutStart = getGridWithoutStart grid
-
-    getInputGrid :: String -> Vector (Vector Char)
-    getInputGrid input = fromList (pmap (\x -> fromList (trim x)) (lines input))
 
     getInitialScoutState grid = ScoutState {
             scout1 = Scout { pos = startPos, dir = fst directions},
@@ -131,9 +129,3 @@ module Day10.Day10 where
             (E, W) -> '-'
         newStartLine = originalStartLine // [((snd startPos), newStartChar)]
         newGrid = grid // [((fst startPos), newStartLine)]
-
-    getGridChar :: Vector (Vector Char) -> Int -> Int -> Char
-    getGridChar grid y x = getByIndex (getByIndex grid y) x
-
-    getByIndex :: Vector a -> Int -> a
-    getByIndex vector idx = vhead (ifilter (\i x -> i == idx) vector)
