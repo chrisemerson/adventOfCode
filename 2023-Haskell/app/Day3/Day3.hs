@@ -2,6 +2,7 @@ module Day3.Day3 where
     import Data.Char
     import Data.Typeable
     import Data.Vector (fromList, ifoldl, imap, ifilter, Vector, map)
+    import Grid
     import Util
 
     vmap = Data.Vector.map
@@ -19,15 +20,12 @@ module Day3.Day3 where
 
     sumEnginePartNumbers input =
         sum (pmap number (filter (hasAdjacentSymbol inputGrid) (findNumbers inputGrid))) where
-            inputGrid = getInputGrid input
+            inputGrid = convertToGrid input
 
     sumGearRatios input = sum (pmap product (filter (\x -> length x == 2) numbersAdjacentToGears)) where
         numbersAdjacentToGears = pmap (pmap number . (findNumbersAdjacentToGear numbers)) (findGears inputGrid)
         numbers = findNumbers inputGrid
-        inputGrid = getInputGrid input
-
-    getInputGrid :: String -> Vector (Vector Char)
-    getInputGrid input = fromList (pmap (fromList . trim) (lines input))
+        inputGrid = convertToGrid input
 
     findNumbers inputVec = concat $ imap findNumbersInRow inputVec
 

@@ -14,4 +14,9 @@ module Util where
     range :: Int -> Int -> [Int]
     range start end = take (end - start + 1) (iterate (+ 1) start)
 
+    frequencies :: String -> [(Char, Int)]
     frequencies string = [ (x, c) | x <- ['A'..'z'] ++ ['0'..'9'], let c = (length.filter (== x)) string, c > 0 ]
+
+    rmdups :: Eq a => [a] -> [a]
+    rmdups [] = []
+    rmdups (x:xs) = x : filter (/= x) (rmdups xs)

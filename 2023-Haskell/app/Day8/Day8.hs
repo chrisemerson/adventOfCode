@@ -11,7 +11,9 @@ module Day8.Day8 where
         nodes = snd parsedInput
         parsedInput = parseInput input
 
-    part2 input = show $ map (\s -> getPathToAnyEnd nodes (concat (repeat instructions)) s) (map (\n -> (nodeId n)) (filter (\n -> stringEndsWith (nodeId n) "A") nodes)) where
+    part2 input = show $ foldl lcm 1 cycleLengths where
+        cycleLengths = map (\s -> length (getPathToAnyEnd nodes (concat (repeat instructions)) s) - 1) startPoints
+        startPoints = map (\n -> (nodeId n)) (filter (\n -> stringEndsWith (nodeId n) "A") nodes)
         instructions = fst parsedInput
         nodes = snd parsedInput
         parsedInput = parseInput input
@@ -32,7 +34,7 @@ module Day8.Day8 where
 
     getPathToAnyEnd nodes instructions currentNode = if stringEndsWith currentNode "Z"
         then [currentNode]
-        else [currentNode] ++ (getPath nodes (tail instructions) (getNextNode nodes currentNode (head instructions)))
+        else [currentNode] ++ (getPathToAnyEnd nodes (tail instructions) (getNextNode nodes currentNode (head instructions)))
 
     getNextNode :: [Node] -> String -> Char -> String
     getNextNode nodes currentNode instruction = if instruction == 'L'
