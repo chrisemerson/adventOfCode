@@ -1,6 +1,7 @@
 module Day12.Day12 where
     import Data.List (group)
     import Data.List.Split
+    import Data.List.Utils (join)
     import Util
 
     part1 :: String -> String
@@ -11,7 +12,8 @@ module Day12.Day12 where
     part1 input = show $ sum (map getValidSpringCombinations parsedInput) where
         parsedInput = parseInput input
 
-    part2 input = input
+    part2 input = show $ sum (map getValidSpringCombinations parsedInput) where
+        parsedInput = map (\s -> unfoldSpringRow s 5) (parseInput input)
 
     parseInput input = map parseLine (lines input)
 
@@ -30,3 +32,8 @@ module Day12.Day12 where
 
     springRowIsValid :: SpringRow -> Bool
     springRowIsValid springRow = pattern springRow == map length (filter (\x -> head x == '#') (group (row springRow)))
+
+    unfoldSpringRow springRow multiple = SpringRow { row = newRow, unknowns = newUnknowns, pattern = newPattern } where
+        newUnknowns = findUnknowns newRow
+        newRow = join "?" (take multiple (repeat (row springRow)))
+        newPattern = concat (take multiple (repeat (pattern springRow)))

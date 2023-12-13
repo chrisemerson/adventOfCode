@@ -57,6 +57,7 @@ executable aoc
     -- other-extensions:
     build-depends:
         base ^>=4.17.2.0,
+        MissingH,
         regex-pcre-builtin,
         split,
         text,
