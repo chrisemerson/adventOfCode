@@ -8,7 +8,6 @@ module Day13.Day13 where
     part2 :: String -> String
 
     part1 input = show $ scoreReflectionPoints (map findReflectionPoints (parseInput input))
-
     part2 input = show $ scoreReflectionPoints (map findReflectionPointsAfterSmudgeCorrection (parseInput input))
 
     parseInput :: String -> [[[Char]]]
