@@ -1,4 +1,5 @@
 module Day13.Day13 where
+    import Data.List
     import Data.List.Split
     import Grid
     import Util
@@ -6,15 +7,17 @@ module Day13.Day13 where
     part1 :: String -> String
     part2 :: String -> String
 
-    part1 input = show $ score where
-        score = foldl (\a x -> a + (sum (fst x)) + (100 * (sum (snd x)))) 0 reflectionPoints
-        reflectionPoints = map (\x -> (checkColsForReflection x, checkRowsForReflection x)) parsedInput
-        parsedInput = parseInput input
+    part1 input = show $ scoreReflectionPoints (map findReflectionPoints (parseInput input))
 
-    part2 input = input
+    part2 input = show $ scoreReflectionPoints (map findReflectionPointsAfterSmudgeCorrection (parseInput input))
 
     parseInput :: String -> [[[Char]]]
     parseInput input = map lines (splitOn "\n\n" input)
+
+    scoreReflectionPoints reflectionPoints = foldl (\a x -> a + (sum (fst x)) + (100 * (sum (snd x)))) 0 reflectionPoints
+
+    findReflectionPoints :: [[Char]] -> ([Int], [Int])
+    findReflectionPoints grid = (checkColsForReflection grid, checkRowsForReflection grid)
 
     checkColsForReflection :: [[Char]] -> [Int]
     checkColsForReflection grid =
@@ -42,3 +45,24 @@ module Day13.Day13 where
         else if (head lst == last lst)
             then checkListForReflectionDownMiddle (take ((length lst) - 2) (drop 1 lst))
             else False
+
+    findReflectionPointsAfterSmudgeCorrection :: [[Char]] -> ([Int], [Int])
+    findReflectionPointsAfterSmudgeCorrection grid = (filter (\x -> not (elem x (fst originalReflectionLines))) (fst nonOriginalNewReflections), filter (\x -> not (elem x (snd originalReflectionLines))) (snd nonOriginalNewReflections)) where
+        nonOriginalNewReflections = head (filter (\x -> or[(fst x) /= (fst originalReflectionLines), (snd x) /= (snd originalReflectionLines)]) newReflectionsPerCharChange)
+        newReflectionsPerCharChange = filter (\x -> or [length (fst x) /= 0, length (snd x) /= 0]) (map findReflectionPoints newGridsPerCharChange)
+        newGridsPerCharChange = foldl (\a x -> a ++ x) [] (map (\i -> (map (\j -> swapCharacterInGrid grid i j) (range 0 gridNoCols))) (range 0 gridNoRows))
+        gridNoRows = (length grid) - 1
+        gridNoCols = (length (head grid)) - 1
+        originalReflectionLines = findReflectionPoints grid
+
+    swapCharacterInGrid :: [[Char]] -> Int -> Int -> [[Char]]
+    swapCharacterInGrid grid row col = replacementGrid where
+        replacementGrid = rowsBefore ++ [replacementRow] ++ rowsAfter
+        rowToReplace = head (drop row grid)
+        rowsBefore = take row grid
+        rowsAfter = drop (row + 1) grid
+        replacementRow = colsBefore ++ [replacementChar] ++ colsAfter
+        colsBefore = take col rowToReplace
+        colsAfter = drop (col + 1) rowToReplace
+        originalChar = head (drop col rowToReplace)
+        replacementChar = if originalChar == '#' then '.' else '#'
