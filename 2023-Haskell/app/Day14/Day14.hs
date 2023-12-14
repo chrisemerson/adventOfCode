@@ -9,7 +9,7 @@ module Day14.Day14 where
         gridAfterRolls = rollRocksNorth grid
         grid = convertToGrid input
 
-    part2 input = show $ map calculateStress (take 10 (iterate cycleRocks grid)) where
+    part2 input = show $ map calculateStress (take 20 (iterate cycleRocks grid)) where
        grid = convertToGrid input
 
     cycleRocks :: Grid -> Grid
