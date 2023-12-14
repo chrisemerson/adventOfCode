@@ -9,19 +9,22 @@ module Day14.Day14 where
         gridAfterRolls = rollRocksNorth grid
         grid = convertToGrid input
 
-    part2 input = show $ swapGridChars grid (0, 0) (0, 1) where
+    part2 input = show $ map calculateStress (take 10 (iterate cycleRocks grid)) where
        grid = convertToGrid input
 
+    cycleRocks :: Grid -> Grid
+    cycleRocks grid = rollRocksEast (rollRocksSouth (rollRocksWest (rollRocksNorth grid)))
+
     rollRocksNorth grid = rollRocks grid (-1) 0 findRocksThatCanRollNorth
-    rollRocksWest grid = rollRocks grid 0 (-1) findRocksThatCanRollNorth
-    rollRocksSouth grid = rollRocks grid 1 0 findRocksThatCanRollNorth
-    rollRocksEast grid = rollRocks grid 0 1 findRocksThatCanRollNorth
+    rollRocksWest grid = rollRocks grid 0 (-1) findRocksThatCanRollWest
+    rollRocksSouth grid = rollRocks grid 1 0 findRocksThatCanRollSouth
+    rollRocksEast grid = rollRocks grid 0 1 findRocksThatCanRollEast
 
     rollRocks :: Grid -> Int -> Int -> (Grid -> [(Int, Int)]) -> Grid
     rollRocks grid yOffset xOffset findFn = if not (length (findFn grid) > 0)
         then grid
-        else rollRocks (swapGridChars grid rockToMove (((fst rockToMove) + yOffset), ((snd rockToMove) + xOffset))) yOffset xOffset findFn where
-           rockToMove = head (findFn grid)
+        else rollRocks gridAfterRolling yOffset xOffset findFn where
+            gridAfterRolling = foldl (\a r -> swapGridChars a r (((fst r) + yOffset), ((snd r) + xOffset))) grid (findFn grid)
 
     findRocks grid = filter (\c -> getGridChar grid (fst c) (snd c) == 'O') cells where
         cells = concat $ map (\r -> map (\c -> (r, c)) (range 0 ((glength (ghead grid)) - 1))) (range 0 ((glength grid) - 1))
