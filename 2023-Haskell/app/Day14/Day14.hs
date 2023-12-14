@@ -27,9 +27,9 @@ module Day14.Day14 where
         cells = concat $ map (\r -> map (\c -> (r, c)) (range 0 ((glength (ghead grid)) - 1))) (range 0 ((glength grid) - 1))
 
     findRocksThatCanRollNorth grid = filter (\r -> and[fst r > 0, getGridChar grid ((fst r) - 1) (snd r) == '.']) (findRocks grid)
-    findRocksThatCanRollWest grid = filter (\r -> and[fst r > 0, getGridChar grid ((fst r) - 1) (snd r) == '.']) (findRocks grid)
-    findRocksThatCanRollSouth grid = filter (\r -> and[fst r > 0, getGridChar grid ((fst r) - 1) (snd r) == '.']) (findRocks grid)
-    findRocksThatCanRollEast grid = filter (\r -> and[fst r > 0, getGridChar grid ((fst r) - 1) (snd r) == '.']) (findRocks grid)
+    findRocksThatCanRollWest grid = filter (\r -> and[snd r > 0, getGridChar grid (fst r) ((snd r) - 1) == '.']) (findRocks grid)
+    findRocksThatCanRollSouth grid = filter (\r -> and[fst r < ((glength grid) - 1), getGridChar grid ((fst r) + 1) (snd r) == '.']) (findRocks grid)
+    findRocksThatCanRollEast grid = filter (\r -> and[snd r < ((glength (ghead grid)) - 1), getGridChar grid (fst r) ((snd r) + 1) == '.']) (findRocks grid)
 
     calculateStress grid = sum stressPerRow where
         stressPerRow = gmap (\i r -> (gridHeight - i) * (glength (gfilter (\_ c -> c == 'O') r))) grid
