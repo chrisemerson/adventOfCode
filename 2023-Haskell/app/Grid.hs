@@ -26,3 +26,9 @@ module Grid where
         newGrid = gmap (\y r -> gmap (\x c -> if (y, x) == from then originalToChar else if (y, x) == to then originalFromChar else c) r) grid
         originalFromChar = getGridChar grid (fst from) (snd from)
         originalToChar = getGridChar grid (fst to) (snd to)
+
+    height :: Grid -> Int
+    height grid = glength grid
+
+    width :: Grid -> Int
+    width grid = glength (ghead grid)

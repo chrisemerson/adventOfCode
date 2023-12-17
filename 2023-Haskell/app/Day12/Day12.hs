@@ -24,6 +24,8 @@ module Day12.Day12 where
 
     findUnknowns springs = snd (foldl (\a x -> if x == '?' then ((fst a) + 1, (snd a) ++ [fst a]) else ((fst a) + 1, snd a)) (0, []) springs)
 
+    type Memo f = f -> f
+
     getValidSpringCombinations :: SpringRow -> Int
     getValidSpringCombinations springRow = if length (unknowns springRow) == 0
         then if springRowIsValid springRow then 1 else 0
