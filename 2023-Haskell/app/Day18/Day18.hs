@@ -11,9 +11,10 @@ module Day18.Day18 where
     data DugCell = DugCell { xPos :: Int, yPos :: Int, cellColour :: Colour } deriving (Show, Eq)
     data Field = Field { dugCells :: [DugCell], currentX :: Int, currentY :: Int } deriving (Show)
 
-    part1 input = show $ findCentre field where
+    part1 input = show $ findBoundingRectangle field where
         field = foldl processStep initialField steps
         steps = parseInput input
+
     part2 input = show $ input
 
     parseInput :: String -> [Step]
@@ -56,11 +57,17 @@ module Day18.Day18 where
             _ -> (currentY field)
         newDugCell = DugCell { xPos = newX, yPos = newY, cellColour = col }
 
-    findCentre field = ((maxY - minY) `div` 2, (maxX - minX) `div` 2) where
+    findBoundingRectangle :: Field -> ((Int, Int), (Int, Int))
+    findBoundingRectangle field = ((minY, minX), (maxY, maxX)) where
         cells = map (\c -> (yPos c, xPos c)) (dugCells field)
         maxY = maximum (map fst cells)
         minY = minimum (map fst cells)
         maxX = maximum (map snd cells)
         minX = minimum (map snd cells)
 
-    floodFill field = field
+    isInsideShape :: [(Int, Int)] -> (Int, Int) -> Int -> Bool
+    isInsideShape cells (y, x) distToCheck = or [not (cellEmpty cells (y, x)), insideShape] where
+        insideShape = True
+
+    cellEmpty :: [(Int, Int)] -> (Int, Int) -> Bool
+    cellEmpty cells (y, x) = length (filter (\c -> and [fst c == y, snd c == x]) cells) == 0
