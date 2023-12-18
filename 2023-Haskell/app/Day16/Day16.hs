@@ -7,7 +7,7 @@ module Day16.Day16 where
     data BeamDirection = N | S | E | W deriving (Show)
     data Cell = Cell { xPos :: Int, yPos :: Int} deriving (Show)
     data Beam = Beam { direction :: BeamDirection, cell :: Cell } deriving (Show)
-    data EnergiseState = EnergiseState { energisedCells :: [Cell], beams :: [Beam] } deriving (Show)
+    data EnergiseState = EnergiseState { energisedCells :: [Cell], beams :: [Beam], historicBeams :: [Beam] } deriving (Show)
 
     part1 input = show $ take 10 (iterate (\s -> progressState s grid) initialState) where
         grid = convertToGrid input
@@ -15,7 +15,13 @@ module Day16.Day16 where
 
     part2 input = input
 
-    initialState = EnergiseState { energisedCells = [Cell { xPos = 0, yPos = 0 }], beams = [Beam { direction = E, cell = Cell { xPos = 0, yPos = 0 }}]}
+    initialState = EnergiseState {
+        energisedCells = [initialCell],
+        beams = [initialBeam],
+        historicBeams = [initialBeam]
+    } where
+        initialBeam = Beam { direction = E, cell = initialCell}
+        initialCell = Cell { xPos = 0, yPos = 0 }
 
     progressState :: EnergiseState -> Grid -> EnergiseState
     progressState state grid = state
