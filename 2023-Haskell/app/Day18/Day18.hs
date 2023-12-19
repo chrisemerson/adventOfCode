@@ -1,4 +1,5 @@
 module Day18.Day18 where
+    import Data.Set
     import Data.List.Split
     import Util
 
@@ -11,7 +12,8 @@ module Day18.Day18 where
     data DugCell = DugCell { xPos :: Int, yPos :: Int, cellColour :: Colour } deriving (Show, Eq)
     data Field = Field { dugCells :: [DugCell], currentX :: Int, currentY :: Int } deriving (Show)
 
-    part1 input = show $ findBoundingRectangle field where
+    part1 input = show $ length (rmdups (floodFill cells (1, 1))) where
+        cells = map (\c -> (yPos c, xPos c)) (dugCells field)
         field = foldl processStep initialField steps
         steps = parseInput input
 
@@ -57,17 +59,10 @@ module Day18.Day18 where
             _ -> (currentY field)
         newDugCell = DugCell { xPos = newX, yPos = newY, cellColour = col }
 
-    findBoundingRectangle :: Field -> ((Int, Int), (Int, Int))
-    findBoundingRectangle field = ((minY, minX), (maxY, maxX)) where
-        cells = map (\c -> (yPos c, xPos c)) (dugCells field)
-        maxY = maximum (map fst cells)
-        minY = minimum (map fst cells)
-        maxX = maximum (map snd cells)
-        minX = minimum (map snd cells)
-
-    isInsideShape :: [(Int, Int)] -> (Int, Int) -> Int -> Bool
-    isInsideShape cells (y, x) distToCheck = or [not (cellEmpty cells (y, x)), insideShape] where
-        insideShape = True
+    floodFill :: [(Int, Int)] -> (Int, Int) -> [(Int, Int)]
+    floodFill cells (y, x) = if length adjacentEmptyCells == 0 then cells else newCells where
+        adjacentEmptyCells = filter (\c -> cellEmpty cells c) [(y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)]
+        newCells = foldl (\a c -> floodFill (a ++ [c]) c) cells adjacentEmptyCells
 
     cellEmpty :: [(Int, Int)] -> (Int, Int) -> Bool
-    cellEmpty cells (y, x) = length (filter (\c -> and [fst c == y, snd c == x]) cells) == 0
+    cellEmpty cells (y, x) = not (elem (y, x) cells)
