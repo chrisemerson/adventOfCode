@@ -12,7 +12,11 @@ module Util where
     stringEndsWith str search = (drop ((length str) - (length search)) str) == search
 
     stringContains :: String -> String -> Bool
-    stringContains str search = if stringStartsWith str search then True else stringContains (drop 1 str) search
+    stringContains str search = if length str == 0
+        then False
+        else if stringStartsWith str search
+            then True
+            else stringContains (drop 1 str) search
 
     range :: Int -> Int -> [Int]
     range start end = take (end - start + 1) (iterate (+ 1) start)
