@@ -68,7 +68,7 @@ module Day16.Day16 where
         else [beam]
 
     getCharAtBeam :: Beam -> Grid Char -> Char
-    getCharAtBeam beam grid = getGridCell grid (yPos (cell beam)) (xPos (cell beam))
+    getCharAtBeam beam grid = getGridCell grid (yPos (cell beam), xPos (cell beam))
 
     progressBeam :: Beam -> Grid Char -> Beam
     progressBeam beam grid = (case (direction beam) of

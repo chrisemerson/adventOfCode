@@ -3,6 +3,7 @@ module Grid where
     import Util
 
     type Grid a = Vector (Vector a)
+    type Coord = (Int, Int)
 
     gmap = Data.Vector.imap
     gfilter = Data.Vector.ifilter
@@ -15,19 +16,22 @@ module Grid where
     convertToGrid :: String -> Grid Char
     convertToGrid string = fromList (map (\x -> fromList (trim x)) (lines string))
 
-    getGridCell :: Grid a -> Int -> Int -> a
-    getGridCell grid y x = getByIndex (getByIndex grid y) x
+    convertToIntGrid :: String -> Grid Int
+    convertToIntGrid string = fromList (map (\x -> fromList (map (\xx -> read [xx]) (trim x))) (lines string))
+
+    getGridCell :: Grid a -> Coord -> a
+    getGridCell grid (y, x) = getByIndex (getByIndex grid y) x
 
     getByIndex :: Vector a -> Int -> a
     getByIndex vector idx = Data.Vector.head (ifilter (\i x -> i == idx) vector)
 
-    swapGridCells :: Grid a -> (Int, Int) -> (Int, Int) -> Grid a
+    swapGridCells :: Grid a -> Coord -> Coord -> Grid a
     swapGridCells grid from to = newGrid where
         newGrid = gmap (\y r -> gmap (\x c -> if (y, x) == from then originalToCell else if (y, x) == to then originalFromCell else c) r) grid
-        originalFromCell = getGridCell grid (fst from) (snd from)
-        originalToCell = getGridCell grid (fst to) (snd to)
+        originalFromCell = getGridCell grid from
+        originalToCell = getGridCell grid to
 
-    changeGridCell :: Grid a -> (Int, Int) -> a -> Grid a
+    changeGridCell :: Grid a -> Coord -> a -> Grid a
     changeGridCell grid (yPos, xPos) replacement = gmap (\y r -> gmap (\x c -> if (y, x) == (yPos, xPos) then replacement else c) r) grid
 
     height :: Grid a -> Int
