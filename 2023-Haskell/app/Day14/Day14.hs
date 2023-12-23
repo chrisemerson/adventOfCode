@@ -25,7 +25,7 @@ module Day14.Day14 where
     rollRocks grid getSpaceFn findFn = if not (length (findFn grid) > 0)
         then grid
         else rollRocks gridAfterRolling getSpaceFn findFn where
-            gridAfterRolling = foldl (\a r -> swapGridChars a r (getSpaceFn grid (fst r) (snd r))) grid (findFn grid)
+            gridAfterRolling = foldl (\a r -> swapGridCells a r (getSpaceFn grid (fst r) (snd r))) grid (findFn grid)
 
     findRocks grid = filter (\c -> getGridCell grid (fst c) (snd c) == 'O') cells where
         cells = concat $ map (\r -> map (\c -> (r, c)) (range 0 ((width grid) - 1))) (range 0 ((height grid) - 1))
