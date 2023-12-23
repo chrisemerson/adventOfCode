@@ -58,7 +58,7 @@ module Day10.Day10 where
         E -> Scout { pos = (fst (pos scout), snd (pos scout) + 1), dir = dir scout }
         W -> Scout { pos = (fst (pos scout), snd (pos scout) - 1), dir = dir scout }
 
-    changeScoutDir scout grid = (case (getGridChar grid (fst (pos scout)) (snd (pos scout))) of
+    changeScoutDir scout grid = (case (getGridCell grid (fst (pos scout)) (snd (pos scout))) of
         '|' -> Scout { pos = pos scout, dir = currentDir }
         '-' -> Scout { pos = pos scout, dir = currentDir }
         'F' -> Scout { pos = pos scout, dir = if currentDir == N then E else S }
@@ -84,7 +84,7 @@ module Day10.Day10 where
 
     getPipeCharAtCell :: Vector (Vector Char) -> [(Int, Int)] -> (Int, Int) -> Char
     getPipeCharAtCell grid pipeLocations pos = if cellIsPartOfPipes pipeLocations pos
-        then getGridChar grid (fst pos) (snd pos)
+        then getGridCell grid (fst pos) (snd pos)
         else '.'
 
     cellIsPartOfPipes :: [(Int, Int)] -> (Int, Int) -> Bool
@@ -105,16 +105,16 @@ module Day10.Day10 where
             W -> canGoWest grid startPos) [N, S, E, W]
 
     canGoNorth grid pos = or [pipe == '|', pipe == 'F', pipe == '7']
-        where pipe = getGridChar grid (fst pos - 1) (snd pos)
+        where pipe = getGridCell grid (fst pos - 1) (snd pos)
 
     canGoSouth grid pos = or [pipe == '|', pipe == 'J', pipe == 'L']
-        where pipe = getGridChar grid (fst pos + 1) (snd pos)
+        where pipe = getGridCell grid (fst pos + 1) (snd pos)
 
     canGoEast grid pos = or [pipe == '-', pipe == 'J', pipe == '7']
-        where pipe = getGridChar grid (fst pos) (snd pos + 1)
+        where pipe = getGridCell grid (fst pos) (snd pos + 1)
 
     canGoWest grid pos = or [pipe == '-', pipe == 'F', pipe == 'L']
-        where pipe = getGridChar grid (fst pos) (snd pos - 1)
+        where pipe = getGridCell grid (fst pos) (snd pos - 1)
 
     getGridWithoutStart :: Vector (Vector Char) -> Vector (Vector Char)
     getGridWithoutStart grid = newGrid where

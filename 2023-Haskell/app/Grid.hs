@@ -1,8 +1,9 @@
 module Grid where
-    import Data.Vector (fromList, head, ifilter, Vector, imap, ifoldl, length, drop, take)
+    import Data.Vector (fromList, head, ifilter, Vector, imap, ifoldl, length, drop, take, replicate)
     import Util
 
-    type Grid = Vector (Vector Char)
+--    data Grid a = Vector (Vector a)
+    type Grid a = Vector (Vector a)
 
     gmap = Data.Vector.imap
     gfilter = Data.Vector.ifilter
@@ -12,23 +13,26 @@ module Grid where
     gdrop = Data.Vector.drop
     gtake = Data.Vector.take
 
-    convertToGrid :: String -> Grid
+    convertToGrid :: String -> Grid Char
     convertToGrid string = fromList (map (\x -> fromList (trim x)) (lines string))
 
-    getGridChar :: Grid -> Int -> Int -> Char
-    getGridChar grid y x = getByIndex (getByIndex grid y) x
+    getGridCell :: Grid a -> Int -> Int -> a
+    getGridCell grid y x = getByIndex (getByIndex grid y) x
 
     getByIndex :: Vector a -> Int -> a
     getByIndex vector idx = Data.Vector.head (ifilter (\i x -> i == idx) vector)
 
-    swapGridChars :: Grid -> (Int, Int) -> (Int, Int) -> Grid
+    swapGridChars :: Grid a -> (Int, Int) -> (Int, Int) -> Grid a
     swapGridChars grid from to = newGrid where
         newGrid = gmap (\y r -> gmap (\x c -> if (y, x) == from then originalToChar else if (y, x) == to then originalFromChar else c) r) grid
-        originalFromChar = getGridChar grid (fst from) (snd from)
-        originalToChar = getGridChar grid (fst to) (snd to)
+        originalFromChar = getGridCell grid (fst from) (snd from)
+        originalToChar = getGridCell grid (fst to) (snd to)
 
-    height :: Grid -> Int
+    height :: Grid a -> Int
     height grid = glength grid
 
-    width :: Grid -> Int
+    width :: Grid a -> Int
     width grid = glength (ghead grid)
+
+    fillGrid :: Int -> Int -> a -> Grid a
+    fillGrid height width fillWith = Data.Vector.replicate height (Data.Vector.replicate width fillWith)

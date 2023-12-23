@@ -15,7 +15,7 @@ module Day16.Day16 where
     part2 input = show $ maximum (map (\b -> findNumberOfEnergisedTiles grid b) (getPossibleInputBeams grid)) where
          grid = convertToGrid input
 
-    getPossibleInputBeams :: Grid -> [Beam]
+    getPossibleInputBeams :: Grid Char -> [Beam]
     getPossibleInputBeams grid =
         map (\i -> Beam { direction = E, cell = Cell { xPos = 0, yPos = i}}) (range 0 ((height grid) - 1))
         ++ map (\i -> Beam { direction = S, cell = Cell { xPos = i, yPos = 0}}) (range 0 ((width grid) - 1))
@@ -33,7 +33,7 @@ module Day16.Day16 where
         historicBeams = [startBeam]
     }
 
-    progressState :: EnergiseState -> Grid -> EnergiseState
+    progressState :: EnergiseState -> Grid Char -> EnergiseState
     progressState state grid = EnergiseState {
         energisedCells = addToEnergisedCells (energisedCells state) newBeams,
         beams = newBeams,
@@ -41,10 +41,10 @@ module Day16.Day16 where
     } where
         newBeams = removeAlreadySeenBeams (historicBeams state) (removeOffGridBeams (map (\b -> progressBeam b grid) (bounceBeams (beams state) grid)) grid)
 
-    bounceBeams :: [Beam] -> Grid -> [Beam]
+    bounceBeams :: [Beam] -> Grid Char -> [Beam]
     bounceBeams beams grid = concat (map (\b -> bounceBeam b grid) beams)
 
-    bounceBeam :: Beam -> Grid -> [Beam]
+    bounceBeam :: Beam -> Grid Char -> [Beam]
     bounceBeam beam grid = if and [getCharAtBeam beam grid == '-', or [direction beam == N, direction beam == S]]
             then [Beam { direction = W, cell = cell beam }, Beam { direction = E, cell = cell beam }]
         else if and [getCharAtBeam beam grid == '|', or [direction beam == W, direction beam == E]]
@@ -67,10 +67,10 @@ module Day16.Day16 where
             else [Beam { direction = S, cell = cell beam }]
         else [beam]
 
-    getCharAtBeam :: Beam -> Grid -> Char
-    getCharAtBeam beam grid = getGridChar grid (yPos (cell beam)) (xPos (cell beam))
+    getCharAtBeam :: Beam -> Grid Char -> Char
+    getCharAtBeam beam grid = getGridCell grid (yPos (cell beam)) (xPos (cell beam))
 
-    progressBeam :: Beam -> Grid -> Beam
+    progressBeam :: Beam -> Grid Char -> Beam
     progressBeam beam grid = (case (direction beam) of
         N -> Beam { direction = N, cell = Cell { xPos = x, yPos = y - 1}}
         S -> Beam { direction = S, cell = Cell { xPos = x, yPos = y + 1}}
@@ -82,10 +82,10 @@ module Day16.Day16 where
     addToEnergisedCells :: [Cell] -> [Beam] -> [Cell]
     addToEnergisedCells cells beams = concat [cells, map cell beams]
 
-    removeOffGridBeams :: [Beam] -> Grid -> [Beam]
+    removeOffGridBeams :: [Beam] -> Grid Char -> [Beam]
     removeOffGridBeams beams grid = filter (\b -> beamIsOnGrid b grid) beams
 
-    beamIsOnGrid :: Beam -> Grid -> Bool
+    beamIsOnGrid :: Beam -> Grid Char -> Bool
     beamIsOnGrid beam grid = and[x >= 0, x < width grid, y >= 0, y < height grid] where
         x = (xPos (cell beam))
         y = (yPos (cell beam))
