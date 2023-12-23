@@ -1,31 +1,33 @@
 module Day17.Day17 where
     import Grid
+    import Util
 
     part1 :: String -> String
     part2 :: String -> String
 
-    part1 input = show $ findShortestPath parsedInput [(11, 12)] where
+    part1 input = show $ dijkstra parsedInput (0, 0) (12, 12) distancesGrid unvisitedNodes [] where
+        distancesGrid = changeGridCell (fillGrid (height parsedInput) (width parsedInput) 9999) (0, 0) 0
+        unvisitedNodes = [(y, x) | y <- range 0 ((height parsedInput) - 1), x <- range 0 ((width parsedInput) - 1), (y, x) /= (0, 0)]
         parsedInput = parseInput input
 
-    part2 input = show $ findPossibleMoves parsedInput [(11, 12)] where
+    part2 input = show $ parsedInput where
         parsedInput = parseInput input
 
-    parseInput input = convertToGrid input
+    parseInput input = convertToIntGrid input
 
-    findShortestPath :: Grid -> [(Int, Int)] -> ([(Int, Int)], Int)
-    findShortestPath grid pathSoFar = if and [(fst currentMove) == (height grid - 1), (snd currentMove) == (width grid - 1)]
-        then (pathSoFar, heatLossThisSquare)
-        else if length possibleMoves == 0
-            then ([], 99999)
-            else (fst bestPath, (snd bestPath) + heatLossThisSquare) where
-                heatLossThisSquare = read [getGridChar grid (fst currentMove) (snd currentMove)]
-                currentMove = last pathSoFar
-                bestPath = head (filter (\pp -> snd pp == minimumHeatLoss) possiblePaths)
-                minimumHeatLoss = minimum (map snd possiblePaths)
-                possiblePaths = map (\pm -> findShortestPath grid (pathSoFar ++ [pm])) possibleMoves
-                possibleMoves = findPossibleMoves grid pathSoFar
+    dijkstra :: Grid Int -> Coord -> Coord -> Grid Int -> [Coord] -> [Coord] -> Int
+    dijkstra grid startNode targetNode distancesGrid unvisitedNodes pathSoFar = if length unvisitedNodes == 0
+        then getGridCell distancesGrid targetNode
+        else minPathToHere where
+            minPathToHere = 0
+            newUnvisitedNodes = filter (\n -> n /= minDistanceNode) unvisitedNodes
+            minDistanceNode = filter (\n -> getGridCell minDistanceGrid n == minDistanceToAdjacentNodes) adjacentNodes
+            minDistanceToAdjacentNodes = map (\n -> getGridCell minDistanceGrid n) adjacentNodes
+            minDistanceGrid = foldl getMinDistanceGrid distanceGrid distanceGridsPerAdjacentNode
+            distanceGridsPerAdjacentNode = map (\n -> (changeGridCell distancesGrid n (getGridCell grid n))) adjacentNodes
+            adjacentNodes = findPossibleMoves grid (pathSoFar ++ [startNode])
 
-    findPossibleMoves :: Grid -> [(Int, Int)] -> [(Int, Int)]
+    findPossibleMoves :: Grid Int -> [Coord] -> [Coord]
     findPossibleMoves grid pathSoFar = possibleMovesNotVisitingSameSquares where
         possibleMovesNotVisitingSameSquares = filter (\pm -> not (elem pm pathSoFar)) possibleMovesWithinRules
         possibleMovesWithinRules = filter (\pm -> or [not (mustTurn last4Spots), pm /= forwardMove]) possibleMovesInsideGrid
@@ -39,9 +41,13 @@ module Day17.Day17 where
         possibleSteps = [(0, 1), (0, -1), (1, 0), (-1, 0)]
         currentSpot = last pathSoFar
 
-    mustTurn :: [(Int, Int)] -> Bool
+    getMinDistanceGrid :: Grid Int -> Grid Int -> Grid Int
+    getMinDistanceGrid gridA gridB = gmap (\y r -> gmap (\x c -> min (getGridCell gridB (y, x)) c) r) gridA
+
+    mustTurn :: [Coord] -> Bool
     mustTurn last4Points = if length last4Points < 4 then False else or [
         and [snd (head last4Points) == snd (head (drop 1 last4Points)), snd (head (drop 1 last4Points)) == snd (head (drop 2 last4Points)), snd (head (drop 2 last4Points)) == snd (head (drop 3 last4Points))],
         and [fst (head last4Points) == fst (head (drop 1 last4Points)), fst (head (drop 1 last4Points)) == fst (head (drop 2 last4Points)), fst (head (drop 2 last4Points)) == fst (head (drop 3 last4Points))]]
 
+    isInsideGrid :: Grid a -> Coord -> Bool
     isInsideGrid grid (y, x) = and [y >= 0, y < height grid, x >= 0, x < width grid]
