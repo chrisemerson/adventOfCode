@@ -2,12 +2,15 @@ module Day17.Day17 where
     import Grid
     import Util
 
+    data NodeInfo = NodeInfo { shortestDist :: Int, shortestPath :: [Coord], visited :: Bool } deriving (Show, Eq)
+
+    instance Ord NodeInfo where
+        compare a b = compare (shortestDist a) (shortestDist b)
+
     part1 :: String -> String
     part2 :: String -> String
 
-    part1 input = show $ dijkstra parsedInput (0, 0) (12, 12) distancesGrid unvisitedNodes [] where
-        distancesGrid = changeGridCell (fillGrid (height parsedInput) (width parsedInput) 9999) (0, 0) 0
-        unvisitedNodes = [(y, x) | y <- range 0 ((height parsedInput) - 1), x <- range 0 ((width parsedInput) - 1), (y, x) /= (0, 0)]
+    part1 input = show $ getShortestDistToTarget parsedInput (0, 0) (12, 12) where
         parsedInput = parseInput input
 
     part2 input = show $ parsedInput where
@@ -15,17 +18,30 @@ module Day17.Day17 where
 
     parseInput input = convertToIntGrid input
 
-    dijkstra :: Grid Int -> Coord -> Coord -> Grid Int -> [Coord] -> [Coord] -> Int
-    dijkstra grid startNode targetNode distancesGrid unvisitedNodes pathSoFar = if length unvisitedNodes == 0
-        then getGridCell distancesGrid targetNode
-        else minPathToHere where
-            minPathToHere = 0
-            newUnvisitedNodes = filter (\n -> n /= minDistanceNode) unvisitedNodes
-            minDistanceNode = filter (\n -> getGridCell minDistanceGrid n == minDistanceToAdjacentNodes) adjacentNodes
-            minDistanceToAdjacentNodes = map (\n -> getGridCell minDistanceGrid n) adjacentNodes
-            minDistanceGrid = foldl getMinDistanceGrid distanceGrid distanceGridsPerAdjacentNode
-            distanceGridsPerAdjacentNode = map (\n -> (changeGridCell distancesGrid n (getGridCell grid n))) adjacentNodes
-            adjacentNodes = findPossibleMoves grid (pathSoFar ++ [startNode])
+    getShortestDistToTarget :: Grid Int -> Coord -> Coord -> Int
+    getShortestDistToTarget grid startNode targetNode = shortestDist (getGridCell nodeInfoGrid targetNode) where
+        nodeInfoGrid = dijkstra grid startNode startNodeInfoGrid
+        startNodeInfoGrid = changeGridCell (fillGrid (height grid) (width grid) otherNodeInfo) (0, 0) startNodeInfo
+        startNodeInfo = NodeInfo { shortestDist = 0, shortestPath = [], visited = True }
+        otherNodeInfo = NodeInfo { shortestDist = 999999, shortestPath = [], visited = False }
+
+    dijkstra :: Grid Int -> Coord -> Grid NodeInfo -> Grid NodeInfo
+    dijkstra grid startNode nodeInfoGrid = if sum (gmap (\_ r -> glength (gfilter (\_ c -> not (visited c)) r)) nodeInfoGrid) <= 1
+        then nodeInfoGrid
+        else dijkstra grid nextNodeToVisit newMinNodeInfoGrid where
+            newMinNodeInfoGrid = changeGridCell minNodeInfoGrid nextNodeToVisit newNodeInfo
+            newNodeInfo = NodeInfo { shortestDist = (shortestDist currentNodeInfo), shortestPath = (shortestPath currentNodeInfo), visited = True }
+            currentNodeInfo = getGridCell minNodeInfoGrid nextNodeToVisit
+            nextNodeToVisit = head (filter (\n -> and [not (visited (getGridCell nodeInfoGrid n)), (shortestDist (getGridCell minNodeInfoGrid n)) == lowestUnvisitedDist]) allNodes)
+            allNodes = [(y, x) | y <- range 0 ((height grid) - 1), x <- range 0 ((width grid) - 1)]
+            lowestUnvisitedDist = shortestDist (minimum (gmap (\_ r -> minimum r) unvisitedNodes))
+            unvisitedNodes = gmap (\_ r -> gfilter (\_ n -> not (visited n)) r) nodeInfoGrid
+            minNodeInfoGrid = foldl getMinNodeInfoGrid nodeInfoGrid infoGridsPerAdjacentNode
+            infoGridsPerAdjacentNode = map (\n -> (changeGridCell nodeInfoGrid n NodeInfo {
+                shortestDist = (shortestDist (getGridCell nodeInfoGrid startNode)) + (getGridCell grid n),
+                shortestPath = (shortestPath (getGridCell nodeInfoGrid startNode)) ++ [startNode],
+                visited = visited (getGridCell nodeInfoGrid n) })) adjacentNodes
+            adjacentNodes = findPossibleMoves grid ((shortestPath (getGridCell nodeInfoGrid startNode)) ++ [startNode])
 
     findPossibleMoves :: Grid Int -> [Coord] -> [Coord]
     findPossibleMoves grid pathSoFar = possibleMovesNotVisitingSameSquares where
@@ -41,8 +57,8 @@ module Day17.Day17 where
         possibleSteps = [(0, 1), (0, -1), (1, 0), (-1, 0)]
         currentSpot = last pathSoFar
 
-    getMinDistanceGrid :: Grid Int -> Grid Int -> Grid Int
-    getMinDistanceGrid gridA gridB = gmap (\y r -> gmap (\x c -> min (getGridCell gridB (y, x)) c) r) gridA
+    getMinNodeInfoGrid :: Grid NodeInfo -> Grid NodeInfo -> Grid NodeInfo
+    getMinNodeInfoGrid gridA gridB = gmap (\y r -> gmap (\x c -> min (getGridCell gridB (y, x)) c) r) gridA
 
     mustTurn :: [Coord] -> Bool
     mustTurn last4Points = if length last4Points < 4 then False else or [
