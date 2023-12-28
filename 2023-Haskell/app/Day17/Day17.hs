@@ -1,4 +1,6 @@
 module Day17.Day17 where
+    import Data.List (minimumBy)
+    import Data.Vector (toList)
     import Grid
     import Util
 
@@ -18,11 +20,11 @@ module Day17.Day17 where
 
     parseInput input = convertToIntGrid input
 
-    getShortestDistToTarget :: Grid Int -> Coord -> Coord -> Int
-    getShortestDistToTarget grid startNode targetNode = shortestDist (getGridCell nodeInfoGrid targetNode) where
+    getShortestDistToTarget :: Grid Int -> Coord -> Coord -> Grid NodeInfo
+    getShortestDistToTarget grid startNode targetNode = nodeInfoGrid where
         nodeInfoGrid = dijkstra grid startNode startNodeInfoGrid
-        startNodeInfoGrid = changeGridCell (fillGrid (height grid) (width grid) otherNodeInfo) (0, 0) startNodeInfo
-        startNodeInfo = NodeInfo { shortestDist = 0, shortestPath = [], visited = True }
+        startNodeInfoGrid = changeGridCell (fillGrid (height grid) (width grid) otherNodeInfo) startNode startNodeInfo
+        startNodeInfo = NodeInfo { shortestDist = 0, shortestPath = [startNode], visited = True }
         otherNodeInfo = NodeInfo { shortestDist = 999999, shortestPath = [], visited = False }
 
     dijkstra :: Grid Int -> Coord -> Grid NodeInfo -> Grid NodeInfo
@@ -30,27 +32,27 @@ module Day17.Day17 where
         then nodeInfoGrid
         else dijkstra grid nextNodeToVisit newMinNodeInfoGrid where
             newMinNodeInfoGrid = changeGridCell minNodeInfoGrid nextNodeToVisit newNodeInfo
-            newNodeInfo = NodeInfo { shortestDist = (shortestDist currentNodeInfo), shortestPath = (shortestPath currentNodeInfo), visited = True }
+            newNodeInfo = NodeInfo { shortestDist = shortestDist currentNodeInfo, shortestPath = shortestPath currentNodeInfo, visited = True }
             currentNodeInfo = getGridCell minNodeInfoGrid nextNodeToVisit
             nextNodeToVisit = head (filter (\n -> and [not (visited (getGridCell nodeInfoGrid n)), (shortestDist (getGridCell minNodeInfoGrid n)) == lowestUnvisitedDist]) allNodes)
             allNodes = [(y, x) | y <- range 0 ((height grid) - 1), x <- range 0 ((width grid) - 1)]
-            lowestUnvisitedDist = shortestDist (minimum (gmap (\_ r -> minimum r) unvisitedNodes))
-            unvisitedNodes = gmap (\_ r -> gfilter (\_ n -> not (visited n)) r) nodeInfoGrid
+            lowestUnvisitedDist = shortestDist (minimum (gmap (\_ r -> minimum (gfilter (\_ c -> not (visited c)) r)) nodeInfoGrid))
             minNodeInfoGrid = foldl getMinNodeInfoGrid nodeInfoGrid infoGridsPerAdjacentNode
             infoGridsPerAdjacentNode = map (\n -> (changeGridCell nodeInfoGrid n NodeInfo {
                 shortestDist = (shortestDist (getGridCell nodeInfoGrid startNode)) + (getGridCell grid n),
-                shortestPath = (shortestPath (getGridCell nodeInfoGrid startNode)) ++ [startNode],
+                shortestPath = pathSoFar ++ [n],
                 visited = visited (getGridCell nodeInfoGrid n) })) adjacentNodes
-            adjacentNodes = findPossibleMoves grid ((shortestPath (getGridCell nodeInfoGrid startNode)) ++ [startNode])
+            adjacentNodes = findPossibleMoves grid pathSoFar
+            pathSoFar = shortestPath (getGridCell nodeInfoGrid startNode)
 
     findPossibleMoves :: Grid Int -> [Coord] -> [Coord]
     findPossibleMoves grid pathSoFar = possibleMovesNotVisitingSameSquares where
         possibleMovesNotVisitingSameSquares = filter (\pm -> not (elem pm pathSoFar)) possibleMovesWithinRules
         possibleMovesWithinRules = filter (\pm -> or [not (mustTurn last4Spots), pm /= forwardMove]) possibleMovesInsideGrid
-        forwardMove = if (length last2Spots) < 2 then (-1, -1) else (fst (last last2Spots) - fst (head last2Spots), snd (last last2Spots) - snd (head last2Spots))
-        lastSpot = head last2Spots
-        last2Spots = if (length pathSoFar) > 1 then take (lengthOfPathSoFar - 2) pathSoFar else [(-1, -1)]
-        last4Spots = take (lengthOfPathSoFar - 4) pathSoFar
+        forwardMove = if (length last2Spots) < 2 then (-1, -1) else (2 * (fst (last last2Spots)) - fst (head last2Spots), (2 * (snd (last last2Spots))) - snd (head last2Spots))
+        lastSpot = last last2Spots
+        last2Spots = if lengthOfPathSoFar >= 2 then drop (lengthOfPathSoFar - 2) pathSoFar else [(-1, -1)]
+        last4Spots = drop (lengthOfPathSoFar - 4) pathSoFar
         lengthOfPathSoFar = length pathSoFar
         possibleMovesInsideGrid = filter (\pm -> isInsideGrid grid pm) possibleMoves
         possibleMoves = map (\pm -> (fst pm + fst currentSpot, snd pm + snd currentSpot)) possibleSteps
