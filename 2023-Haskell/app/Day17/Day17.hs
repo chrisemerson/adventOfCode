@@ -1,5 +1,5 @@
 module Day17.Day17 where
-    import Data.List (minimumBy)
+    import Debug.Trace
     import Data.Vector (toList)
     import Grid
     import Util
@@ -12,7 +12,7 @@ module Day17.Day17 where
     part1 :: String -> String
     part2 :: String -> String
 
-    part1 input = show $ getShortestDistToTarget parsedInput (0, 0) (12, 12) where
+    part1 input = show $ getShortestDistToTarget parsedInput (0, 0) (0, 8) where
         parsedInput = parseInput input
 
     part2 input = show $ parsedInput where
@@ -20,30 +20,38 @@ module Day17.Day17 where
 
     parseInput input = convertToIntGrid input
 
-    getShortestDistToTarget :: Grid Int -> Coord -> Coord -> Grid NodeInfo
-    getShortestDistToTarget grid startNode targetNode = nodeInfoGrid where
+    getShortestDistToTarget :: Grid Int -> Coord -> Coord -> NodeInfo
+    getShortestDistToTarget grid startNode targetNode = getGridCell nodeInfoGrid targetNode where
         nodeInfoGrid = dijkstra grid startNode startNodeInfoGrid
         startNodeInfoGrid = changeGridCell (fillGrid (height grid) (width grid) otherNodeInfo) startNode startNodeInfo
         startNodeInfo = NodeInfo { shortestDist = 0, shortestPath = [startNode], visited = True }
         otherNodeInfo = NodeInfo { shortestDist = 999999, shortestPath = [], visited = False }
 
     dijkstra :: Grid Int -> Coord -> Grid NodeInfo -> Grid NodeInfo
-    dijkstra grid startNode nodeInfoGrid = if sum (gmap (\_ r -> glength (gfilter (\_ c -> not (visited c)) r)) nodeInfoGrid) <= 1
+    dijkstra grid startNode nodeInfoGrid = if sum (gmap (\_ r -> glength (gfilter (\_ c -> not (visited c)) r)) nodeInfoGrid) == 0
         then nodeInfoGrid
         else dijkstra grid nextNodeToVisit newMinNodeInfoGrid where
             newMinNodeInfoGrid = changeGridCell minNodeInfoGrid nextNodeToVisit newNodeInfo
-            newNodeInfo = NodeInfo { shortestDist = shortestDist currentNodeInfo, shortestPath = shortestPath currentNodeInfo, visited = True }
+            newNodeInfo = NodeInfo {
+                shortestDist = shortestDist currentNodeInfo,
+                shortestPath = shortestPath currentNodeInfo,
+                visited = True }
             currentNodeInfo = getGridCell minNodeInfoGrid nextNodeToVisit
-            nextNodeToVisit = head (filter (\n -> and [not (visited (getGridCell nodeInfoGrid n)), (shortestDist (getGridCell minNodeInfoGrid n)) == lowestUnvisitedDist]) allNodes)
+            nextNodeToVisit = head (filter (\n -> and [not (visited (getGridCell nodeInfoGrid n)), (shortestDist (getGridCell minNodeInfoGrid n)) == lowestUnvisitedDistTrace]) allNodes)
             allNodes = [(y, x) | y <- range 0 ((height grid) - 1), x <- range 0 ((width grid) - 1)]
-            lowestUnvisitedDist = shortestDist (minimum (gmap (\_ r -> minimum (gfilter (\_ c -> not (visited c)) r)) nodeInfoGrid))
+            lowestUnvisitedDistTrace = trace ("Lowest unvisited dist: " ++ show lowestUnvisitedDist) lowestUnvisitedDist
+            lowestUnvisitedDist = shortestDist (minimum (concat (toList (gmap (\_ r -> toList (gfilter (\_ c -> not (visited c)) r)) minNodeInfoGridTrace))))
+            minNodeInfoGridTrace = trace ("Min Info Grid: " ++ show minNodeInfoGrid) minNodeInfoGrid
             minNodeInfoGrid = foldl getMinNodeInfoGrid nodeInfoGrid infoGridsPerAdjacentNode
             infoGridsPerAdjacentNode = map (\n -> (changeGridCell nodeInfoGrid n NodeInfo {
                 shortestDist = (shortestDist (getGridCell nodeInfoGrid startNode)) + (getGridCell grid n),
                 shortestPath = pathSoFar ++ [n],
-                visited = visited (getGridCell nodeInfoGrid n) })) adjacentNodes
-            adjacentNodes = findPossibleMoves grid pathSoFar
-            pathSoFar = shortestPath (getGridCell nodeInfoGrid startNode)
+                visited = False })) adjacentNodesTrace
+            adjacentNodesTrace = trace ("Adjacent Nodes: " ++ show adjacentNodes) adjacentNodes
+            adjacentNodes = findPossibleMoves grid pathSoFarTrace
+            pathSoFarTrace = trace ("Path So Far: " ++ show pathSoFar) pathSoFar
+            pathSoFar = shortestPath (getGridCell nodeInfoGrid startNodeTrace)
+            startNodeTrace = trace ("Start Node: " ++ show startNode) startNode
 
     findPossibleMoves :: Grid Int -> [Coord] -> [Coord]
     findPossibleMoves grid pathSoFar = possibleMovesNotVisitingSameSquares where
