@@ -3,7 +3,7 @@ module Day20.InputParser where
     import Day20.Machine
     import Util
 
-    parseInput input = findInputsForConjunctionModules Modules {
+    parseInput input = findInputsForConjunctionModules Machine {
         modules = modulesWithoutBroadcaster,
         broadcasterDestinations = (destinations broadcaster),
         highPulsesSent = 0,
@@ -35,21 +35,21 @@ module Day20.InputParser where
         destinations = map trim (splitOn "," (last moduleParts))
         inputs = []
 
-    findInputsForConjunctionModules :: Modules -> Modules
-    findInputsForConjunctionModules modulesState = Modules {
-        modules = map (findInputsForConjunctionModule modulesState) (modules modulesState),
-        broadcasterDestinations = broadcasterDestinations modulesState,
-        highPulsesSent = highPulsesSent modulesState,
-        lowPulsesSent = lowPulsesSent modulesState
+    findInputsForConjunctionModules :: Machine -> Machine
+    findInputsForConjunctionModules machineState = Machine {
+        modules = map (findInputsForConjunctionModule machineState) (modules machineState),
+        broadcasterDestinations = broadcasterDestinations machineState,
+        highPulsesSent = highPulsesSent machineState,
+        lowPulsesSent = lowPulsesSent machineState
     }
 
-    findInputsForConjunctionModule :: Modules -> Module -> Module
-    findInputsForConjunctionModule modulesState moduleState = (case moduleState of
+    findInputsForConjunctionModule :: Machine -> Module -> Module
+    findInputsForConjunctionModule machineState moduleState = (case moduleState of
         Conjunction name states destinations -> Conjunction {
             name = name,
             states = map (\i -> SignalState { ssName = i, ssState = LowPulse }) inputs,
             destinations = destinations
         }
         _           -> moduleState) where
-        inputs = map name (filter (\m -> elem moduleName (destinations m)) (modules modulesState))
+        inputs = map name (filter (\m -> elem moduleName (destinations m)) (modules machineState))
         moduleName = name moduleState

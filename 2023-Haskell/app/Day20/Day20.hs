@@ -7,3 +7,6 @@ module Day20.Day20 where
 
     part1 input = show $ parseInput input
     part2 input = input
+
+    sendPulseToModule :: Machine -> String -> PulseType -> Machine
+    sendPulseToModule machine moduleName pulseType = machine
