@@ -3,11 +3,18 @@ module Day20.Machine where
         modules :: [Module],
         broadcasterDestinations :: [String],
         highPulsesSent :: Int,
-        lowPulsesSent :: Int } deriving (Show)
+        lowPulsesSent :: Int,
+        buttonPressData :: [ButtonPressData] } deriving (Show)
 
-    data Module = FlipFlop { name :: String, state :: Bool, destinations :: [String] }
-                | Conjunction { name :: String, states :: [SignalState], destinations :: [String] } deriving (Show)
+    data ModuleType = FlipFlopModule | ConjunctionModule deriving (Eq, Show)
 
-    data SignalState = SignalState { ssName :: String, ssState :: PulseType } deriving (Show)
+    data Module = FlipFlop { name :: String, mType :: ModuleType, state :: Bool, destinations :: [String] }
+                | Conjunction { name :: String, mType :: ModuleType, states :: [SignalState], destinations :: [String] } deriving (Show, Eq)
+
+    data SignalState = SignalState { ssName :: String, ssState :: PulseType } deriving (Show, Eq)
+
+    data ButtonPressData = ButtonPressData { input :: String, buttonPresses :: Int} deriving (Show)
 
     data PulseType = HighPulse | LowPulse deriving (Show, Eq)
+
+    data PulseTransmission = PulseTransmission { moduleFrom :: String, moduleTo :: String, pulseType :: PulseType } deriving (Show, Eq)

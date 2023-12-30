@@ -1,14 +1,16 @@
 module Day20.InputParser where
     import Data.List.Split
+    import Debug.Trace
     import Day20.Machine
     import Util
 
-    parseInput input = findInputsForConjunctionModules Machine {
+    parseInput input = findInputsForRxConjunction (findInputsForConjunctionModules Machine {
         modules = modulesWithoutBroadcaster,
         broadcasterDestinations = (destinations broadcaster),
         highPulsesSent = 0,
-        lowPulsesSent = 0
-    } where
+        lowPulsesSent = 0,
+        buttonPressData = []
+    }) where
         modulesWithoutBroadcaster = filter (\m -> name m /= "broadcaster") modules
         broadcaster = head (filter (\m -> name m == "broadcaster") modules)
         modules = map (parseLine.trim) (lines input)
@@ -20,6 +22,7 @@ module Day20.InputParser where
 
     parseFlipFlop info = FlipFlop {
         name = head moduleParts,
+        mType = FlipFlopModule,
         state = False,
         destinations = destinations
     } where
@@ -28,6 +31,7 @@ module Day20.InputParser where
 
     parseConjunction info = Conjunction {
         name = head moduleParts,
+        mType = ConjunctionModule,
         states = map (\d -> SignalState { ssName = d, ssState = LowPulse }) inputs,
         destinations = destinations
     } where
@@ -40,16 +44,29 @@ module Day20.InputParser where
         modules = map (findInputsForConjunctionModule machineState) (modules machineState),
         broadcasterDestinations = broadcasterDestinations machineState,
         highPulsesSent = highPulsesSent machineState,
-        lowPulsesSent = lowPulsesSent machineState
+        lowPulsesSent = lowPulsesSent machineState,
+        buttonPressData = buttonPressData machineState
     }
 
+    findInputsForRxConjunction :: Machine -> Machine
+    findInputsForRxConjunction machineState = Machine {
+        modules = modules machineState,
+        broadcasterDestinations = broadcasterDestinations machineState,
+        highPulsesSent = highPulsesSent machineState,
+        lowPulsesSent = lowPulsesSent machineState,
+        buttonPressData = map (\i -> ButtonPressData { input = i, buttonPresses = 0 }) rxInputInputs
+    } where
+        rxInputInputs = if length rxModules == 0 then [] else map (\s -> ssName s) (states (head rxModules))
+        rxModules = (filter (\m -> elem "rx" (destinations m)) (modules machineState))
+
     findInputsForConjunctionModule :: Machine -> Module -> Module
-    findInputsForConjunctionModule machineState moduleState = (case moduleState of
-        Conjunction name states destinations -> Conjunction {
-            name = name,
+    findInputsForConjunctionModule machineState moduleState = if mType moduleState == ConjunctionModule
+        then Conjunction {
+            name = (name moduleState),
+            mType = ConjunctionModule,
             states = map (\i -> SignalState { ssName = i, ssState = LowPulse }) inputs,
-            destinations = destinations
+            destinations = (destinations moduleState)
         }
-        _           -> moduleState) where
-        inputs = map name (filter (\m -> elem moduleName (destinations m)) (modules machineState))
-        moduleName = name moduleState
+        else moduleState where
+            inputs = map name (filter (\m -> elem moduleName (destinations m)) (modules machineState))
+            moduleName = name moduleState
