@@ -63,4 +63,24 @@ don't need it. Glad I have given it a go though.
 2021
 ----
 
-C#, JavaScript, Haskell, Ruby or Scala perhaps?
+I ended up using TypeScript this year - it was inevitable one year that I'd use one of JS or TS, thought I should
+improve my knowledge in this area and would much rather use TS than JS.
+
+2022
+----
+
+After doing some .NET at work in the past I thought I should give C# a go and see how I get on with it, given I enjoyed
+working with it on a project.
+
+2023
+----
+
+Haskell... How bad can it be? It has a reputation as a bit of a language for academics, though I thought it was actually
+pretty pleasant to use and quite easy to pick up given my Clojure knowledge. Let's see if i get further than in 2016
+which was the last time I tried to use a functional programming language... and hopefully leading to use F# in the
+future!
+
+2024
+----
+
+Using Ruby this year mainly so I can upskill and help out with a website that is built on Ruby on Rails more easily.
