@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Day1 < AocDay
+  def part1_test_answer = 11
+  def part2_test_answer = 31
+
   def part1(input)
     left_list, right_list = get_sorted_lists(input)
 

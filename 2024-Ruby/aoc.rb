@@ -57,9 +57,25 @@ end
 
 case part_no.to_i
 when 1
+  test_result = day.part1(day.get_test_input)
+
+  if test_result == day.part1_test_answer
+    print "\e[32mPart 1 test passed\e[0m\n"
+  else
+    print "\e[31mPart 1 test failed\e[0m\n"
+  end
+
   print day.part1(day.get_input)
 
 when 2
+  test_result = day.part2(day.get_test_input)
+
+  if test_result == day.part2_test_answer
+    print "\e[32mPart 2 test passed\e[0m\n"
+  else
+    print "\e[31mPart 2 test failed\e[0m\n"
+  end
+
   print day.part2(day.get_input)
 
 else
