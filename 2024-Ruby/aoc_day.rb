@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AocDay
-  def getInput
+  def get_input
     File.read('./' + self.class.name.to_s + '/input.txt')
   end
 

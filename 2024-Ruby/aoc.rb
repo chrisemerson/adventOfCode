@@ -26,15 +26,15 @@ autoload :Day23, "./Day23/day23.rb"
 autoload :Day24, "./Day24/day24.rb"
 autoload :Day25, "./Day25/day25.rb"
 
-day_no = ARGV[0] if ARGV.length > 0
+day_no = (ARGV[0] if ARGV.length > 0).to_s
 part_no = ARGV[1] if ARGV.length > 1
 
 begin
-  day_class = Object.const_get('Day' + day_no.to_s)
+  day_class = Object.const_get("Day#{day_no}")
   day = day_class.new
 rescue NameError,LoadError
-  print "Day class does not exist: Day" + day_no + "\n"
-  print "Create a day class that extends AocDay at \'Day" + day_no + "/day" + day_no + ".rb\' and try again\n\n"
+  print "Day class does not exist: Day#{day_no}\n"
+  print "Create a day class that extends AocDay at \'Day#{day_no}/day#{day_no}.rb\' and try again\n\n"
 
   print <<-eof
 -----------------------------
@@ -57,13 +57,13 @@ end
 
 case part_no.to_i
 when 1
-  print day.part1(day.getInput)
+  print day.part1(day.get_input)
 
 when 2
-  print day.part2(day.getInput)
+  print day.part2(day.get_input)
 
 else
-  print "Unknown part: " + part.to_s
+  print "Unknown part: #{part_no.to_s}"
 end
 
 print "\n\n"
