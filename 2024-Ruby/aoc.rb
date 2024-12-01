@@ -1,33 +1,46 @@
 require "./aoc_day.rb"
 
 autoload :Day1, "./Day1/day1.rb"
+autoload :Day2, "./Day2/day2.rb"
+autoload :Day3, "./Day3/day3.rb"
+autoload :Day4, "./Day4/day4.rb"
+autoload :Day5, "./Day5/day5.rb"
+autoload :Day6, "./Day6/day6.rb"
+autoload :Day7, "./Day7/day7.rb"
+autoload :Day8, "./Day8/day8.rb"
+autoload :Day9, "./Day9/day9.rb"
+autoload :Day10, "./Day10/day10.rb"
+autoload :Day11, "./Day11/day11.rb"
+autoload :Day12, "./Day12/day12.rb"
+autoload :Day13, "./Day13/day13.rb"
+autoload :Day14, "./Day14/day14.rb"
+autoload :Day15, "./Day15/day15.rb"
+autoload :Day16, "./Day16/day16.rb"
+autoload :Day17, "./Day17/day17.rb"
+autoload :Day18, "./Day18/day18.rb"
+autoload :Day19, "./Day19/day19.rb"
+autoload :Day20, "./Day20/day20.rb"
+autoload :Day21, "./Day21/day21.rb"
+autoload :Day22, "./Day22/day22.rb"
+autoload :Day23, "./Day23/day23.rb"
+autoload :Day24, "./Day24/day24.rb"
+autoload :Day25, "./Day25/day25.rb"
 
-day = ARGV[0] if ARGV.length > 0
-part = ARGV[1] if ARGV.length > 1
+day_no = ARGV[0] if ARGV.length > 0
+part_no = ARGV[1] if ARGV.length > 1
 
 begin
-  day_class = Object.const_get('Day' + day.to_s)
+  day_class = Object.const_get('Day' + day_no.to_s)
   day = day_class.new
-
-  case part.to_i
-  when 1
-    print day.part1(day.getInput)
-
-  when 2
-    print day.part2(day.getInput)
-
-  else
-    print "Unknown part: " + part.to_s
-  end
-rescue NameError
-  print "Day class does not exist: Day" + day + "\n"
-  print "Create a day class that extends AocDay at \'Day" + day + "/Day" + day + ".rb\' and try again\n\n"
+rescue NameError,LoadError
+  print "Day class does not exist: Day" + day_no + "\n"
+  print "Create a day class that extends AocDay at \'Day" + day_no + "/day" + day_no + ".rb\' and try again\n\n"
 
   print <<-eof
 -----------------------------
 # frozen_string_literal: true
 
-class Day#{day} < AocDay
+class Day#{day_no} < AocDay
   def part1(input)
     super
   end
@@ -37,7 +50,20 @@ class Day#{day} < AocDay
   end
 end
 -----------------------------
+
 eof
+  exit(1)
+end
+
+case part_no.to_i
+when 1
+  print day.part1(day.getInput)
+
+when 2
+  print day.part2(day.getInput)
+
+else
+  print "Unknown part: " + part.to_s
 end
 
 print "\n\n"
