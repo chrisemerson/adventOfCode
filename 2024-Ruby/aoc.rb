@@ -1,46 +1,26 @@
-require "./aoc_day.rb"
-
-autoload :Day1, "./Day1/day1.rb"
-autoload :Day2, "./Day2/day2.rb"
-autoload :Day3, "./Day3/day3.rb"
-autoload :Day4, "./Day4/day4.rb"
-autoload :Day5, "./Day5/day5.rb"
-autoload :Day6, "./Day6/day6.rb"
-autoload :Day7, "./Day7/day7.rb"
-autoload :Day8, "./Day8/day8.rb"
-autoload :Day9, "./Day9/day9.rb"
-autoload :Day10, "./Day10/day10.rb"
-autoload :Day11, "./Day11/day11.rb"
-autoload :Day12, "./Day12/day12.rb"
-autoload :Day13, "./Day13/day13.rb"
-autoload :Day14, "./Day14/day14.rb"
-autoload :Day15, "./Day15/day15.rb"
-autoload :Day16, "./Day16/day16.rb"
-autoload :Day17, "./Day17/day17.rb"
-autoload :Day18, "./Day18/day18.rb"
-autoload :Day19, "./Day19/day19.rb"
-autoload :Day20, "./Day20/day20.rb"
-autoload :Day21, "./Day21/day21.rb"
-autoload :Day22, "./Day22/day22.rb"
-autoload :Day23, "./Day23/day23.rb"
-autoload :Day24, "./Day24/day24.rb"
-autoload :Day25, "./Day25/day25.rb"
+require "./bootstrap.rb"
+require 'fileutils'
 
 day_no = (ARGV[0] if ARGV.length > 0).to_s
 part_no = ARGV[1] if ARGV.length > 1
 
-begin
-  day_class = Object.const_get("Day#{day_no}")
-  day = day_class.new
-rescue NameError,LoadError
-  print "Day class does not exist: Day#{day_no}\n"
-  print "Create a day class that extends AocDay at \'Day#{day_no}/day#{day_no}.rb\' and try again\n\n"
+class_loaded = false
 
-  print <<-eof
------------------------------
+until class_loaded
+  begin
+    day_class = Object.const_get("Day#{day_no}")
+    day = day_class.new
+    class_loaded = true
+  rescue NameError, LoadError
+    print "Day class does not exist: Day#{day_no}\n"
+
+    expected_file_content = <<-eof
 # frozen_string_literal: true
 
 class Day#{day_no} < AocDay
+  def part1_test_answer = super
+  def part2_test_answer = super
+
   def part1(input)
     super
   end
@@ -49,10 +29,35 @@ class Day#{day_no} < AocDay
     super
   end
 end
------------------------------
-
 eof
-  exit(1)
+
+    print "-----------------------------\n"
+    print expected_file_content
+    print "-----------------------------\n"
+    print "Create this file now? (y/n): "
+
+    user_input = STDIN.gets.chomp
+
+    print "\n"
+
+    if user_input.downcase == 'y'
+      FileUtils.mkdir_p 'Day' + day_no
+
+      File.open("./Day#{day_no}/day#{day_no}.rb", 'w') do |f|
+        f.write(expected_file_content)
+      end
+
+      File.open("./Day#{day_no}/input.txt", 'w') do |f|
+        f.write('')
+      end
+
+      File.open("./Day#{day_no}/test.txt", 'w') do |f|
+        f.write('')
+      end
+    else
+      exit(1)
+    end
+  end
 end
 
 case part_no.to_i
