@@ -21,7 +21,7 @@ class Day1 < AocDay
 
     input.lines.map(&:chomp)
          .map { |line| line.split(" ").map(&:chomp).map(&:to_i) }
-         .map { |a, b| left_list.append(a); right_list.append(b) }
+         .each { |a, b| left_list.append(a); right_list.append(b) }
 
     [left_list.sort, right_list.sort]
   end
