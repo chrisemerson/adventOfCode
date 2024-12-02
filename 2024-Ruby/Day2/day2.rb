@@ -8,31 +8,31 @@ class Day2 < AocDay
     .chomp
     .lines
     .map(&:chomp)
-    .select { |l| lineIsValid(l.split(" ").map { |i| i.chomp.to_i }) }
+    .select { |l| report_is_valid(l.split(" ").map { |i| i.chomp.to_i }) }
     .length
 
   def part2(input) = input
     .chomp
     .lines
     .map(&:chomp)
-    .select { |l| lineIsValidWithOneMissingReport(l.split(" ").map { |i| i.chomp.to_i }) }
+    .select { |l| report_is_valid_with_one_missing_level(l.split(" ").map { |i| i.chomp.to_i }) }
     .length
 
   private
 
-  def lineIsValid(line)
-    differences = line.each_cons(2).map { |a, b| a - b }
+  def report_is_valid(report)
+    level_differences = report.each_cons(2).map { |a, b| a - b }
 
-    if differences[0] > 0
-      differences.reject { |i| i >= 1 && i <= 3 }.length == 0
+    if level_differences[0] > 0
+      level_differences.reject { |i| i >= 1 && i <= 3 }.length == 0
     else
-      differences.reject { |i| i <= -1 && i >= -3 }.length == 0
+      level_differences.reject { |i| i <= -1 && i >= -3 }.length == 0
     end
   end
 
-  def lineIsValidWithOneMissingReport(line) = line
+  def report_is_valid_with_one_missing_level(report) = report
     .each_with_index
-    .map { |_, i| line.each_with_index.reject { |_, ii| i == ii }.map { |x, _| x } }
-    .map { |l| lineIsValid(l) }
+    .map { |_, i| report.each_with_index.reject { |_, ii| i == ii }.map { |x, _| x } }
+    .map { |l| report_is_valid(l) }
     .any?
 end
