@@ -63,7 +63,7 @@ end
 case part_no.to_i
 when 1
   unless day.part1_test_answer.nil?
-    part1_test_result = day.part1(day.get_test_input)
+    part1_test_result = day.part1(day.get_test_input(1))
 
     if part1_test_result == day.part1_test_answer
       print "\e[32mPart 1 test passed\e[0m\n"
@@ -76,7 +76,7 @@ when 1
 
 when 2
   unless day.part2_test_answer.nil?
-    part2_test_result = day.part2(day.get_test_input)
+    part2_test_result = day.part2(day.get_test_input(2))
 
     if part2_test_result == day.part2_test_answer
       print "\e[32mPart 2 test passed\e[0m\n"
