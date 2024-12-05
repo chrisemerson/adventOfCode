@@ -21,10 +21,10 @@ class Day5 < AocDay
   def parse_input(input)
     input_pt1, input_pt2 = input.chomp.split("\n\n")
 
-    rules = input_pt1.lines.map(&:chomp).map { |r| r.split("|").map { |x| x.chomp.to_i } }
-    lines = input_pt2.lines.map(&:chomp).map { |l| l.split(",").map { |x| x.chomp.to_i } }
-
-    [rules, lines]
+    [
+      input_pt1.lines.map(&:chomp).map { |r| r.split("|").map { |x| x.chomp.to_i } },
+      input_pt2.lines.map(&:chomp).map { |l| l.split(",").map { |x| x.chomp.to_i } }
+    ]
   end
 
   def check_rules(line, rules)
