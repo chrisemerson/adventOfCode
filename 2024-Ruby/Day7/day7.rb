@@ -3,13 +3,13 @@
 class Day7 < AocDay
   def part1_test_answer = 3749
   def part2_test_answer = 11387
+  def part1(input) = sum_valid_equations(input, [method(:add), method(:mul)])
+  def part2(input) = sum_valid_equations(input, [method(:add), method(:mul), method(:concat)])
 
-  def part1(input) = parse_input(input)
-    .filter { |e| is_equation_valid?(*e, [method(:add), method(:mul)]) }
-    .map { |e| e[0] }.sum
+  private
 
-  def part2(input) = parse_input(input)
-    .filter { |e| is_equation_valid?(*e, [method(:add), method(:mul), method(:concat)]) }
+  def sum_valid_equations(input, operations) = parse_input(input)
+    .filter { |e| is_equation_valid?(*e, operations) }
     .map { |e| e[0] }.sum
 
   def parse_input(input) = input.chomp.lines.map do |l|
