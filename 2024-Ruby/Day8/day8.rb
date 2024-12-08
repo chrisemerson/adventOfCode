@@ -19,7 +19,7 @@ class Day8 < AocDay
     end
 
     anti_nodes
-      .reject { |y, x| y < 0 || y >= input.chomp.lines.length || x < 0 || x >= input.lines[0].chomp.length }
+      .filter { |y, x| in_bounds?(input, y, x) }
       .uniq
       .length
   end
@@ -36,7 +36,7 @@ class Day8 < AocDay
           anti_node_y = al[0]
           anti_node_x = al[1]
 
-          until anti_node_y < 0 || anti_node_x < 0 || anti_node_y >= input.chomp.lines.length || anti_node_x >= input.lines[0].chomp.length
+          while in_bounds?(input, anti_node_y, anti_node_x)
             anti_node_y -= anti_node_dy
             anti_node_x -= anti_node_dx
           end
@@ -44,7 +44,9 @@ class Day8 < AocDay
           anti_node_y += anti_node_dy
           anti_node_x += anti_node_dx
 
-          until anti_node_y < 0 || anti_node_x < 0 || anti_node_y >= input.chomp.lines.length || anti_node_x >= input.lines[0].chomp.length
+          anti_nodes.add([anti_node_y, anti_node_x])
+
+          while in_bounds?(input, anti_node_y, anti_node_x)
             anti_node_y += anti_node_dy
             anti_node_x += anti_node_dx
 
@@ -55,7 +57,7 @@ class Day8 < AocDay
     end
 
     anti_nodes
-      .reject { |y, x| y < 0 || y >= input.chomp.lines.length || x < 0 || x >= input.lines[0].chomp.length }
+      .filter { |y, x| in_bounds?(input, y, x) }
       .uniq
       .length
   end
@@ -84,4 +86,6 @@ class Day8 < AocDay
       acc_y
     end
   end
+
+  def in_bounds?(input, y, x) = y >= 0 && x >= 0 && y < input.chomp.lines.length && x < input.lines[0].chomp.length
 end
