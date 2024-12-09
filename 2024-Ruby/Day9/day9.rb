@@ -48,15 +48,7 @@ class Day9 < AocDay
           *disk_layout.slice(index_to_replace + 1, file_index - index_to_replace - 1),
           ['.', file_length],
           *disk_layout.slice(file_index + 1, disk_layout.length - file_index)
-        ].reduce([[], '.', 0]) { |acc, cur|
-          if cur[0] == acc[1]
-            [acc[0], acc[1], acc[2] + cur[1]]
-          else
-            [[*acc[0], [acc[1], acc[2]]], cur[0], cur[1]]
-          end
-        }
-
-        disk_layout = [*disk_layout[0], [disk_layout[1], disk_layout[2]]].reject { |_, l| l == 0 }
+        ].reject { |_, l| l == 0 }
       end
 
       file_id -= 1
