@@ -2,28 +2,17 @@
 
 class Day10 < AocDay
   def part1_test_answer = 36
-  def part2_test_answer = super
+  def part2_test_answer = 81
 
-  def part1(input)
-    grid = parse_input(input)
-    trailheads = find_trailheads(grid)
-    routes = trailheads.map { |th| find_routes(grid, th) }
+  def part1(input) = find_trailheads(parse_input(input))
+    .map { |th| find_routes(parse_input(input), th) }
+    .map { |route| route.map(&:last).uniq.length }
+    .sum
 
-    routes.each do |trailhead|
-      print "Trailhead: " + trailhead[0][0].to_s + " has " + trailhead.length.to_s + " routes\n"
-      trailhead.each do |route|
-        print route.to_s + "\n"
-      end
-
-      print "\n"
-    end
-
-    exit
-  end
-
-  def part2(input)
-    super
-  end
+  def part2(input) = find_trailheads(parse_input(input))
+    .map { |th| find_routes(parse_input(input), th) }
+    .map(&:length)
+    .sum
 
   private
 
@@ -41,14 +30,16 @@ class Day10 < AocDay
   def find_routes(grid, trailhead)
     return [[trailhead]] if grid[trailhead[0]][trailhead[1]] == 9
 
-    routes = [[0, 1], [0, -1], [1, 0], [-1, 0]]
-      .reject { |dy, dx| trailhead[0] + dy < 0 || trailhead[0] + dy >= grid.length || trailhead[1] + dx < 0 || trailhead[1] + dx >= grid[0].length }
-      .map { |dy, dx| [trailhead[0] + dy, trailhead[1] + dx] }
-      .filter { |y, x| grid[y][x] - grid[trailhead[0]][trailhead[1]] == 1 }
-      .map{|ns| find_routes(grid, ns)}
+    routes_from_here = find_cells_to_jump_to(grid, trailhead)
+      .map { |c| find_routes(grid, c) }
       .reject(&:nil?)
-      .map{|route| [trailhead, *route[0]]}
+      .reduce([]) { |acc, rs| acc + rs.map { |r| [trailhead, *r] } }
 
-    routes.empty? ? nil : routes
+    routes_from_here.empty? ? nil : routes_from_here
   end
+
+  def find_cells_to_jump_to(grid, cell) = [[0, 1], [0, -1], [1, 0], [-1, 0]]
+    .reject { |dy, dx| cell[0] + dy < 0 || cell[0] + dy >= grid.length || cell[1] + dx < 0 || cell[1] + dx >= grid[0].length }
+    .map { |dy, dx| [cell[0] + dy, cell[1] + dx] }
+    .filter { |y, x| grid[y][x] - grid[cell[0]][cell[1]] == 1 }
 end
