@@ -20,11 +20,7 @@ class Day10 < AocDay
 
   def find_trailheads(grid) = grid
     .each_with_index
-    .map { |r, y|
-      r
-        .each_with_index
-        .filter { |v, _| v == 0 }
-        .map { |_, x| [y, x] }
+    .map { |r, y| r.each_with_index.filter { |v, _| v == 0 }.map { |_, x| [y, x] }
     }.reduce([]) { |acc, x| [*acc, *x] }
 
   def find_routes(grid, trailhead)
