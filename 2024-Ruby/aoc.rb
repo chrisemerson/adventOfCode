@@ -29,7 +29,7 @@ class Day#{day_no} < AocDay
     super
   end
 end
-eof
+    eof
 
     print "-----------------------------\n"
     print expected_file_content
@@ -62,7 +62,9 @@ end
 
 case part_no.to_i
 when 1
-  unless day.part1_test_answer.nil?
+  if day.part1_test_answer.nil?
+    print day.part1(day.get_input)
+  else
     part1_test_result = day.part1(day.get_test_input(1))
 
     if part1_test_result == day.part1_test_answer
@@ -75,7 +77,9 @@ when 1
   end
 
 when 2
-  unless day.part2_test_answer.nil?
+  if day.part2_test_answer.nil?
+    print day.part2(day.get_input)
+  else
     part2_test_result = day.part2(day.get_test_input(2))
 
     if part2_test_result == day.part2_test_answer
