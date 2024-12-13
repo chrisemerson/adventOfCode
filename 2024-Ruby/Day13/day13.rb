@@ -2,41 +2,32 @@
 
 class Day13 < AocDay
   def part1_test_answer = 480
-
   def part2_test_answer = super
+  def part1(input) = parse_claws(input).map { |c| win_prize(c) }.sum.to_i
 
-  def part1(input)
-    claws = parse_claws(input)
-
-    claws.map { |c| win_prize(c) }
-
-  end
-
-  def part2(input)
-    parse_claws(input)
-  end
+  def part2(input) = parse_claws(input).map { |c| {
+    :A => { :X => c[:A][:X], :Y => c[:A][:Y] },
+    :B => { :X => c[:B][:X], :Y => c[:B][:Y] },
+    :prize => { :X => c[:prize][:X] + 10000000000000, :Y => c[:prize][:Y] + 10000000000000 } }
+  }.map { |c| win_prize(c) }.sum.to_i
 
   private
 
   def win_prize(claw)
-    try_buttons(claw[:A][:X], claw[:A][:Y], claw[:B][:X], claw[:B][:Y], claw[:prize][:X], claw[:prize][:Y])
+    a_button_gradient = claw[:A][:Y].fdiv(claw[:A][:X].to_f)
+    b_button_gradient = claw[:B][:Y].fdiv(claw[:B][:X].to_f)
+    b_gradient_intercept = claw[:prize][:Y] - b_button_gradient * claw[:prize][:X]
+
+    intercept_x = b_gradient_intercept.fdiv(a_button_gradient - b_button_gradient).round
+
+    if intercept_x % claw[:A][:X] == 0 && (claw[:prize][:X] - intercept_x) % claw[:B][:X] == 0
+      3 * (intercept_x / claw[:A][:X].to_f) + (claw[:prize][:X].to_f - intercept_x) / claw[:B][:X].to_f
+    else
+      0
+    end
   end
 
-  def try_buttons(ax, ay, bx, by, px, py, x = 0, y = 0)
-    return 0 if x == px && y == py
-    return nil if x > px || y > py
-
-    options = [
-      try_buttons(ax, ay, bx, by, px, py, x + ax, y + ay),
-      try_buttons(ax, ay, bx, by, px, py, x + bx, y + by)
-    ].reject(&:nil?)
-
-    options.empty? ? nil : options.min
-  end
-
-  def parse_claws(input)
-    claws = input.strip.split("\n\n").map { |c| parse_claw(c) }
-  end
+  def parse_claws(input) = input.strip.split("\n\n").map { |c| parse_claw(c) }
 
   def parse_claw(claw)
     claw_details = {}
