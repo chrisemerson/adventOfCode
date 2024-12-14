@@ -3,29 +3,18 @@
 class Day11 < AocDay
   def part1_test_answer = 55312
   def part2_test_answer = nil
-  def part1(input) = blink_times(parse_input(input), 25).sum
-  def part2(input) = blink_times(parse_input(input), 75).sum
-
-  def initialize = @cache = {}
+  def part1(input) = blink_times(parse_input(input), 25).map { |_, v| v }.sum
+  def part2(input) = blink_times(parse_input(input), 75).map { |_, v| v }.sum
 
   private
 
-  def parse_input(input) = input.chomp.split(" ").map(&:chomp).map(&:to_i)
-  def blink_times(stones, blinks) = stones.map { |stone| blink_single_stone_times(stone, blinks).length }
+  def parse_input(input) = input.chomp.split(" ").map(&:chomp).map(&:to_i).group_by(&:itself).transform_values!(&:size)
 
-  def blink_single_stone_times(stone, times)
-    return [stone] if times.zero?
-
-    @cache[stone] = {} unless @cache.has_key?(stone)
-
-    unless @cache[stone].has_key?(times)
-      @cache[stone][times] = blink(stone)
-        .map { |s| blink_single_stone_times(s, times - 1) }
-        .reduce([]) {|acc, sc| acc + sc }
-    end
-
-    @cache[stone][times]
-  end
+  def blink_times(stones, blinks) = (1..blinks)
+    .reduce(stones) { |acc, _| acc
+      .map { |s, c| blink(s) * c }.reduce([]) { |arr, cur| arr + cur }
+      .group_by(&:itself)
+      .transform_values!(&:size) }
 
   def blink(stone)
     if stone == 0
