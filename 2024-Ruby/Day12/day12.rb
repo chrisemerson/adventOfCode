@@ -2,25 +2,15 @@
 
 class Day12 < AocDay
   def part1_test_answer = 1930
-
   def part2_test_answer = 1206
 
   def part1(input) = find_garden_areas(parse_input(input))
     .map { |ga| ga[:points].length * find_perimeter(ga[:points]) }
     .sum
 
-  def part2(input)
-    garden = parse_input(input)
-
-    find_garden_areas(garden)
-      .map { |ga|
-
-        print "Area " + ga[:name] + " has " + count_edges(garden, ga[:points]).to_s + " edges\n"
-
-        ga[:points].length * count_edges(garden, ga[:points])
-      }
-      .sum
-  end
+  def part2(input) = find_garden_areas(parse_input(input))
+    .map { |ga| ga[:points].length * count_edges(ga[:points]) }
+    .sum
 
   private
 
@@ -34,10 +24,25 @@ class Day12 < AocDay
         .length
     }.sum
 
-  def count_edges(garden, points)
+  def count_edges(points)
     corners = 0
 
+    y_values = points.map { |p| p[0] }
+    x_values = points.map { |p| p[1] }
 
+    (y_values.min..y_values.max + 1).each do |y|
+      (x_values.min..x_values.max + 1).each do |x|
+        corner_bitmask = 0
+
+        corner_bitmask += 1 if points.include?([y - 1, x - 1])
+        corner_bitmask += 2 if points.include?([y - 1, x])
+        corner_bitmask += 4 if points.include?([y, x - 1])
+        corner_bitmask += 8 if points.include?([y, x])
+
+        corners += 1 if [1, 2, 4, 7, 8, 11, 13, 14].include?(corner_bitmask)
+        corners += 2 if [6, 9].include?(corner_bitmask)
+      end
+    end
 
     corners
   end
