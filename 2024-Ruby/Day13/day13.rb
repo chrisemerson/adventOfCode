@@ -3,11 +3,11 @@
 class Day13 < AocDay
   def part1_test_answer = 480
   def part2_test_answer = super
+
   def part1(input) = parse_claws(input).map { |c| win_prize(c) }.sum.to_i
 
   def part2(input) = parse_claws(input).map { |c| {
-    :A => { :X => c[:A][:X], :Y => c[:A][:Y] }, :B => { :X => c[:B][:X], :Y => c[:B][:Y] },
-    :prize => { :X => c[:prize][:X] + 10000000000000, :Y => c[:prize][:Y] + 10000000000000 } }
+    :A => c[:A], :B => c[:B], :prize => { :X => c[:prize][:X] + 10000000000000, :Y => c[:prize][:Y] + 10000000000000 } }
   }.map { |c| win_prize(c) }.sum.to_i
 
   private
