@@ -2,7 +2,7 @@
 
 class Day17 < AocDay
   def part1_test_answer = "4,6,3,5,6,3,5,2,1,0"
-  def part2_test_answer = nil
+  def part2_test_answer = nil # Solution is specific to the algorithm in my real input, no point running on test input
 
   def part1(input)
     initial_registers, program = parse_input(input)
@@ -11,47 +11,26 @@ class Day17 < AocDay
 
   def part2(input)
     _, program = parse_input(input)
-
     required_output = program.reverse
-
-    starting_a = 1
     register_a = 1
 
-    loop do
-      register_a = starting_a
+    while (program_input = required_output.delete_at(0))
+      register_a += 0
 
-      while (program_input = required_output.delete_at(0))
-        print "Looking for " + program_input.to_s + ": "
-
-        until program_input == part2_output_from_a(register_a)
-          print register_a.to_s + " => "
-          print part2_output_from_a(register_a).to_s + "..."
-          register_a += 1
-        end
-
-        print register_a.to_s + " => "
-        print part2_output_from_a(register_a).to_s + "...Found!" + "\n\n"
-
-        register_a *= 8
+      until program_input == part2_output_from_a(register_a)
+        register_a += 1
       end
 
-      if run_program(program, { :A => register_a, :B => 0, :C => 0 }) == program.join(',')
-        break
-      end
-
-      starting_a += 1
+      register_a <<= 3
     end
 
-    registers, program = parse_input(input)
+    register_a = (register_a << 3) >> 6
 
-    registers[:A] = register_a / 8
+    until program.join(',') == run_program(program, { :A => register_a, :B => 0, :C => 0 })
+      register_a += 1
+    end
 
-    output = run_program(program, registers)
-
-    print "Looking for: " + program.to_s + "\n"
-    print "Got:         " + output.split(',').map(&:to_i).to_s + "\n"
-
-    registers[:A]
+    register_a
   end
 
   private
@@ -125,12 +104,10 @@ class Day17 < AocDay
   end
 
   def part2_output_from_a(a)
-    b = a % 8
-    b = b ^ 3
-    c = a / (2 ** b)
-    b = b ^ c
-    b = b ^ 3
+    b = a % 8 # B is last 3 digits of A
+    c = a >> (b ^ 3) # C is A right shifted by a value 0 - 7
+    b = b ^ c # B is XOR'd with C
 
-    b % 8
+    b % 8 # Last 3 bits of B output
   end
 end
