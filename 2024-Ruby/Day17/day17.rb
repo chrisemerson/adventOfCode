@@ -104,7 +104,7 @@ class Day17 < AocDay
   end
 
   def part2_output_from_a(a)
-    b = a % 8 # B is last 3 digits of A
+    b = a % 8 # B is last 3 bits of A
     c = a >> (b ^ 3) # C is A right shifted by a value 0 - 7
     b = b ^ c # B is XOR'd with C
 
