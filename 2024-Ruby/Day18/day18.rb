@@ -70,7 +70,7 @@ class Day18 < AocDay
     until queue.empty?
       pos, points = queue.delete_at(0)
 
-      if get_min_points(pos[0], pos[1]).nil? #|| get_min_points(pos[0], pos[1]) >= points
+      if get_min_points(pos[0], pos[1]).nil?
         record_min_points(pos[0], pos[1], points)
 
         get_adjacent_cells(pos, grid).each { |ac| queue << [ac, points + 1] }
