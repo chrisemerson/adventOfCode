@@ -2,27 +2,18 @@
 
 class Day20 < AocDay
   def part1_test_answer = nil
-  def part2_test_answer = super
+  def part2_test_answer = nil
 
   def part1(input)
-    grid = parse_input(input)
+    find_path(parse_input(input))
 
-    base_path_length = find_path(grid)
-
-    grid
-      .each_with_index
-      .map { |row, y| row
-        .each_with_index
-        .map { |_, x| is_shortcut_position(grid, y, x) ? find_path(grid, [y, x]) : nil }
-        .reject(&:nil?) }
-      .reduce([]) { |acc, x| acc + x }
-      .map { |bp| base_path_length - bp }
-      .filter { |cs| cs >= 100 }
-      .length
+    find_cheats(2).filter { |cs| cs >= 100 }.length
   end
 
   def part2(input)
-    super
+    find_path(parse_input(input))
+
+    find_cheats(20).filter { |cs| cs >= 100 }.length
   end
 
   def initialize = @min_points = {}
@@ -31,7 +22,7 @@ class Day20 < AocDay
 
   def parse_input(input) = input.strip.lines.map { |line| line.strip.split('') }
 
-  def find_path(grid, invisible_wall = nil)
+  def find_path(grid)
     @min_points = {}
 
     start_pos = grid
@@ -50,7 +41,7 @@ class Day20 < AocDay
       .reduce([]) { |acc, row| acc + row }
       .filter { |d| d[0] == "E" }[0][1]
 
-    find_best_path(start_pos, 0, grid, invisible_wall)
+    find_best_path(start_pos, 0, grid)
 
     get_min_points(*end_pos)
   end
@@ -65,7 +56,7 @@ class Day20 < AocDay
     @min_points[y][x]
   end
 
-  def find_best_path(pos, points, grid, invisible_wall)
+  def find_best_path(pos, points, grid)
     stack = [[pos, points]]
 
     until stack.empty?
@@ -74,25 +65,27 @@ class Day20 < AocDay
       if get_min_points(pos[0], pos[1]).nil? || get_min_points(pos[0], pos[1]) >= points
         record_min_points(pos[0], pos[1], points)
 
-        get_adjacent_cells(pos, grid, invisible_wall).each { |ac| stack << [ac, points + 1] }
+        get_adjacent_cells(pos, grid).each { |ac| stack << [ac, points + 1] }
       end
     end
   end
 
-  def get_adjacent_cells(pos, grid, invisible_wall) = [[0, 1], [1, 0], [0, -1], [-1, 0]]
+  def get_adjacent_cells(pos, grid) = [[0, 1], [1, 0], [0, -1], [-1, 0]]
     .map { |dy, dx| [pos[0] + dy, pos[1] + dx] }
     .reject { |cy, cx| cy < 0 || cy >= grid.length || cx < 0 || cx >= grid[0].length }
-    .filter { |cy, cx| grid[cy][cx] != '#' || (!invisible_wall.nil? && cy == invisible_wall[0] && cx == invisible_wall[1]) }
+    .reject { |cy, cx| grid[cy][cx] == '#' }
     .sort_by { |cy, cx| (grid.length - cy) + (grid[0].length - cx) }
 
-  def is_shortcut_position(grid, y, x) = grid[y][x] == '#' &&
-    y > 0 &&
-    y < grid.length - 1 &&
-    x > 0 &&
-    x < grid.length - 1 &&
-    (
-      (%w[. S E].include?(grid[y - 1][x]) && %w[. S E].include?(grid[y + 1][x])) ||
-        (%w[. S E].include?(grid[y][x - 1]) && %w[. S E].include?(grid[y][x + 1]))
-    )
+  def find_cheats(cheat_time)
+    points_on_path = @min_points.map { |y, xs| xs.map { |x, p| [[y, x], p] } }.reduce([]) { |acc, x| acc + x }
 
+    points_on_path.map { |coords, points|
+      points_on_path
+        .map { |icoords, ipoints|
+          manhattan_distance = (icoords[0] - coords[0]).abs + (icoords[1] - coords[1]).abs
+
+          manhattan_distance <= cheat_time && ipoints > points + manhattan_distance ? ipoints - points - manhattan_distance : nil }
+        .reject(&:nil?)
+    }.reduce([]) { |acc, x| acc + x }
+  end
 end
