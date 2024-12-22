@@ -11,8 +11,17 @@ class Day22 < AocDay
       .map { |n| (1..2000).reduce([n]) { |acc, _| acc + [run_once(acc.last)] }.map { |nn| nn % 10 } }
       .map { |s| s[1..].reduce([[s[0], nil]]) { |acc, n| acc + [[n, n - acc.last[0]]] }.reject { |_, d| d.nil? } }
 
-    differences.map { |s|
-      s.each_cons(4).map { |ds| find_highest_price_for_difference_sequence(differences, ds.map { |_, d| d }) }.max
+    sale_indexes = differences.map { |s|
+      s.each_cons(4).reduce({}) { |acc, ds|
+        key = ds.map { |_, d| d }.join(',')
+        acc[key] = ds[3][0] unless acc.has_key?(key)
+        acc
+      } }
+
+    sale_indexes.map { |si| si.keys }.flatten.uniq.map { |as|
+      sale_indexes.map { |si|
+        si.has_key?(as) ? si[as] : 0
+      }.sum
     }.max
   end
 
@@ -21,45 +30,12 @@ class Day22 < AocDay
   private
 
   def parse_input(input) = input.strip.lines.map(&:strip).map(&:to_i)
+
   def run_times(number, times) = (1..times).reduce(number) { |acc, _| run_once(acc) }
 
   def run_once(number)
     number = (number ^ (number * 64)) % 16777216
     number = (number ^ (number / 32)) % 16777216
     (number ^ (number * 2048)) % 16777216
-  end
-
-  def find_highest_price_for_difference_sequence(sequences, differences)
-    unless @cache.has_key?(differences[0]) &&
-      @cache[differences[0]].has_key?(differences[1]) &&
-      @cache[differences[0]][differences[1]].has_key?(differences[2]) &&
-      @cache[differences[0]][differences[1]][differences[2]].has_key?(differences[3])
-      total = 0
-
-      sequences.map do |seq|
-        highest = 0
-
-        (3..(seq.length - 1)).each do |i|
-          if seq[i - 3][1] == differences[0] &&
-            seq[i - 2][1] == differences[1] &&
-            seq[i - 1][1] == differences[2] &&
-            seq[i][1] == differences[3] &&
-            seq[i][0] > highest
-            highest = seq[i][0]
-          end
-        end
-
-        total += highest
-      end
-
-      @cache[differences[0]] = {} unless @cache.has_key?(differences[0])
-      @cache[differences[0]][differences[1]] = {} unless @cache[differences[0]].has_key?(differences[1])
-      @cache[differences[0]][differences[1]][differences[2]] = {} unless @cache[differences[0]][differences[1]].has_key?(differences[2])
-      @cache[differences[0]][differences[1]][differences[2]][differences[3]] = {} unless @cache[differences[0]][differences[1]][differences[2]].has_key?(differences[3])
-
-      @cache[differences[0]][differences[1]][differences[2]][differences[3]] = total
-    end
-
-    @cache[differences[0]][differences[1]][differences[2]][differences[3]]
   end
 end
