@@ -21,8 +21,6 @@ class Day22 < AocDay
     }.max
   end
 
-  def initialize = @cache = {}
-
   private
 
   def parse_input(input) = input.strip.lines.map(&:strip).map(&:to_i)
