@@ -24,3 +24,13 @@ function copy(t)
 
     return setmetatable(new, getmetatable(t))
 end
+
+function contains(haystack, needle)
+    for _, v in ipairs(haystack) do
+        if v == needle then
+            return true
+        end
+    end
+
+    return false
+end

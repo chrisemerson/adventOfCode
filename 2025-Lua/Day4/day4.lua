@@ -1,6 +1,6 @@
 package.path = package.path .. ";../?.lua"
 
-require "../Util/table"
+require "Util/table"
 
 function import_grid(file)
     local grid = {}
