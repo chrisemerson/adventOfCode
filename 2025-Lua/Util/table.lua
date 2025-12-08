@@ -34,3 +34,57 @@ function contains(haystack, needle)
 
     return false
 end
+
+function slice(table, start, finish)
+    local slice = {}
+
+    for i = start, finish do
+        slice[i] = table[i]
+    end
+
+    return slice
+end
+
+function keys(table)
+    local keys = {}
+
+    for k, _ in pairs(table) do
+        keys[#keys + 1] = k
+    end
+
+    return keys
+end
+
+function key_exists(table, key)
+    for k, _ in pairs(table) do
+        if k == key then
+            return true
+        end
+    end
+
+    return false
+end
+
+function table_concat(a, b)
+    local result = {}
+
+    for _, v in ipairs(a) do
+        result[#result + 1] = v
+    end
+
+    for _, v in ipairs(b) do
+        result[#result + 1] = v
+    end
+
+    return result
+end
+
+function toset(table)
+    local set = {}
+
+    for _, v in ipairs(table) do
+        set[v] = true
+    end
+
+    return set
+end
