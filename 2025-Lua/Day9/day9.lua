@@ -7,7 +7,7 @@ local right_bound = 0
 local top_bound = nil
 local bottom_bound = 0
 
-for line in io.lines("input.txt") do
+for line in io.lines("test.txt") do
     local _, _, x, y = string.find(line, "(%d+),(%d+)")
 
     points[#points + 1] = {['x'] = tonumber(x), ['y'] = tonumber(y)}
@@ -85,4 +85,8 @@ function print_grid(grid)
     end
 end
 
-print_grid(grid)
+function point_in_polygon(points, y, x)
+    
+end
+
+--print_grid(grid)
