@@ -25,7 +25,7 @@ end
 
 local machines = {}
 
-for line in io.lines("test.txt") do
+for line in io.lines("input.txt") do
     machines[#machines + 1] = parse_line(line)
 end
 
@@ -43,7 +43,7 @@ function apply_button_set(current_light_state, button_set)
     local this_light_state = current_light_state
 
     for _, button in ipairs(button_set) do
-        this_light_state = apply_button(current_light_state, button)
+        this_light_state = apply_button(this_light_state, button)
     end
 
     return this_light_state
@@ -57,11 +57,6 @@ function find_minimum_button_presses(lights, buttons, current_light_state)
     if #buttons == 0 then
         return nil
     end
-
-    print(lights)
-    print(current_light_state)
-    print(dump(buttons))
-    print()
 
     local min_button_presses
     local minimal_button_set = {}
@@ -102,18 +97,12 @@ end
 
 local total_button_presses = 0
 
---for _, machine in ipairs(machines) do
---    total_button_presses = total_button_presses + find_minimum_button_presses(
---        machine['lights'],
---        machine['buttons'],
---        string.rep(".", #machine['lights'])
---    )
---end
+for _, machine in ipairs(machines) do
+    total_button_presses = total_button_presses + find_minimum_button_presses(
+        machine['lights'],
+        machine['buttons'],
+        string.rep(".", #machine['lights'])
+    )['presses']
+end
 
-print(dump(find_minimum_button_presses(
-        machines[2]['lights'],
-        machines[2]['buttons'],
-        string.rep(".", #machines[2]['lights'])
-)))
-
---print("Part 1: " .. total_button_presses)
+print("Part 1: " .. total_button_presses)
