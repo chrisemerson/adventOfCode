@@ -1,11 +1,38 @@
-package.path = package.path .. ";../?.lua"
+package.path = package.path .. ";../?.lua;../?/init.lua"
 require "Util/table"
 
-function split_by_comma(str)
+local alg = require 'sci/alg'
+
+local wrap, yield = coroutine.wrap, coroutine.yield
+
+--[[
+    Yields combinations of non-repeating items of tbl.
+    tbl is the source of items,
+    sub is a combination of items that all yielded combination ought to contain,
+    min it the minimum key of items that can be added to yielded combinations.
+--]]
+local function unique_combinations (tbl, sub, min)
+    sub = sub or {}
+    min = min or 1
+    return wrap (function ()
+        if #sub > 0 then
+            yield (sub) -- yield short combination.
+        end
+        if #sub < #tbl then
+            for i = min, #tbl do    -- iterate over longer combinations.
+                for combo in unique_combinations (tbl, append (sub, tbl [i]), i + 1) do
+                    yield (combo)
+                end
+            end
+        end
+    end)
+end
+
+function split_by_comma(str, offset)
     local items = {}
 
     for x in string.gmatch(str, "[^,]+") do
-        items[#items + 1] = tonumber(x) + 1
+        items[#items + 1] = tonumber(x) + offset
     end
 
     return items
@@ -17,15 +44,15 @@ function parse_line(line)
     local button_schematics = {}
 
     for button in string.gmatch(buttons, "%(([%d,]+)%)%s*") do
-        button_schematics[#button_schematics + 1] = split_by_comma(button)
+        button_schematics[#button_schematics + 1] = split_by_comma(button, 1)
     end
 
-    return {['lights'] = lights, ['buttons'] = button_schematics, ['joltages'] = split_by_comma(joltages)}
+    return {['lights'] = lights, ['buttons'] = button_schematics, ['joltages'] = split_by_comma(joltages, 0)}
 end
 
 local machines = {}
 
-for line in io.lines("input.txt") do
+for line in io.lines("test.txt") do
     machines[#machines + 1] = parse_line(line)
 end
 
@@ -49,60 +76,42 @@ function apply_button_set(current_light_state, button_set)
     return this_light_state
 end
 
-function find_minimum_button_presses(lights, buttons, current_light_state)
-    if lights == current_light_state then
-        return {['presses'] = 0, ['buttons'] = {}}
-    end
-
-    if #buttons == 0 then
-        return nil
-    end
-
-    local min_button_presses
-    local minimal_button_set = {}
-
-    for i, button_set in pairs(buttons) do
-        local this_light_state = apply_button_set(current_light_state, button_set)
-        local new_buttons = {}
-
-        for j, jbutton_set in pairs(buttons) do
-            if i ~= j then
-                new_buttons[j] = jbutton_set
-            end
-        end
-
-        local min_button_presses_from_here = find_minimum_button_presses(
-            lights,
-            new_buttons,
-            this_light_state
-        )
-
-        if min_button_presses_from_here ~= nil then
-            if min_button_presses == nil then
-                min_button_presses = min_button_presses_from_here['presses']
-                minimal_button_set = table_concat(min_button_presses_from_here['buttons'], button_set)
-            elseif min_button_presses_from_here['presses'] < min_button_presses then
-                min_button_presses = min_button_presses_from_here['presses']
-                minimal_button_set = table_concat(min_button_presses_from_here['buttons'], button_set)
-            end
-        end
-    end
-
-    if min_button_presses == nil then
-        return nil
-    else
-        return {['presses'] = min_button_presses + 1, ['buttons'] = minimal_button_set}
-    end
-end
-
 local total_button_presses = 0
 
 for _, machine in ipairs(machines) do
-    total_button_presses = total_button_presses + find_minimum_button_presses(
-        machine['lights'],
-        machine['buttons'],
-        string.rep(".", #machine['lights'])
-    )['presses']
+    local min_button_presses_for_machine = nil
+
+    for button_combo in unique_combinations(machine['buttons']) do
+        local lights = string.rep(".", #machine['lights'])
+
+        for _, button_set in ipairs(button_combo) do
+            lights = apply_button_set(lights, button_set)
+        end
+
+        if lights == machine['lights'] then
+            if min_button_presses_for_machine == nil then
+                min_button_presses_for_machine = #button_combo
+            elseif #button_combo < min_button_presses_for_machine then
+                min_button_presses_for_machine = #button_combo
+            end
+        end
+    end
+
+    if min_button_presses_for_machine ~= nil then
+        total_button_presses = total_button_presses + min_button_presses_for_machine
+    end
 end
 
 print("Part 1: " .. total_button_presses)
+
+local machine = machines[1]
+local joltages = machine['joltages']
+local joltage_state = {}
+
+for _ = 1, #joltages do
+    joltage_state[#joltage_state + 1] = 0
+end
+
+print(dump(joltage_state))
+
+print(alg.mat(2,3))

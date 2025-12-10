@@ -88,3 +88,15 @@ function toset(table)
 
     return set
 end
+
+function append (t, new)
+    local clone = {}
+
+    for _, item in ipairs (t) do
+        clone [#clone + 1] = item
+    end
+
+    clone [#clone + 1] = new
+
+    return clone
+end
