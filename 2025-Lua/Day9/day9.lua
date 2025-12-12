@@ -4,7 +4,7 @@ require "Util/table"
 local points = {}
 local left_bound = nil
 
-for line in io.lines("input.txt") do
+for line in io.lines("test.txt") do
     local _, _, x, y = string.find(line, "(%d+),(%d+)")
 
     points[#points + 1] = {['x'] = tonumber(x), ['y'] = tonumber(y)}
@@ -33,7 +33,7 @@ print("Part 1: " .. max_area)
 
 left_bound = left_bound - 1
 
-function point_in_polygon(points, y, x)
+local function point_in_polygon(points, y, x)
     local last_point = points[#points]
     local in_polygon = false
 
@@ -54,22 +54,78 @@ function point_in_polygon(points, y, x)
     return in_polygon
 end
 
-function line_intersects(ax1, ay1, ax2, ay2, bx1, by1, bx2, by2)
-    -- a is our horizontal line, b our vertical line
+local function line_intersects(ax1, ay1, ax2, ay2, bx1, by1, bx2, by2)
+    for y = math.min(ay1, ay2, by1, by2) - 1, math.max(ay1, ay2, by1, by2) + 1 do
+        for x = math.min(ax1, ax2, bx1, bx2) - 1, math.max(ax1, ax2, bx1, bx2) + 1 do
+            local a_vertical = ax1 == ax2
+            local b_vertical = bx1 == bx2
 
-    -- Vertical line is entirely above or below our horizontal one
-    if (by1 <= ay1 and by2 <= ay2) or (by1 > ay1 and by2 > ay2) then
-        --print("Do not intersect")
-        return false
+            local point_on_a = (a_vertical and ax1 == x and math.min(ay1, ay2) <= y and math.max(ay1, ay2) >= y) or (not a_vertical and ay1 == y and math.min(ax1, ax2) <= x and math.max(ax1, ax2) >= x)
+            local point_on_b = (b_vertical and bx1 == x and math.min(by1, by2) <= y and math.max(by1, by2) >= y) or (not b_vertical and by1 == y and math.min(bx1, bx2) <= x and math.max(bx1, bx2) >= x)
+
+            if point_on_a and point_on_b then
+                if a_vertical and b_vertical then
+                    io.write('H')
+                elseif a_vertical or b_vertical then
+                    io.write('+')
+                else
+                    io.write('=')
+                end
+            elseif point_on_a then
+                if a_vertical then
+                    io.write('|')
+                else
+                    io.write('-')
+                end
+            elseif point_on_b then
+                if b_vertical then
+                    io.write('|')
+                else
+                    io.write('-')
+                end
+            else
+                io.write(".")
+            end
+        end
+
+        print()
     end
 
-    -- Horizontal line is entirely to the left of our vertical line
-    if (ax1 < bx1 and ax2 < bx2) then
-        --print("Do not intersect")
-        return false
+    --Are both lines horizontal?
+    if ay1 == ay2 and by1 == by2 then
+        --If they have different y values, they don't intersect
+        if ay1 ~= by1 then return false end
+
+        --Check for overlap
+        return not ((ax1 < math.min(bx1, bx2) and ax2 < math.min(bx1, bx2)) or (ax1 > math.max(bx1, bx2) and ax2 > math.max(bx1, bx2)))
     end
 
-    --print("Intersects")
+    --Are both lines vertical?
+    if ax1 == ax2 and bx1 == bx2 then
+        --If they have different x values, they don't intersect
+        if ax1 ~= bx1 then return false end
+
+        --Check for overlap
+        return not ((ay1 < math.min(by1, by2) and ay2 < math.min(by1, by2)) or (ay1 > math.max(by1, by2) and ay2 > math.max(by1, by2)))
+    end
+
+    --One line is vertical and the other horizontal
+    if ay1 == ay2 then
+        --A is the horizontal line
+        --First check if B is off to the left or right of the entirety of A
+        if (bx1 < ax1 and bx1 < ax2) or (bx1 > ax1 and bx1 > ax2) then return false end
+
+        --Check if B is entirely above or below A
+        if (by1 < ay1 and by2 < ay1) or (by1 > ay1 and by2 > ay1) then return false end
+    else
+        --B is the horizontal line
+        --First check if B is off to the left or right of  A
+        if (bx1 < ax1 and bx2 < ax1) or (bx1 > ax1 and bx2 > ax1) then return false end
+
+        --Check if B is entirely above or below A
+        if (by1 < ay1 and by1 < ay2) or (by1 > ay1 and by1 > ay2) then return false end
+    end
+
     return true
 end
 
@@ -78,17 +134,45 @@ max_area = 0
 for _, i in ipairs(points) do
     for _, j in ipairs(points) do
         local this_area = (math.abs(i['x'] - j['x']) + 1) * (math.abs(i['y'] - j['y']) + 1)
-        local all_points_inside = true
+        local topleft = {['y'] = math.min(i['y'], j['y']), ['x'] = math.min(i['x'], j['x'])}
+        local bottomright = {['y'] = math.max(i['y'], j['y']), ['x'] = math.max(i['x'], j['x'])}
 
-        for ddy = math.min(i['y'], j['y']), math.max(i['y'], j['y']) do
-            for ddx = math.min(i['x'], j['x']), math.max(i['x'], j['x']) do
-                if not point_in_polygon(points, ddy, ddx) then
-                    all_points_inside = false
-                end
+        local last_point = points[#points]
+        local in_polygon = true
+
+        for _, point in ipairs(points) do
+            -- Left edge
+            if line_intersects(last_point['x'], last_point['y'], point['x'], point['y'], topleft['x'], topleft['y'] + 1, topleft['x'], bottomright['y'] - 1) then
+                print("intersects")
+                in_polygon = false
             end
+
+            -- Top edge
+            if line_intersects(last_point['x'], last_point['y'], point['x'], point['y'], topleft['x'] + 1, topleft['y'], bottomright['x'] - 1, topleft['y']) then
+                print("intersects")
+                in_polygon = false
+            end
+
+            -- Right edge
+            if line_intersects(last_point['x'], last_point['y'], point['x'], point['y'], bottomright['x'], topleft['y'] + 1, bottomright['x'], bottomright['y'] - 1) then
+                print("intersects")
+                in_polygon = false
+            end
+
+            -- Bottom edge
+            if line_intersects(last_point['x'], last_point['y'], point['x'], point['y'], topleft['x'] + 1, bottomright['y'], bottomright['x'] - 1, bottomright['y']) then
+                print("intersects")
+                in_polygon = false
+            end
+
+            print()
+            print()
+
+            last_point = point
         end
 
-        if this_area > max_area and all_points_inside then
+        if this_area > max_area and in_polygon then
+            print("Rectangle " .. dump(topleft) .. " " .. dump(bottomright) .. " has max area " .. this_area)
             max_area = this_area
         end
     end
