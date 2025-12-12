@@ -1,8 +1,6 @@
 package.path = package.path .. ";../?.lua;../?/init.lua"
 require "Util/table"
 
-local alg = require 'sci/alg'
-
 local wrap, yield = coroutine.wrap, coroutine.yield
 
 --[[
@@ -52,7 +50,7 @@ end
 
 local machines = {}
 
-for line in io.lines("test.txt") do
+for line in io.lines("input.txt") do
     machines[#machines + 1] = parse_line(line)
 end
 
@@ -104,14 +102,61 @@ end
 
 print("Part 1: " .. total_button_presses)
 
-local machine = machines[1]
-local joltages = machine['joltages']
-local joltage_state = {}
+local total_button_presses = 0
+local pattern = "^c%s*Objective:%s*obj%s*=%s*(%d+)%s*%(MINimum%)$"
 
-for _ = 1, #joltages do
-    joltage_state[#joltage_state + 1] = 0
+for _, machine in ipairs(machines) do
+    local model = ""
+    local variables = {}
+
+    for i = 1, #machine['buttons'] do
+        model = model .. "var x" .. i .. ", >=0, <=9999, integer;" .. string.char(10)
+        variables[#variables + 1] = "x" .. i
+    end
+
+    model = model .. "minimize obj: " .. table.concat(variables, " + ") .. ";" .. string.char(10)
+
+    local joltage_contributors = {}
+
+    for i, button_set in pairs(machine['buttons']) do
+        for _, button in ipairs(button_set) do
+            if joltage_contributors[button] == nil then
+                joltage_contributors[button] = {}
+            end
+
+            joltage_contributors[button][#joltage_contributors[button] + 1] = i
+        end
+    end
+
+    for ji, joltage_required in pairs(machine['joltages']) do
+        model = model .. "s.t. joltage" .. ji .. ": "
+
+        local contributing_vars = {}
+
+        for _, button in ipairs(joltage_contributors[ji]) do
+            contributing_vars[#contributing_vars + 1] = "x" .. button
+        end
+
+        model = model .. table.concat(contributing_vars, " + ") .. " = " .. joltage_required .. ";" .. string.char(10)
+    end
+
+    model = model .. "end;"
+
+    local file = io.open("joltages.model", "w")
+    file:write(model)
+    file:close()
+
+    os.execute("glpsol --model joltages.model -w out > /dev/null")
+
+    local answer
+
+    for line in io.lines("out") do
+        if string.match(line, pattern) then
+            answer = string.match(line, pattern)
+        end
+    end
+
+    total_button_presses = total_button_presses + answer
 end
 
-print(dump(joltage_state))
-
-print(alg.mat(2,3))
+print("Part 2: " .. total_button_presses)

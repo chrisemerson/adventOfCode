@@ -3,11 +3,8 @@ require "Util/table"
 
 local points = {}
 local left_bound = nil
-local right_bound = 0
-local top_bound = nil
-local bottom_bound = 0
 
-for line in io.lines("test.txt") do
+for line in io.lines("input.txt") do
     local _, _, x, y = string.find(line, "(%d+),(%d+)")
 
     points[#points + 1] = {['x'] = tonumber(x), ['y'] = tonumber(y)}
@@ -21,14 +18,7 @@ for _, i in ipairs(points) do
             left_bound = i['x']
         end
 
-        if top_bound == nil then
-            top_bound = i['y']
-        end
-
         left_bound = math.min(left_bound, i['x'], j['x'])
-        right_bound = math.max(right_bound, i['x'], j['x'])
-        top_bound = math.min(top_bound, i['y'], j['y'])
-        bottom_bound = math.max(bottom_bound, i['y'], j['y'])
 
         local dx = math.abs(i['x'] - j['x']) + 1
         local dy = math.abs(i['y'] - j['y']) + 1
@@ -41,52 +31,67 @@ end
 
 print("Part 1: " .. max_area)
 
-left_bound = left_bound
-right_bound = right_bound
-top_bound = top_bound
-bottom_bound = bottom_bound
-
-local grid = {}
-
-for y = top_bound - 2, bottom_bound + 1 do
-    for x = left_bound - 2, right_bound + 1 do
-        if grid[y] == nil then
-            grid[y] = {}
-        end
-
-        grid[y][x] = "."
-    end
-end
-
-local last_point = points[#points]
-
-for _, point in ipairs(points) do
-    grid[point['y']][point['x']] = 'r'
-
-    local step_y = (last_point['y'] - point['y']) / math.abs(last_point['y'] - point['y'])
-    local step_x = (last_point['x'] - point['x']) / math.abs(last_point['x'] - point['x'])
-
-    for dy = point['y'], last_point['y'], step_y do
-        for dx = point['x'], last_point['x'], step_x do
-            grid[dy][dx] = 'g'
-        end
-    end
-
-    last_point = point
-end
-
-function print_grid(grid)
-    for _, y in ipairs(grid) do
-        for _, x in ipairs(y) do
-            io.write(x)
-        end
-
-        print()
-    end
-end
+left_bound = left_bound - 1
 
 function point_in_polygon(points, y, x)
-    
+    local last_point = points[#points]
+    local in_polygon = false
+
+    for _, point in ipairs(points) do
+        if last_point['x'] == point['x'] then
+            if line_intersects(left_bound, y, x, y, last_point['x'], last_point['y'], point['x'], point['y']) then
+                in_polygon = not in_polygon
+            end
+        elseif last_point['y'] == point['y'] then
+            if y == last_point['y'] and y >= math.min(last_point['y'], point['y']) and y <= math.max(last_point['y'], point['y']) then
+                return true
+            end
+        end
+
+        last_point = point
+    end
+
+    return in_polygon
 end
 
---print_grid(grid)
+function line_intersects(ax1, ay1, ax2, ay2, bx1, by1, bx2, by2)
+    -- a is our horizontal line, b our vertical line
+
+    -- Vertical line is entirely above or below our horizontal one
+    if (by1 <= ay1 and by2 <= ay2) or (by1 > ay1 and by2 > ay2) then
+        --print("Do not intersect")
+        return false
+    end
+
+    -- Horizontal line is entirely to the left of our vertical line
+    if (ax1 < bx1 and ax2 < bx2) then
+        --print("Do not intersect")
+        return false
+    end
+
+    --print("Intersects")
+    return true
+end
+
+max_area = 0
+
+for _, i in ipairs(points) do
+    for _, j in ipairs(points) do
+        local this_area = (math.abs(i['x'] - j['x']) + 1) * (math.abs(i['y'] - j['y']) + 1)
+        local all_points_inside = true
+
+        for ddy = math.min(i['y'], j['y']), math.max(i['y'], j['y']) do
+            for ddx = math.min(i['x'], j['x']), math.max(i['x'], j['x']) do
+                if not point_in_polygon(points, ddy, ddx) then
+                    all_points_inside = false
+                end
+            end
+        end
+
+        if this_area > max_area and all_points_inside then
+            max_area = this_area
+        end
+    end
+end
+
+print("Part 2: " .. max_area)
