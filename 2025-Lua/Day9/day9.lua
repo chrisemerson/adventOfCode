@@ -99,7 +99,6 @@ for _, i in ipairs(points) do
 
             if not rectangle_intersects(i, j, k, l) then
                 max_area = this_area
-                print("Max area of " .. max_area .. " found, corners (y=" ..  i['y'] .. ", x=" .. i['x'] .. "), (y=" .. j['y'] .. ", x=" .. j['x'] .. ")")
             end
         end
     end
